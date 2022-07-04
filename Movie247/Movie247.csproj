@@ -1,0 +1,256 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\admin\" />
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\web\css\ajax-loader.html" />
+    <None Include="wwwroot\web\css\fonts\slick-2.html" />
+    <None Include="wwwroot\web\css\fonts\slick-3.html" />
+    <None Include="wwwroot\web\css\fonts\slick-4.html" />
+    <None Include="wwwroot\web\css\fonts\slick.html" />
+    <None Include="wwwroot\web\css\fonts\slickd41d.html" />
+    <None Include="wwwroot\web\css\plugins.css" />
+    <None Include="wwwroot\web\css\style.css" />
+    <None Include="wwwroot\web\fonts\fontawesome-webfont93e3.eot" />
+    <None Include="wwwroot\web\fonts\fontawesome-webfont93e3.svg" />
+    <None Include="wwwroot\web\fonts\fontawesome-webfont93e3.ttf" />
+    <None Include="wwwroot\web\fonts\fontawesome-webfont93e3.woff" />
+    <None Include="wwwroot\web\fonts\fontawesome-webfont93e3.woff2" />
+    <None Include="wwwroot\web\fonts\fontawesome-webfontd41d.eot" />
+    <None Include="wwwroot\web\images\blank.html" />
+    <None Include="wwwroot\web\images\fancybox_loading%402x.gif" />
+    <None Include="wwwroot\web\images\fancybox_loading.gif" />
+    <None Include="wwwroot\web\images\fancybox_overlay.png" />
+    <None Include="wwwroot\web\images\fancybox_sprite%402x.png" />
+    <None Include="wwwroot\web\images\fancybox_sprite.png" />
+    <None Include="wwwroot\web\images\logo1.png" />
+    <None Include="wwwroot\web\images\logo2.png" />
+    <None Include="wwwroot\web\images\nivo\close%402x.png" />
+    <None Include="wwwroot\web\images\nivo\close.png" />
+    <None Include="wwwroot\web\images\nivo\loading%402x.gif" />
+    <None Include="wwwroot\web\images\nivo\loading.gif" />
+    <None Include="wwwroot\web\images\nivo\next%402x.png" />
+    <None Include="wwwroot\web\images\nivo\next.png" />
+    <None Include="wwwroot\web\images\nivo\prev%402x.png" />
+    <None Include="wwwroot\web\images\nivo\prev.png" />
+    <None Include="wwwroot\web\images\uploads\ads1.png" />
+    <None Include="wwwroot\web\images\uploads\ads2.png" />
+    <None Include="wwwroot\web\images\uploads\author.png" />
+    <None Include="wwwroot\web\images\uploads\author2.png" />
+    <None Include="wwwroot\web\images\uploads\author3.png" />
+    <None Include="wwwroot\web\images\uploads\author4.png" />
+    <None Include="wwwroot\web\images\uploads\ava1.jpg" />
+    <None Include="wwwroot\web\images\uploads\ava2.jpg" />
+    <None Include="wwwroot\web\images\uploads\ava3.jpg" />
+    <None Include="wwwroot\web\images\uploads\ava4.jpg" />
+    <None Include="wwwroot\web\images\uploads\blog-detail.jpg" />
+    <None Include="wwwroot\web\images\uploads\blog-detail2.jpg" />
+    <None Include="wwwroot\web\images\uploads\blog-it1.jpg" />
+    <None Include="wwwroot\web\images\uploads\blog-it2.jpg" />
+    <None Include="wwwroot\web\images\uploads\blog26.jpg" />
+    <None Include="wwwroot\web\images\uploads\blog27.jpg" />
+    <None Include="wwwroot\web\images\uploads\blog29.jpg" />
+    <None Include="wwwroot\web\images\uploads\bloglist-it1.jpg" />
+    <None Include="wwwroot\web\images\uploads\bloglist-it2.jpg" />
+    <None Include="wwwroot\web\images\uploads\bloglist-it3.jpg" />
+    <None Include="wwwroot\web\images\uploads\bloglist-it4.jpg" />
+    <None Include="wwwroot\web\images\uploads\bloglist-it5.jpg" />
+    <None Include="wwwroot\web\images\uploads\bloglist-it6.jpg" />
+    <None Include="wwwroot\web\images\uploads\blogv21.jpg" />
+    <None Include="wwwroot\web\images\uploads\blogv22.jpg" />
+    <None Include="wwwroot\web\images\uploads\blogv23.jpg" />
+    <None Include="wwwroot\web\images\uploads\blogv24.jpg" />
+    <None Include="wwwroot\web\images\uploads\blogv25.jpg" />
+    <None Include="wwwroot\web\images\uploads\blogv29.jpg" />
+    <None Include="wwwroot\web\images\uploads\cast1.jpg" />
+    <None Include="wwwroot\web\images\uploads\cast2.jpg" />
+    <None Include="wwwroot\web\images\uploads\cast3.jpg" />
+    <None Include="wwwroot\web\images\uploads\cast4.jpg" />
+    <None Include="wwwroot\web\images\uploads\cast5.jpg" />
+    <None Include="wwwroot\web\images\uploads\cast6.jpg" />
+    <None Include="wwwroot\web\images\uploads\cast7.jpg" />
+    <None Include="wwwroot\web\images\uploads\cast9.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb1.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb2.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb21.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb22.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb23.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb24.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb25.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb26.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb27.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb28.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb29.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb3.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb4.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb5.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb6.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb7.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb8.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceb9.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceblist1.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceblist2.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceblist3.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceblist4.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceblist5.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceblist6.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceblist7.jpg" />
+    <None Include="wwwroot\web\images\uploads\ceblist8.jpg" />
+    <None Include="wwwroot\web\images\uploads\cebsingle2.png" />
+    <None Include="wwwroot\web\images\uploads\celeb-hero-single.jpg" />
+    <None Include="wwwroot\web\images\uploads\cm-img.png" />
+    <None Include="wwwroot\web\images\uploads\drop-icon.png" />
+    <None Include="wwwroot\web\images\uploads\err-img.png" />
+    <None Include="wwwroot\web\images\uploads\error-bg.jpg" />
+    <None Include="wwwroot\web\images\uploads\film1.jpg" />
+    <None Include="wwwroot\web\images\uploads\film2.jpg" />
+    <None Include="wwwroot\web\images\uploads\film3.jpg" />
+    <None Include="wwwroot\web\images\uploads\film4.jpg" />
+    <None Include="wwwroot\web\images\uploads\film5.jpg" />
+    <None Include="wwwroot\web\images\uploads\film6.jpg" />
+    <None Include="wwwroot\web\images\uploads\film7.jpg" />
+    <None Include="wwwroot\web\images\uploads\film8.jpg" />
+    <None Include="wwwroot\web\images\uploads\ft-bg.jpg" />
+    <None Include="wwwroot\web\images\uploads\hero-bg.jpg" />
+    <None Include="wwwroot\web\images\uploads\image1-1.jpg" />
+    <None Include="wwwroot\web\images\uploads\image1.jpg" />
+    <None Include="wwwroot\web\images\uploads\image10.jpg" />
+    <None Include="wwwroot\web\images\uploads\image101.jpg" />
+    <None Include="wwwroot\web\images\uploads\image11.jpg" />
+    <None Include="wwwroot\web\images\uploads\image111.jpg" />
+    <None Include="wwwroot\web\images\uploads\image12.jpg" />
+    <None Include="wwwroot\web\images\uploads\image121.jpg" />
+    <None Include="wwwroot\web\images\uploads\image13.jpg" />
+    <None Include="wwwroot\web\images\uploads\image131.jpg" />
+    <None Include="wwwroot\web\images\uploads\image14.jpg" />
+    <None Include="wwwroot\web\images\uploads\image141.jpg" />
+    <None Include="wwwroot\web\images\uploads\image15.jpg" />
+    <None Include="wwwroot\web\images\uploads\image151.jpg" />
+    <None Include="wwwroot\web\images\uploads\image16.jpg" />
+    <None Include="wwwroot\web\images\uploads\image161.jpg" />
+    <None Include="wwwroot\web\images\uploads\image17.jpg" />
+    <None Include="wwwroot\web\images\uploads\image171.jpg" />
+    <None Include="wwwroot\web\images\uploads\image18.jpg" />
+    <None Include="wwwroot\web\images\uploads\image181.jpg" />
+    <None Include="wwwroot\web\images\uploads\image19.jpg" />
+    <None Include="wwwroot\web\images\uploads\image191.jpg" />
+    <None Include="wwwroot\web\images\uploads\image2-1.jpg" />
+    <None Include="wwwroot\web\images\uploads\image2.jpg" />
+    <None Include="wwwroot\web\images\uploads\image20.jpg" />
+    <None Include="wwwroot\web\images\uploads\image201.jpg" />
+    <None Include="wwwroot\web\images\uploads\image21.jpg" />
+    <None Include="wwwroot\web\images\uploads\image211.jpg" />
+    <None Include="wwwroot\web\images\uploads\image3.jpg" />
+    <None Include="wwwroot\web\images\uploads\image31.jpg" />
+    <None Include="wwwroot\web\images\uploads\image4.jpg" />
+    <None Include="wwwroot\web\images\uploads\image41.jpg" />
+    <None Include="wwwroot\web\images\uploads\image5.jpg" />
+    <None Include="wwwroot\web\images\uploads\image51.jpg" />
+    <None Include="wwwroot\web\images\uploads\image6.jpg" />
+    <None Include="wwwroot\web\images\uploads\image61.jpg" />
+    <None Include="wwwroot\web\images\uploads\image7.jpg" />
+    <None Include="wwwroot\web\images\uploads\image71.jpg" />
+    <None Include="wwwroot\web\images\uploads\image8.jpg" />
+    <None Include="wwwroot\web\images\uploads\image81.jpg" />
+    <None Include="wwwroot\web\images\uploads\image9.jpg" />
+    <None Include="wwwroot\web\images\uploads\image91.jpg" />
+    <None Include="wwwroot\web\images\uploads\landing-dark-version.png" />
+    <None Include="wwwroot\web\images\uploads\landing-light-version.png" />
+    <None Include="wwwroot\web\images\uploads\movie-single.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-it1.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-it10.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-it11.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-it12.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-it2.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-it3.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-it4.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-it5.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-it6.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-it7.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-it8.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-it9.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-item1.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-item10.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-item11.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-item12.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-item2.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-item3.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-item4.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-item5.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-item6.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-item7.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-item8.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv-item9.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv1.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv2.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv3.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv4.jpg" />
+    <None Include="wwwroot\web\images\uploads\mv5.jpg" />
+    <None Include="wwwroot\web\images\uploads\play-vd.png" />
+    <None Include="wwwroot\web\images\uploads\poster1.jpg" />
+    <None Include="wwwroot\web\images\uploads\search-bg.png" />
+    <None Include="wwwroot\web\images\uploads\search-bgsb.png" />
+    <None Include="wwwroot\web\images\uploads\season.jpg" />
+    <None Include="wwwroot\web\images\uploads\series-img.jpg" />
+    <None Include="wwwroot\web\images\uploads\slider-bg.jpg" />
+    <None Include="wwwroot\web\images\uploads\slider-bg2.jpg" />
+    <None Include="wwwroot\web\images\uploads\slider1.jpg" />
+    <None Include="wwwroot\web\images\uploads\slider2.jpg" />
+    <None Include="wwwroot\web\images\uploads\slider3.jpg" />
+    <None Include="wwwroot\web\images\uploads\slider4.jpg" />
+    <None Include="wwwroot\web\images\uploads\sr-single.jpg" />
+    <None Include="wwwroot\web\images\uploads\topsearch.png" />
+    <None Include="wwwroot\web\images\uploads\trailer2.jpg" />
+    <None Include="wwwroot\web\images\uploads\trailer3.png" />
+    <None Include="wwwroot\web\images\uploads\trailer4.png" />
+    <None Include="wwwroot\web\images\uploads\trailer5.jpg" />
+    <None Include="wwwroot\web\images\uploads\trailer6.jpg" />
+    <None Include="wwwroot\web\images\uploads\trailer7.jpg" />
+    <None Include="wwwroot\web\images\uploads\user-hero-bg.jpg" />
+    <None Include="wwwroot\web\images\uploads\user-img.png" />
+    <None Include="wwwroot\web\images\uploads\userava1.jpg" />
+    <None Include="wwwroot\web\images\uploads\userava2.jpg" />
+    <None Include="wwwroot\web\images\uploads\userava3.jpg" />
+    <None Include="wwwroot\web\images\uploads\userava4.jpg" />
+    <None Include="wwwroot\web\images\uploads\userava5.jpg" />
+    <None Include="wwwroot\web\images\uploads\vd-item1.jpg" />
+    <None Include="wwwroot\web\images\uploads\vd-item2.jpg" />
+    <None Include="wwwroot\web\images\uploads\vd-item3.jpg" />
+    <None Include="wwwroot\web\images\uploads\vd-item4.jpg" />
+    <None Include="wwwroot\web\js\custom.js" />
+    <None Include="wwwroot\web\js\jquery.js" />
+    <None Include="wwwroot\web\js\plugins.js" />
+    <None Include="wwwroot\web\js\plugins2.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="jQuery.Validation" Version="1.19.4" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.17">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.17">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+  </ItemGroup>
+
+</Project>

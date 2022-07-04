@@ -1,0 +1,169 @@
+﻿@using Movie247.Helpers
+@using Movie247.Models
+@model IEnumerable<Movie247.Models.Person>
+@{
+    ViewData["Title"] = "Index";
+    FilterModel filterHelper = ViewBag.Filter;
+}
+
+<div class="hero common-hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="hero-ct">
+                    <h1>celebrity listing</h1>
+                    <ul class="breadcumb">
+                        <li class="active"><a href="Home">Home</a></li>
+                        <li> <span class="ion-ios-arrow-right"></span> celebrity listing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- celebrity list section-->
+<div class="page-single">
+    <div class="container">
+        <div class="row ipad-width2">
+            <div class="col-md-9 col-sm-12 col-xs-12">
+                <div class="topbar-filter">
+                    <p class="pad-change">Found <span>@filterHelper.TotalCount celebrities</span> in total</p>
+                </div>
+                <div class="row">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-md-12">
+                            <div class="ceb-item-style-2">
+                                <a href="/Celebrity/Details/@item.Id">
+                                    <img src="~/web/images/person/@item.ProfilePath" alt="" class="img-responsive"
+                                    style="max-width:100px;">
+                                </a>
+                                <div class="ceb-infor">
+                                    <h2><a href="/Celebrity/Details/@item.Id">@item.Name</a></h2>
+                                    <span>Popularity: @item.Popularity</span>
+                                    <p>
+                                        @(!string.IsNullOrEmpty(item.Description)? (item.Description.Length>150 ?
+                                    item.Description.Substring(0,150)+"..." : item.Description.Length) : "Updating ...")
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="topbar-filter">
+                    <label>Movies per page: @filterHelper.PageSize</label>
+                    @{
+                        PagingModel pagingModel = ViewBag.Paging;
+                    }
+                    <partial name="_Paging" model=@pagingModel />
+                </div>
+            </div>
+            <div class="col-md-3 col-xs-12 col-sm-12">
+                <div class="sidebar">
+                    <div class="searh-form">
+                        <h4 class="sb-title">Search celebrity</h4>
+                        <form class="form-style-1 celebrity-form" id="celebrity-form">
+                            <div class="row">
+                                <div class="col-md-12 form-it">
+                                    <label>Celebrity name</label>
+                                    <input type="text" placeholder="Enter keywords" name="Keyword" />
+                                </div>
+                                <div class="col-md-12 form-it">
+                                    <label>Category</label>
+                                    <select name="Category">
+                                        <option value="">All</option>
+                                        <option value="actor">Actor</option>
+                                        <option value="director">Director</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 form-it">
+                                    <label>Year of birth</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input name="FromYear" type="number" class="datepicker"
+                                                min="@ViewBag.DateFromAndTo.Item2" max="@ViewBag.DateFromAndTo.Item1"
+                                                placeholder="To" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input name="ToYear" type="number" class="datepicker" placeholder="From"
+                                                max="@ViewBag.DateFromAndTo.Item1" min="@ViewBag.DateFromAndTo.Item2" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-it">
+                                    <label>Sort By</label>
+                                    <select name="SortBy">
+                                        <option value="popularity">Popularity</option>
+                                        <option value="date">Date of birth</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 form-it">
+                                    <label>Order By</label>
+                                    <select name="OrderBy">
+                                        <option value="desc">Descending</option>
+                                        <option value="asc">Ascending</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 form-it">
+                                    <label>Celebrity per page</label>
+                                    <select name="PageSize">
+                                        <option value="12">12</option>
+                                        <option value="24">24</option>
+                                        <option value="36">36</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 ">
+                                    <input class="submit" type="submit" value="submit">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    @section Scripts{
+                    <script>
+                        $("select[name='PageSize']").val("@filterHelper.PageSize");
+                        $("select[name='SortBy']").val("@filterHelper.SortBy");
+                        $("select[name='OrderBy']").val("@filterHelper.OrderBy");
+                        $("select[name='Category']").val("@filterHelper.Category");
+                        $("input[name='Keyword']").val("@filterHelper.Keyword");
+                        if (@filterHelper.FromYear != 0) {
+                            $("input[name='FromYear']").val("@filterHelper.FromYear");
+                        }
+                        if (@filterHelper.ToYear != 0) {
+                            $("input[name='ToYear']").val("@filterHelper.ToYear");
+                        }
+                        $('#celebrity-form').submit(function (e) {
+                            var emptyinputs = $(this).find('input').filter(function () {
+                                return !$.trim(this.value).length;  // get all empty fields
+                            }).prop('disabled', true);
+                            var emptyselects = $(this).find('select').filter(function () {
+                                return !$.trim(this.value).length;  // get all empty fields
+                            }).prop('disabled', true);
+                        });
+                    </script>
+                    }
+                    <div class="ads">
+                        <img src="images/uploads/ads1.png" alt="">
+                    </div>
+                    <div class="celebrities">
+                        <h4 class="sb-title">featured celebrity</h4>
+                        <div class="slider-nav-celebrities">
+                            @foreach (Person person in ViewBag.Top10Celebrities)
+                            {
+                                <div class="celeb-item">
+                                    <a href="/Celebrity/Details/@person.Id">
+                                        <img src="~/web/images/person/@person.ProfilePath" alt="" width="70" height="70">
+                                    </a>
+                                    <div class="celeb-author">
+                                        <h6><a href="/Celebrity/Details/@person.Id">@person.Name</a></h6>
+                                        <span>Popularity: @person.Popularity</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end of celebrity list section-->

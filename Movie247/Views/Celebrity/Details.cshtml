@@ -1,0 +1,221 @@
+﻿@model Movie247.Models.Person
+@using Movie247.Models
+
+@{
+    ViewData["Title"] = "Details";
+}
+<div class="hero hero3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- <h1> movie listing - list</h1>
+                <ul class="breadcumb">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li> <span class="ion-ios-arrow-right"></span> movie listing</li>
+                </ul> -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- celebrity single section-->
+
+<div class="page-single movie-single cebleb-single">
+    <div class="container">
+        <div class="row ipad-width">
+            <div class="col-md-4 col-sm-12 col-xs-12">
+                <div class="mv-ceb">
+                    <img src="~/web/images/person/@Model.ProfilePath" alt="">
+                </div>
+            </div>
+            <div class="col-md-8 col-sm-12 col-xs-12">
+                <div class="movie-single-ct">
+                    <h1 class="bd-hd">@Html.DisplayFor(model => model.Name)</h1>
+                    @if (@Model.MovieCasts.Count > 0)
+                    {
+                        <p class="ceb-single">Acting</p>
+                    }
+                    else
+                    {
+                        <p class="ceb-single">Directing</p>
+                    }
+                    <div class="social-link cebsingle-socail">
+                        <a href="#"><i class="ion-social-facebook"></i></a>
+                        <a href="#"><i class="ion-social-twitter"></i></a>
+                        <a href="#"><i class="ion-social-googleplus"></i></a>
+                        <a href="#"><i class="ion-social-linkedin"></i></a>
+                    </div>
+                    <div class="movie-tabs">
+                        <div class="tabs">
+                            <ul class="tab-links tabs-mv">
+                                <li class="active"><a href="#overviewceb">Overview</a></li>
+                                <li><a href="#filmography">filmography</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="overviewceb" class="tab active">
+                                    <div class="row">
+                                        <div class="col-md-8 col-sm-12 col-xs-12">
+                                            <p></p>
+                                            <p>@(string.IsNullOrEmpty(Model.Description)?"Updating ..." :
+                                                Model.Description)</p>
+                                            <div class="mvsingle-item ov-item">
+                                                <a class="img-lightbox" data-fancybox-group="gallery"
+                                                    href="images/uploads/image11.jpg"><img
+                                                        src="images/uploads/image1.jpg" alt=""></a>
+                                                <a class="img-lightbox" data-fancybox-group="gallery"
+                                                    href="images/uploads/image21.jpg"><img
+                                                        src="images/uploads/image2.jpg" alt=""></a>
+                                                <a class="img-lightbox" data-fancybox-group="gallery"
+                                                    href="images/uploads/image31.jpg"><img
+                                                        src="images/uploads/image3.jpg" alt=""></a>
+                                                <div class="vd-it">
+                                                    <img class="vd-img" src="images/uploads/image4.jpg" alt="">
+                                                    <a class="fancybox-media hvr-grow"
+                                                        href="https://www.youtube.com/embed/o-0hcF97wy0"><img
+                                                            src="images/uploads/play-vd.png" alt=""></a>
+                                                </div>
+                                            </div>
+                                            <div class="title-hd-sm">
+                                                <h4>filmography</h4>
+                                                <a href="#filmography" class="time">Full Filmography<i
+                                                        class="ion-ios-arrow-right"></i></a>
+                                            </div>
+                                            <!-- movie cast -->
+                                            <div class="mvcast-item">
+                                                @if (@Model.MovieCasts.Count > 0)
+                                                {
+                                                    @foreach (MovieCast movieCast in @Model.MovieCasts.Take(5))
+                                                    {
+                                                        <div class="cast-it">
+                                                            <div class="cast-left cebleb-film">
+                                                                <img src="~/web/images/movie/poster/@movieCast.Movie.PosterPath"
+                                                            alt="">
+                                                                <div>
+                                                                    @Html.ActionLink(movieCast.Movie.Title,"details", "movie",
+                                                            new {id = movieCast.MovieId})
+                                                                    <p class="time">@movieCast.Character</p>
+                                                                </div>
+
+                                                            </div>
+                                                            <p>@movieCast.Movie.ReleaseDate.Year</p>
+                                                        </div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @foreach (MovieCrew movieCrew in @Model.MovieCrews)
+                                                    {
+                                                        <div class="cast-it">
+                                                            <div class="cast-left cebleb-film">
+                                                                <img src="~/web/images/movie/poster/@movieCrew.Movie.PosterPath"
+                                                            alt="">
+                                                                <div>
+                                                                    <a href="#">@movieCrew.Movie.Title </a>
+                                                                    <p class="time"></p>
+                                                                </div>
+
+                                                            </div>
+                                                            <p>@movieCrew.Movie.ReleaseDate.Year</p>
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-xs-12 col-sm-12">
+                                            <div class="sb-it">
+                                                <h6>Fullname: </h6>
+                                                <p><a href="#">@Model.Name</a></p>
+                                            </div>
+                                            <div class="sb-it">
+                                                <h6>Date of Birth: </h6>
+                                                <p>@Model.Birthday?.ToString("MMMM dd, yyyy")</p>
+                                            </div>
+                                            <div class="ads">
+                                                <img src="images/uploads/ads1.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="filmography" class="tab">
+                                    <div class="row">
+                                        <div class="rv-hd">
+                                            <div>
+                                                <h3>Films of</h3>
+                                                <h2>@Model.Name</h2>
+                                            </div>
+
+                                        </div>
+                                        <div class="topbar-filter">
+                                            <p>
+                                                Found
+                                                @if (@Model.MovieCasts.Count > 0)
+                                                {
+                                                    <span>@Model.MovieCasts.Count movies</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@Model.MovieCrews.Count movies</span>
+                                                }
+                                                in total
+                                            </p>
+                                            <label>Filter by:</label>
+                                            <select>
+                                                <option value="popularity">Popularity Descending</option>
+                                                <option value="popularity">Popularity Ascending</option>
+                                                <option value="rating">Rating Descending</option>
+                                                <option value="rating">Rating Ascending</option>
+                                                <option value="date">Release date Descending</option>
+                                                <option value="date">Release date Ascending</option>
+                                            </select>
+                                        </div>
+                                        <!-- movie cast -->
+                                        <div class="mvcast-item">
+                                            @if (@Model.MovieCasts.Count > 0)
+                                            {
+                                                @foreach (MovieCast movieCast in @Model.MovieCasts)
+                                                {
+                                                    <div class="cast-it">
+                                                        <div class="cast-left cebleb-film">
+                                                            <img src="~/web/images/movie/poster/@movieCast.Movie.PosterPath"
+                                                        alt="">
+                                                            <div>
+                                                                @Html.ActionLink(movieCast.Movie.Title,"details", "movie", new
+                                                        {id = movieCast.MovieId})
+                                                                <p class="time">@movieCast.Character</p>
+                                                            </div>
+
+                                                        </div>
+                                                        <p>@movieCast.Movie.ReleaseDate.Year</p>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @foreach (MovieCrew movieCrew in @Model.MovieCrews)
+                                                {
+                                                    <div class="cast-it">
+                                                        <div class="cast-left cebleb-film">
+                                                            <img src="~/web/images/movie/poster/@movieCrew.Movie.PosterPath"
+                                                        alt="">
+                                                            <div>
+                                                                <a href="#">@movieCrew.Movie.Title </a>
+                                                                <p class="time"></p>
+                                                            </div>
+
+                                                        </div>
+                                                        <p>@movieCrew.Movie.ReleaseDate.Year</p>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- celebrity single section-->

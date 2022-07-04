@@ -1,0 +1,175 @@
+﻿@using Movie247.Helpers
+@using Movie247.Models
+@{
+    FilterModel filterHelper = ViewBag.Filter;
+    ViewData["Title"] = "Movies";
+}
+<div class="hero common-hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="hero-ct">
+                    <h1> movie listing</h1>
+                    <ul class="breadcumb">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li> <span class="ion-ios-arrow-right"></span> movie listing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page-single">
+    <div class="container">
+        <div class="row ipad-width">
+            <div class="col-md-8 col-sm-12 col-xs-12">
+                <div class="topbar-filter">
+                    <p>Found <span>@filterHelper.TotalCount movies</span> in total</p>
+                </div>
+                @if (@ViewBag.Movies.Count > 0)
+                {
+                    <div class="flex-wrap-movielist">
+                        @foreach (Movie movie in ViewData["Movies"] as List<Movie>)
+                        {
+                            <div class="movie-item-style-2 movie-item-style-1">
+                                <img src="~/web/images/movie/poster/@movie.PosterPath" alt="">
+                                <div class="hvr-inner">
+
+                                    <a href="Details/@movie.Id"> Read more <i class="ion-android-arrow-dropright"></i> </a>
+                                </div>
+                                <div class="mv-item-infor">
+                                    <h6><a href="Details/@movie.Id">@movie.Title</a></h6>
+                                    <p class="rate"><i class="ion-android-star"></i><span>@movie.ImdbAverage</span> /10</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="topbar-filter">
+                        <label>Movies per page: @filterHelper.PageSize</label>
+
+                        @{
+                            PagingModel pagingModel = ViewBag.Paging as PagingModel;
+
+                        }
+                        <partial name="_Paging" model=@pagingModel />
+                    </div>
+                }
+            </div>
+            <div class="col-md-4 col-sm-12 col-xs-12">
+                <div class="sidebar">
+                    <div class="searh-form">
+                        <h4 class="sb-title">Search for movie</h4>
+                        <form class="form-style-1" method="GET" id="movie-search-form">
+                            <div class="row">
+                                <div class="col-md-12 form-it">
+                                    <label>Movie name</label>
+                                    <input type="text" placeholder="Enter keywords" name="name">
+                                </div>
+                                <div class="col-md-12 form-it">
+                                    <label>Genres</label>
+                                    <div class="group-ip">
+                                        @Html.ListBox("GenreId", (MultiSelectList)ViewBag.Genres, new {@class = "ui fluid dropdown"})
+                                    </div>
+                                </div>
+                                <div class="col-md-12 form-it">
+                                    <label>Companies</label>
+                                    <div class="group-ip">
+                                        @Html.ListBox("CompanyId", (MultiSelectList)ViewBag.Companies, new {@class = "ui fluid dropdown"})
+                                    </div>
+                                </div>
+                                <div class="col-md-12 form-it">
+                                    <label>Countries</label>
+                                    <div class="group-ip">
+                                        @Html.ListBox("CountryId", (MultiSelectList)ViewBag.Countries, new {@class = "ui fluid dropdown"})
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-it">
+                                    <label>Sort By</label>
+                                    <select name="SortBy">
+                                        <option value="popularity">Popularity</option>
+                                        <option value="view">Views</option>
+                                        <option value="date">Release date</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 form-it">
+                                    <label>Order By</label>
+                                    <select name="OrderBy">
+                                        <option value="desc">Descending</option>
+                                        <option value="asc">Ascending</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 form-it">
+                                    <label>Movies per page:</label>
+                                    <select name="PageSize">
+                                        <option value="12">12</option>
+                                        <option value="24">24</option>
+                                    </select>
+                                </div>
+                                @section Scripts {
+                                <script>
+                                    // add default value to the dropdown list
+                                    $('.ui.dropdown').dropdown({
+                                        placeholder: 'Select',
+                                        allowAdditions: true
+                                    });
+                                    $('input[name="name').val('@filterHelper.Name');
+                                    $('select[name="SortBy"]').val('@filterHelper.SortBy');
+                                    $('select[name="OrderBy"]').val('@filterHelper.OrderBy');
+                                    $('select[name="PageSize"]').val('@filterHelper.PageSize');
+                                    $('#movie-search-form').submit(function (e) {
+                                        var emptyinputs = $(this).find('input').filter(function () {
+                                            return !$.trim(this.value).length;  // get all empty fields
+                                        }).prop('disabled', true);
+                                        var emptyselects = $(this).find('select').filter(function () {
+                                            return !$.trim(this.value).length;  // get all empty fields
+                                        }).prop('disabled', true);
+                                     });
+                                </script>
+                                }
+                                @*<div class="col-md-12 form-it">
+                                    <label>Rating Range</label>
+                                    <select>
+                                    <option value="range">-- Select the rating range below --</option>
+                                    <option value="saab">-- Select the rating range below --</option>
+                                    </select>
+                                    </div>*@
+                                @* <div class="col-md-12 form-it">
+                                    <label>Release Year</label>
+                                    <div class="row">
+                                    <div class="col-md-6">
+                                    <input type="number" placeholder="From" min="@ViewBag.LatestAndOldestYearOfMovie.Item2" max="@ViewBag.LatestAndOldestYearOfMovie.Item1" />
+                                    </div>
+                                    <div class="col-md-6">
+                                    <input type="number" placeholder="To" max="@ViewBag.LatestAndOldestYearOfMovie.Item1" min="@ViewBag.LatestAndOldestYearOfMovie.Item2" />
+                                    </div>
+                                    </div>
+                                    </div> *@
+                                <div class="col-md-12 ">
+                                    <input class="submit" type="submit" value="submit">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="ads">
+                        <img src="~/web/images/uploads/ads1.png" alt="">
+                    </div>
+                    <div class="sb-facebook sb-it">
+                        <h4 class="sb-title">Find us on Facebook</h4>
+                        @*<iframe src="~/web/#" data-src="~/web/js/https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Ftemplatespoint.net%2F%3Ffref%3Dts&tabs=timeline&width=340&height=315px&small_header=true&adapt_container_width=false&hide_cover=false&show_facepile=true&appId" height="315" style="width:100%;border:none;overflow:hidden"></iframe>*@
+                    </div>
+                    <div class="sb-twitter sb-it">
+                        <h4 class="sb-title">Tweet to us</h4>
+                        <div class="slick-tw">
+                            <div class="tweet item" id="">
+                                <!-- Put your twiter id here -->
+                            </div>
+                            <div class="tweet item" id="">
+                                <!-- Put your 2nd twiter account id here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
