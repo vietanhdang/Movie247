@@ -1,0 +1,19 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Movie247.Areas.Identity.Data
+
+@inject SignInManager<Movie247User> _signInManager
+
+@if (((await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()?.Count ?? 0) != 0)
+{
+
+    <form id="external-account" method="post" class="form-horizontal" action="/ExternalLogin/OnPost">
+        @foreach (var provider in (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList())
+        {
+            <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name"
+            title="Log in using your @provider.DisplayName account">
+                @provider.DisplayName
+            </button>
+
+        }
+    </form>
+}

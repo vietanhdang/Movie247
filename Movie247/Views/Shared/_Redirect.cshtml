@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Title";
+}
+
+<div class="page-single-2">
+    <div class="container">
+        <div class="row">
+            <div class="middle-content">
+                <a style="margin-top:120px"><img class="md-logo" src="" alt=""></a>
+                @*<img src="~/web/images/uploads/err-img.png" alt="" style="width:40%">*@
+                <img src="" alt="" style="width:40%">
+                @Html.Raw(@ViewBag.Message)
+                @Html.Raw(@ViewBag.ActionLinkFromController)
+                <a href="/" class="redbtn" style="margin:20px">go home</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -4,7 +4,7 @@
     ViewData["Title"] = @Model.Title;
 }
 <div class="hero mv-single-hero"
-    style="background: url('/web/images/movie/backdrop/@Model.BackdropPath'); background-size: cover;">
+     style="background: url('/web/images/movie/backdrop/@Model.BackdropPath'); background-size: cover;">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -26,16 +26,30 @@
                     <img src="~/web/images/movie/poster/@Model.PosterPath" alt="">
                     <div class="movie-btn">
                         <div class="btn-transform transform-vertical red">
-                            <div><a href="#" class="item item-1 redbtn"> <i class="ion-play"></i> Watch Trailer</a>
+                            <div>
+                                <a href="#" class="item item-1 redbtn"> <i class="ion-play"></i> Watch Trailer</a>
                             </div>
-                            <div><a href="https://www.youtube.com/embed/@Model.Trailer"
-                                    class="item item-2 redbtn fancybox-media hvr-grow"><i class="ion-play"></i></a>
+                            <div>
+                                <a href="https://www.youtube.com/embed/@Model.Trailer"
+                                   class="item item-2 redbtn fancybox-media hvr-grow"><i class="ion-play"></i></a>
                             </div>
                         </div>
                         <div class="btn-transform transform-vertical">
-                            <div><a href="#" class="item item-1 yellowbtn"> <i class="ion-card"></i> Buy ticket</a>
-                            </div>
-                            <div><a href="#" class="item item-2 yellowbtn"><i class="ion-card"></i></a></div>
+                            @if (@Model.MovieSources.Count > 0)
+                            {
+                                <div>
+                                    <a href="/Movie/Watch/@Model.Id" class="item item-1 yellowbtn"> <i class="icon icon ion-ios-eye"></i>  Watch Now</a>
+                                </div>
+                                <div><a href="/Movie/Watch/@Model.Id" class="item item-2 yellowbtn"><i class="icon icon ion-ios-eye"></i> </a></div>
+                            }
+                            else
+                            {
+                                <div>
+                                    <a class="item item-1 yellowbtn"> <i class="icon ion-eye-disabled"></i>  No streaming link</a>
+                                </div>
+                                <div><a class="item item-2 yellowbtn"><i class="icon ion-eye-disabled"></i> </a></div>
+                            }
+
                         </div>
                     </div>
                 </div>
@@ -60,28 +74,16 @@
                             <i class="ion-android-star"></i>
                             <p>
                                 <span>@Model.ImdbAverage</span> /10<br>
-                                <span class="rv">@Model.MovieReviews.Count Reviews</span>
+                                <span class="rv"> Reviews</span>
                             </p>
-                        </div>
-                        <div class="rate-star">
-                            <p>Rate This Movie: </p>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star"></i>
-                            <i class="ion-ios-star-outline"></i>
                         </div>
                     </div>
                     <div class="movie-tabs">
                         <div class="tabs">
-                            <ul class="tab-links tabs-mv">
+                            <ul class="tab-links tabs-mv" id="myTab">
                                 <li class="active"><a href="#overview">Overview</a></li>
-                                <li><a href="#reviews"> Reviews</a></li>
                                 <li><a href="#cast"> Cast & Crew </a></li>
+                                <li><a href="#reviews"> Reviews</a></li>
                                 <li><a href="#moviesrelated"> Related Movies</a></li>
                             </ul>
                             <div class="tab-content">
@@ -91,8 +93,9 @@
                                             <p>@Model.Overview</p>
                                             <div class="title-hd-sm tab-links tabs-mv">
                                                 <h4>cast</h4>
-                                                <a href="#cast" class="time">Full Cast & Crew <i
-                                                        class="ion-ios-arrow-right"></i></a>
+                                                <a href="#cast" class="time">
+                                                    Full Cast & Crew <i class="ion-ios-arrow-right"></i>
+                                                </a>
                                             </div>
                                             <!-- movie cast -->
                                             <div class="mvcast-item">
@@ -100,50 +103,50 @@
                                                 {
                                                     <div class="cast-it">
                                                         <div class="cast-left">
-                                                            <img style="width:40px;"
-                                                            src="~/web/images/person/@movieCast.Person.ProfilePath"
-                                                            alt="">
+                                                            <img style="width:100px"
+                                                             src="~/web/images/person/@movieCast.Person.ProfilePath"
+                                                             alt="">
                                                             @Html.ActionLink(movieCast.Person.Name, "Details","Celebrity",
                                                         new {id = movieCast.PersonId})
-
                                                         </div>
-                                                        <p>@movieCast.Character</p>
+                                                        <p style="text-align: center;">@movieCast.Character</p>
                                                     </div>
                                                 }
                                             </div>
                                             <div class="title-hd-sm">
                                                 <h4>User reviews</h4>
-                                                <a href="#" class="time">See All @Model.MovieReviews.Count Reviews <i
-                                                        class="ion-ios-arrow-right"></i></a>
+                                                <a href="#reviews" class="time">
+                                                    See All  Reviews <i class="ion-ios-arrow-right"></i>
+                                                </a>
                                             </div>
                                             <!-- movie user review -->
                                             <div class="mv-user-review-item">
-                                                @if (@Model.MovieReviews.Count > 0)
-                                                {
-                                                    @foreach (MovieReview mr in Model.MovieReviews.OrderByDescending(x =>
-                                                   x.CreateAt).Take(3))
+                                                @* @if (@Model.MovieReviews.Count > 0)
                                                     {
-                                                        <h3></h3>
-                                                        <div class="no-star">
-                                                            @for (int i = 0; i < 10; i++)
-                                                            {
-                                                                if (i < mr.Vote)
-                                                                {
-                                                                    <i class="ion-android-star"></i>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <i class="ion-android-star last"></i>
-                                                                }
-                                                            }
-                                                        </div>
-                                                        <p class="time">
-                                                            @mr.CreateAt by <a href="#"> @mr.User.SurName</a>
-                                                        </p>
-                                                        <p>@mr.Review</p>
+                                                    @foreach (MovieReview mr in Model.MovieReviews.OrderByDescending(x =>
+                                                    x.CreateAt).Take(3))
+                                                    {
+                                                    <h3></h3>
+                                                    <div class="no-star">
+                                                    @for (int i = 0; i < 10; i++)
+                                                    {
+                                                    if (i < mr.Vote)
+                                                    {
+                                                    <i class="ion-android-star"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                    <i class="ion-android-star last"></i>
+                                                    }
+                                                    }
+                                                    </div>
+                                                    <p class="time">
+                                                    @mr.CreateAt by <a href="#"> @mr.User.SurName</a>
+                                                    </p>
+                                                    <p>@mr.Review</p>
                                                     }
 
-                                                }
+                                                    }*@
                                             </div>
                                         </div>
                                         <div class="col-md-4 col-xs-12 col-sm-12">
@@ -200,8 +203,11 @@
                                                     {
                                                         @foreach (MovieKeyword movieKeyword in Model.MovieKeywords)
                                                         {
-                                                            <span class="time"><a href="#">@movieKeyword.Keyword.KeywordName,
-                                                                </a></span>
+                                                            <span class="time">
+                                                                <a href="#">
+                                                                    @movieKeyword.Keyword.KeywordName,
+                                                                </a>
+                                                            </span>
                                                         }
                                                     }
                                                 </p>
@@ -217,12 +223,12 @@
                                         <div class="rv-hd">
                                             <div class="div">
                                                 <h3>Related Movies To</h3>
-                                                <h2>Skyfall: Quantum of Spectre</h2>
+                                                <h2>@Model.Title</h2>
                                             </div>
                                             <a href="#" class="redbtn">Write Review</a>
                                         </div>
                                         <div class="topbar-filter">
-                                            <p>Found <span>@Model.MovieReviews.Count Reviews reviews</span> in total</p>
+                                            <p>Found <span> Reviews reviews</span> in total</p>
                                             <label>Filter by:</label>
                                             <select>
                                                 <option value="popularity">Popularity Descending</option>
@@ -233,43 +239,43 @@
                                                 <option value="date">Release date Ascending</option>
                                             </select>
                                         </div>
-                                        @if (@Model.MovieReviews.Count > 0)
-                                        {
-                                            @foreach (MovieReview mr in Model.MovieReviews.OrderByDescending(x =>
-                                           x.CreateAt).Take(3))
+                                        @*@if (@Model.MovieReviews.Count > 0)
                                             {
-                                                if (!String.IsNullOrEmpty(mr.Review))
-                                                {
-                                                    <div class="mv-user-review-item">
-                                                        <div class="user-infor">
-                                                            <img src="images/uploads/userava1.jpg" alt="">
-                                                            <div>
-                                                                <h3></h3>
-                                                                <div class="no-star">
-                                                                    @for (int i = 0; i < 10; i++)
-                                                                    {
-                                                                        if (i < mr.Vote)
-                                                                        {
-                                                                            <i class="ion-android-star"></i>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <i class="ion-android-star last"></i>
-                                                                        }
-                                                                    }
-                                                                </div>
-                                                                <p class="time">
-                                                                    @mr.CreateAt by <a href="#"> @mr.User.SurName</a>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <p>@mr.Review</p>
-                                                    </div>
-                                                }
+                                            @foreach (MovieReview mr in Model.MovieReviews.OrderByDescending(x =>
+                                            x.CreateAt).Take(3))
+                                            {
+                                            if (!String.IsNullOrEmpty(mr.Review))
+                                            {
+                                            <div class="mv-user-review-item">
+                                            <div class="user-infor">
+                                            <img src="images/uploads/userava1.jpg" alt="">
+                                            <div>
+                                            <h3></h3>
+                                            <div class="no-star">
+                                            @for (int i = 0; i < 10; i++)
+                                            {
+                                            if (i < mr.Vote)
+                                            {
+                                            <i class="ion-android-star"></i>
+                                            }
+                                            else
+                                            {
+                                            <i class="ion-android-star last"></i>
+                                            }
+                                            }
+                                            </div>
+                                            <p class="time">
+                                            @mr.CreateAt by <a href="#"> @mr.User.SurName</a>
+                                            </p>
+                                            </div>
+                                            </div>
+                                            <p>@mr.Review</p>
+                                            </div>
+                                            }
 
                                             }
 
-                                        }
+                                            }*@
                                         <div class="topbar-filter">
                                             <label>Reviews per page:</label>
                                             <select>
@@ -302,12 +308,12 @@
                                             {
                                                 <div class="cast-it">
                                                     <div class="cast-left">
-                                                        <img style="width:40px;"
-                                                        src="~/web/images/person/@movieCrew.Person.ProfilePath" alt="">
+                                                        <img style="width:100px"
+                                                         src="~/web/images/person/@movieCrew.Person.ProfilePath" alt="">
                                                         @Html.ActionLink(movieCrew.Person.Name, "Details","Celebrity", new
                                                     {id = movieCrew.PersonId})
                                                     </div>
-                                                    <p>Director</p>
+                                                    <p style="text-align: center;">Director</p>
                                                 </div>
                                             }
                                         </div>
@@ -321,12 +327,12 @@
                                             {
                                                 <div class="cast-it">
                                                     <div class="cast-left">
-                                                        <img style="width:40px;"
-                                                        src="~/web/images/person/@movieCast.Person.ProfilePath" alt="">
+                                                        <img style="width:100px"
+                                                         src="~/web/images/person/@movieCast.Person.ProfilePath" alt="">
                                                         @Html.ActionLink(movieCast.Person.Name, "Details","Celebrity", new
                                                     {id = movieCast.PersonId})
                                                     </div>
-                                                    <p>@movieCast.Character</p>
+                                                    <p style="text-align: center;">@movieCast.Character</p>
                                                 </div>
                                             }
                                         </div>
@@ -337,112 +343,69 @@
                                 <div id="moviesrelated" class="tab">
                                     <div class="row">
                                         <h3>Related Movies To</h3>
-                                        <h2>Skyfall: Quantum of Spectre</h2>
+                                        <h2>@Model.Title</h2>
                                         <div class="topbar-filter">
-                                            <p>Found <span>12 movies</span> in total</p>
-                                            <label>Sort by:</label>
-                                            <select>
-                                                <option value="popularity">Popularity Descending</option>
-                                                <option value="popularity">Popularity Ascending</option>
-                                                <option value="rating">Rating Descending</option>
-                                                <option value="rating">Rating Ascending</option>
-                                                <option value="date">Release date Descending</option>
-                                                <option value="date">Release date Ascending</option>
-                                            </select>
                                         </div>
-                                        <div class="movie-item-style-2">
-                                            <img src="images/uploads/mv1.jpg" alt="">
-                                            <div class="mv-item-infor">
-                                                <h6><a href="#">oblivion <span>(2012)</span></a></h6>
-                                                <p class="rate"><i class="ion-android-star"></i><span>8.1</span> /10</p>
-                                                <p class="describe">Earth's mightiest heroes must come together and
-                                                    learn to fight as a team if they are to stop the mischievous Loki
-                                                    and his alien army from enslaving humanity...</p>
-                                                <p class="run-time"> Run Time: 2h21’ . <span>MMPA: PG-13 </span> .
-                                                    <span>Release: 1 May 2015</span>
-                                                </p>
-                                                <p>Director: <a href="#">Joss Whedon</a></p>
-                                                <p>Stars: <a href="#">Robert Downey Jr.,</a> <a href="#">Chris
-                                                        Evans,</a> <a href="#"> Chris Hemsworth</a></p>
+                                        @foreach (Movie movie in ViewBag.RelatedMovies)
+                                        {
+                                            <div class="movie-item-style-2">
+                                                <img src="~/web/images/movie/poster/@movie.PosterPath" alt="">
+                                                <div class="mv-item-infor">
+                                                    <h6>
+                                                        <a href="/Movie/Details/@movie.Id">
+                                                            @movie.Title <span>
+                                                                (@movie.ReleaseDate.Year)
+                                                            </span>
+                                                        </a>
+                                                    </h6>
+                                                    <p class="rate">
+                                                        <i class="ion-android-star"></i><span>@movie.ImdbAverage</span> /10
+                                                    </p>
+                                                    <p class="describe">
+                                                        @(!string.IsNullOrEmpty(movie.Overview)?
+                                                    movie.Overview.Length >150 ? movie.Overview.Substring(0, 150) :
+                                                    movie.Overview: "Updating") ...
+                                                    </p>
+                                                    <p class="run-time">
+                                                        Run Time: @movie.Duration min.
+                                                        <span>Release: @movie.ReleaseDate.ToString("MMMM dd, yyyy")</span>
+                                                    </p>
+                                                    <p>
+                                                        Director: @foreach (var item in @movie.MovieCrews)
+                                                        {
+                                                            <a href="/Celebrity/Details/@item.PersonId" data-toggle="tooltip"
+                                                       title="<img src='/web/images/person/@item.Person.ProfilePath' />">@item.Person.Name</a>
+                                                        }
+                                                    </p>
+                                                    <p>
+                                                        Stars:
+                                                        @foreach (var item in @movie.MovieCasts.OrderByDescending(x =>
+                                                       x.Person.Popularity).Take(5))
+                                                        {
+                                                            <a href="/Celebrity/Details/@item.PersonId" data-toggle="tooltip"
+                                                       title="<img src='/web/images/person/@item.Person.ProfilePath' />">@item.Person.Name</a>
+
+                                                        }
+                                                        ...
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="movie-item-style-2">
-                                            <img src="images/uploads/mv2.jpg" alt="">
-                                            <div class="mv-item-infor">
-                                                <h6><a href="#">into the wild <span>(2014)</span></a></h6>
-                                                <p class="rate"><i class="ion-android-star"></i><span>7.8</span> /10</p>
-                                                <p class="describe">As Steve Rogers struggles to embrace his role in the
-                                                    modern world, he teams up with a fellow Avenger and S.H.I.E.L.D
-                                                    agent, Black Widow, to battle a new threat...</p>
-                                                <p class="run-time"> Run Time: 2h21’ . <span>MMPA: PG-13 </span> .
-                                                    <span>Release: 1 May 2015</span>
-                                                </p>
-                                                <p>Director: <a href="#">Anthony Russo,</a><a href="#">Joe Russo</a></p>
-                                                <p>Stars: <a href="#">Chris Evans,</a> <a href="#">Samuel L.
-                                                        Jackson,</a> <a href="#"> Scarlett Johansson</a></p>
-                                            </div>
-                                        </div>
-                                        <div class="movie-item-style-2">
-                                            <img src="images/uploads/mv3.jpg" alt="">
-                                            <div class="mv-item-infor">
-                                                <h6><a href="#">blade runner <span>(2015)</span></a></h6>
-                                                <p class="rate"><i class="ion-android-star"></i><span>7.3</span> /10</p>
-                                                <p class="describe">Armed with a super-suit with the astonishing ability
-                                                    to shrink in scale but increase in strength, cat burglar Scott Lang
-                                                    must embrace his inner hero and help...</p>
-                                                <p class="run-time"> Run Time: 2h21’ . <span>MMPA: PG-13 </span> .
-                                                    <span>Release: 1 May 2015</span>
-                                                </p>
-                                                <p>Director: <a href="#">Peyton Reed</a></p>
-                                                <p>Stars: <a href="#">Paul Rudd,</a> <a href="#"> Michael Douglas</a>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="movie-item-style-2">
-                                            <img src="images/uploads/mv4.jpg" alt="">
-                                            <div class="mv-item-infor">
-                                                <h6><a href="#">Mulholland pride<span> (2013) </span></a></h6>
-                                                <p class="rate"><i class="ion-android-star"></i><span>7.2</span> /10</p>
-                                                <p class="describe">When Tony Stark's world is torn apart by a
-                                                    formidable terrorist called the Mandarin, he starts an odyssey of
-                                                    rebuilding and retribution.</p>
-                                                <p class="run-time"> Run Time: 2h21’ . <span>MMPA: PG-13 </span> .
-                                                    <span>Release: 1 May 2015</span>
-                                                </p>
-                                                <p>Director: <a href="#">Shane Black</a></p>
-                                                <p>Stars: <a href="#">Robert Downey Jr., </a> <a href="#"> Guy
-                                                        Pearce,</a><a href="#">Don Cheadle</a></p>
-                                            </div>
-                                        </div>
-                                        <div class="movie-item-style-2">
-                                            <img src="images/uploads/mv5.jpg" alt="">
-                                            <div class="mv-item-infor">
-                                                <h6><a href="#">skyfall: evil of boss<span> (2013) </span></a></h6>
-                                                <p class="rate"><i class="ion-android-star"></i><span>7.0</span> /10</p>
-                                                <p class="describe">When Tony Stark's world is torn apart by a
-                                                    formidable terrorist called the Mandarin, he starts an odyssey of
-                                                    rebuilding and retribution.</p>
-                                                <p class="run-time"> Run Time: 2h21’ . <span>MMPA: PG-13 </span> .
-                                                    <span>Release: 1 May 2015</span>
-                                                </p>
-                                                <p>Director: <a href="#">Alan Taylor</a></p>
-                                                <p>Stars: <a href="#">Chris Hemsworth, </a> <a href="#"> Natalie
-                                                        Portman,</a><a href="#">Tom Hiddleston</a></p>
-                                            </div>
-                                        </div>
+                                        }
                                         <div class="topbar-filter">
-                                            <label>Movies per page:</label>
-                                            <select>
-                                                <option value="range">5 Movies</option>
-                                                <option value="saab">10 Movies</option>
-                                            </select>
-                                            <div class="pagination2">
-                                                <span>Page 1 of 2:</span>
-                                                <a class="active" href="#">1</a>
-                                                <a href="#">2</a>
-                                                <a href="#"><i class="ion-arrow-right-b"></i></a>
-                                            </div>
                                         </div>
+                                        @section Scripts{
+                                        <script>
+                                            $('a[data-toggle="tooltip"]').tooltip({
+                                                animated: 'fade',
+                                                placement: 'bottom',
+                                                html: true
+                                            });
+                                            $('.tab-links a').on('click', function (e) {
+                                                var currentAttrValue = $(this).attr('href');
+                                                $('#myTab li').removeClass('active').find('a[href="' + currentAttrValue + '"]').parent().addClass('active');
+                                            });
+                                        </script>
+                                        }
                                     </div>
                                 </div>
                             </div>

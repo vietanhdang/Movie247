@@ -145,11 +145,36 @@ namespace Movie247.Logics
                 .Include(movie => movie.MovieCompanies).ThenInclude(x => x.Company)
                 .Include(movie => movie.MovieCountries).ThenInclude(x => x.Country)
                 .Include(movie => movie.MovieCasts).ThenInclude(x => x.Person)
-                .Include(movie => movie.MovieReviews).ThenInclude(x => x.User)
                 .Include(movie => movie.MovieKeywords).ThenInclude(x => x.Keyword)
+                .Include(movie => movie.MovieSources)
                 .FirstOrDefault(movie => movie.Id == id);
             return movie;
         }
 
+        public Movie GetSourceMovieById(int id)
+        {
+            Movie movie = new Movie();
+            movie = _context.Movies
+                .Include(movie => movie.MovieGenres).ThenInclude(x => x.Genre)
+                .Include(movie => movie.MovieKeywords).ThenInclude(x => x.Keyword)
+                .Include(movie => movie.MovieSources)
+                .FirstOrDefault(movie => movie.Id == id);
+            return movie;
+        }
+        // find 12 list movie in genre of movie by id
+        public List<Movie> GetMovieInGenreById(List<MovieGenre> genres, int movieId)
+        {
+            List<int> genredId = genres.Select(x => x.GenreId).ToList();
+            var movie = _context.Movies
+                .Include(movie => movie.MovieGenres).ThenInclude(x => x.Genre)
+                .Include(movie => movie.MovieCompanies).ThenInclude(x => x.Company)
+                .Include(movie => movie.MovieCountries).ThenInclude(x => x.Country)
+                .Include(movie => movie.MovieCasts).ThenInclude(x => x.Person)
+                .Include(movie => movie.MovieCrews).ThenInclude(x => x.Person)
+                .Where(movie => genredId.Contains(movie.MovieGenres.Select(x => x.GenreId).FirstOrDefault()))
+                .Where(movie => movie.Id != movieId)
+                .Take(12).OrderByDescending(m => m.ReleaseDate).ToList();
+            return movie;
+        }
     }
 }

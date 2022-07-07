@@ -1,5 +1,7 @@
-﻿@using Movie247.Controllers
-@using Movie247.Models
+﻿@using Microsoft.AspNetCore.Identity
+@using Movie247.Areas.Identity.Data
+@inject SignInManager<Movie247User> SignInManager
+@inject UserManager<Movie247User> UserManager
 <!DOCTYPE html>
 <!--[if IE 7]>
 <html class="ie ie7 no-js" lang="en-US">
@@ -11,6 +13,7 @@
 <html lang="en" class="no-js">
 
 <!-- 40414:39-->
+
 <head>
     <!-- Basic need -->
     <title>@ViewData["Title"]</title>
@@ -29,7 +32,10 @@
     <!-- CSS files -->
     <link rel="stylesheet" href="~/web/css/plugins.css">
     <link rel="stylesheet" href="~/web/css/style.css">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.2/plyr.css" />
+
 </head>
+
 <body>
     <div id="preloader">
         <img class="logo" src="~/web/images/logo1.png" alt="" width="119" height="58">
@@ -52,7 +58,9 @@
                             <span></span>
                         </div>
                     </div>
-                    <a href="index-2.html"><img class="logo" src="~/web/images/logo1.png" alt="" width="119" height="58"></a>
+                    <a href="index-2.html">
+                        <img class="logo" src="~/web/images/logo1.png" alt="" width="119" height="58">
+                    </a>
                 </div>
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse flex-parent" id="bs-example-navbar-collapse-1">
@@ -74,9 +82,12 @@
                                 Genre <i class="fa fa-angle-down" aria-hidden="true"></i>
                             </a>
                             <ul class="dropdown-menu level1">
-                                <li><a></a></li>
+
+                                <li><a>1</a></li>
+
                             </ul>
                         </li>
+
                         <li class="dropdown first">
                             <a class="btn btn-default dropdown-toggle lv1" data-toggle="dropdown" data-hover="dropdown">
                                 Country <i class="fa fa-angle-down" aria-hidden="true"></i>
@@ -101,8 +112,9 @@
                             </ul>
                         </li>
                         <li><a href="#">Help</a></li>
-                        <li class="loginLink"><a href="#">LOG In</a></li>
-                        <li class="btn signupLink"><a href="#">sign up</a></li>
+                        @*<li class="loginLink"><a href="#">LOG In</a></li>
+                            <li class="btn signupLink"><a href="#">sign up</a></li>*@
+                        @await Html.PartialAsync("_LoginPartial")
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->
@@ -117,6 +129,7 @@
             </div>
         </div>
     </header>
+
     <!-- END | Header -->
     @RenderBody()
 
@@ -174,15 +187,223 @@
                 <p><a target="_blank" href="https://www.templateshub.net">Templates Hub</a></p>
             </div>
             <div class="backtotop">
-                <p><a href="#" id="back-to-top">Back to top  <i class="ion-ios-arrow-thin-up"></i></a></p>
+                <p><a href="#" id="back-to-top">Back to top <i class="ion-ios-arrow-thin-up"></i></a></p>
             </div>
         </div>
     </footer>
-    <!-- end of footer section-->
+
+    @if (!SignInManager.IsSignedIn(User))
+    {
+        <!-- end of footer section-->
+        <!--login form popup-->
+        <div class="login-wrapper" id="login-content">
+            <div class="login-content">
+                <a href="#" class="close">x</a>
+                <h3>Login</h3>
+                <form method="post" action="#" id="login-form">
+                    <div class="row">
+                        <label for="username">
+                            Username or Email:
+                            <input type="text" name="username" id="username" required="required" />
+                        </label>
+                    </div>
+
+                    <div class="row">
+                        <label for="password">
+                            Password:
+                            <input type="password" name="password" id="password" required="required" />
+                        </label>
+                    </div>
+                    <div class="row">
+                        <div class="remember">
+                            <div>
+                                <input type="checkbox" name="remember" value="Remember me"><span>Remember me</span>
+                            </div>
+                            <a href="#">Forget password ?</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button type="submit" id="login-button">Login</button>
+                    </div>
+                </form>
+                <div class="row">
+
+                    <p>Or via social</p>
+                    <div class="social-btn-2">
+                        @await Html.PartialAsync("_ExternalLogin")
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end of login form popup-->
+        <!--signup form popup-->
+        <div class="login-wrapper" id="signup-content">
+            <div class="login-content">
+                <a href="#" class="close">x</a>
+                <h3>sign up</h3>
+                <form method="post" id="register-form">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="username-2">
+                                Username:
+                                <input type="text" name="username" id="username-2" required="required" />
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="firstname-2">
+                                First Name:
+                                <input type="text" name="firstname" id="firstname-2" required="required" />
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lastname-2">
+                                Last Name:
+                                <input type="text" name="lastname" id="lastname-2" required="required" />
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="email-2">
+                                your email:
+                                <input type="email" name="email" id="email-2" placeholder="" required="required" />
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="password-2">
+                                Password:
+                                <input type="password" name="password" id="password-2" required="required" />
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="repassword-2">
+                                re-type Password:
+                                <input type="password" name="password" id="repassword-2" required="required" />
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button type="submit" id="register-button">Sign up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!--end of signup form popup-->
+    }
+
+
+
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="~/web/js/jquery.js"></script>
     <script src="~/web/js/plugins.js"></script>
     <script src="~/web/js/plugins2.js"></script>
     <script src="~/web/js/custom.js"></script>
+
+    <script src="https://cdn.plyr.io/3.7.2/plyr.polyfilled.js"></script>
+    <script>
+        // using ajax to send the login data to the server
+        $(document).ready(function () {
+            // if button name is login
+            $("#login-button").click(function () {
+                $('#login-form').submit(function (e) {
+                    e.preventDefault();
+                    var username = $('#username').val();
+                    var password = $('#password').val();
+                    var remember = $('#remember').val();
+                    $.ajax({
+                        url: '/User/Login',
+                        type: 'POST',
+                        data: {
+                            Email: username,
+                            Password: password,
+                            RememberMe: remember
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                swal({
+                                    title: "Success",
+                                    text: "Login Successful",
+                                    icon: "success",
+                                    timer: 2000,
+                                    button: "OK",
+                                }).then(function () {
+                                    window.location.reload();
+                                });
+                            } else {
+                                // if data message is an array, it means that there are multiple errors
+                                if (data.message instanceof Array) {
+                                    swal("Login Failed", data.message.join('\n').replace(/<(?:.|\n)*?>/gm, ''), "error");
+                                } else {
+                                    swal("Login Failed", data.message, "error");
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+
+            // if button name is register
+            $("#register-button").click(function () {
+                $("#register-form").submit(function (e) {
+                    e.preventDefault();
+                    var username = $('#username-2').val();
+                    var password = $('#password-2').val();
+                    var confirmPassword = $('#repassword-2').val();
+                    var email = $('#email-2').val();
+                    var firstName = $('#firstname-2').val();
+                    var lastName = $('#lastname-2').val();
+                    // animation swal waiting for the server response
+                    swal({
+                        title: "Please wait",
+                        text: "We are processing your request",
+                        buttons: false,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        allowEnterKey: false,
+                        onOpen: () => {
+                            swal.showLoading();
+                        }
+                    });
+                    $.ajax({
+                        url: '/User/Register',
+                        type: 'POST',
+                        data: {
+                            Email: email,
+                            Password: password,
+                            ConfirmPassword: confirmPassword,
+                            FirstName: firstName,
+                            LastName: lastName,
+                            Username: username
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                swal({
+                                    title: "Success",
+                                    text: data.message,
+                                    icon: "success",
+                                    timer: 2000,
+                                    button: "OK",
+                                });
+                            } else {
+                                // if data message is an array, it means that there are multiple errors
+                                if (data.message instanceof Array) {
+                                    swal("Register Failed", data.message.join('\n').replace(/<(?:.|\n)*?>/gm, ''), "error");
+                                } else {
+                                    swal("Register Failed", data.message, "error");
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
     <!--
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -190,4 +411,5 @@
     -->
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

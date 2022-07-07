@@ -44,7 +44,26 @@ namespace Movie247.Controllers
         {
             MovieLogic movieLogic = new(_context);
             Movie movie = movieLogic.GetMovieById(id);
+            ViewData["RelatedMovies"] = movieLogic.GetMovieInGenreById(movie.MovieGenres.ToList(), id);
             return View("Details", movie);
+        }
+        public ActionResult Watch(int id, int source)
+        {
+
+            MovieLogic movieLogic = new(_context);
+            Movie movie = movieLogic.GetSourceMovieById(id);
+            string sourceUrl = "";
+            if (movie.MovieSources.Count > 0)
+            {
+                sourceUrl = movie.MovieSources.Take(1).FirstOrDefault().LinkSource;
+            }
+            else
+            {
+                sourceUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+            }
+            ViewData["Source"] = sourceUrl;
+            ViewData["RelatedMovies"] = movieLogic.GetMovieInGenreById(movie.MovieGenres.ToList(), id);
+            return View(movie);
         }
 
         // GET: MovieController/Create

@@ -169,43 +169,43 @@
 </div>
 
 
-<div class="trailers">
+@* <div class="trailers">
     <div class="container">
-        <div class="row ipad-width">
-            <div class="col-md-12">
-                <div class="title-hd">
-                    <h2>in theater</h2>
-                    <a href="#" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
-                </div>
-                <div class="videos">
-                    <div class="slider-for-2 video-ft">
-                        @foreach (Movie movie in ViewBag.top5TrailerLatest)
-                        {
-                            <div>
-                                <iframe class="item-video" src="@($"https://www.youtube.com/embed/{@movie.Trailer}")"
-                                frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowfullscreen></iframe>
-                            </div>
-                        }
-
-                    </div>
-                    <div class="slider-nav-2 thumb-ft">
-                        @foreach (Movie movie in ViewBag.top5TrailerLatest)
-                        {
-                            <div class="item">
-                                <div class="trailer-img">
-                                    <img src="~/web/images/movie/poster/@movie.PosterPath" alt="@movie.Title" width="4096"
-                                    height="2737">
-                                </div>
-                                <div class="trailer-infor">
-                                    <h4 class="desc">@movie.Title</h4>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="row ipad-width">
+    <div class="col-md-12">
+    <div class="title-hd">
+    <h2>in theater</h2>
+    <a href="#" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
     </div>
-</div>
+    <div class="videos">
+    <div class="slider-for-2 video-ft">
+    @foreach (Movie movie in ViewBag.top5TrailerLatest)
+    {
+
+    <div>
+    <iframe class="item-video" src="@($"https://www.youtube.com/embed/{@movie.Trailer}")"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen></iframe>
+    </div>
+    }
+    </div>
+    <div class="slider-nav-2 thumb-ft">
+    @foreach (Movie movie in ViewBag.top5TrailerLatest)
+    {
+    <div class="item">
+    <div class="trailer-img">
+    <img src="~/web/images/movie/poster/@movie.PosterPath" alt="@movie.Title" width="4096"
+    height="2737">
+    </div>
+    <div class="trailer-infor">
+    <h4 class="desc">@movie.Title</h4>
+    </div>
+    </div>
+    }
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div> *@

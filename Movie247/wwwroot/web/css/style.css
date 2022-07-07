@@ -8236,7 +8236,7 @@ p.ceb-single {
     font-weight: bold;
     text-transform: uppercase;
     width: 100%;
-    margin-bottom: 25px;
+    margin: 10px 0px;
 }
 
 @media (max-width: 767px) {
@@ -8245,24 +8245,22 @@ p.ceb-single {
     }
 }
 
-.overlay .login-content label input {
+.overlay .login-content input {
     font-family: 'Dosis', sans-serif;
     font-size: 14px;
     color: #222222;
     font-weight: bold;
-    text-transform: capitalize;
     margin-top: 10px;
     height: 42px;
     border: 1px solid #e1e1e1;
 }
 
-    .overlay .login-content label input::-webkit-input-placeholder {
-        font-family: 'Dosis', sans-serif;
-        font-size: 14px;
-        color: #222222;
-        font-weight: bold;
-        text-transform: capitalize;
-    }
+.overlay .login-content label input::-webkit-input-placeholder {
+    font-family: 'Dosis', sans-serif;
+    font-size: 14px;
+    color: #222222;
+    font-weight: bold;
+}
 
 .overlay .login-content button {
     font-family: 'Dosis', sans-serif;

@@ -1,4 +1,5 @@
 ﻿@model Movie247.Models.Person
+@using Movie247.Helpers
 @using Movie247.Models
 
 @{
@@ -46,7 +47,7 @@
                     </div>
                     <div class="movie-tabs">
                         <div class="tabs">
-                            <ul class="tab-links tabs-mv">
+                            <ul class="tab-links tabs-mv" id="myTab">
                                 <li class="active"><a href="#overviewceb">Overview</a></li>
                                 <li><a href="#filmography">filmography</a></li>
                             </ul>
@@ -74,10 +75,11 @@
                                                             src="images/uploads/play-vd.png" alt=""></a>
                                                 </div>
                                             </div>
-                                            <div class="title-hd-sm">
+                                            <div class="title-hd-sm tab-links tabs-mv">
                                                 <h4>filmography</h4>
                                                 <a href="#filmography" class="time">Full Filmography<i
                                                         class="ion-ios-arrow-right"></i></a>
+
                                             </div>
                                             <!-- movie cast -->
                                             <div class="mvcast-item">
@@ -157,16 +159,15 @@
                                                 }
                                                 in total
                                             </p>
-                                            <label>Filter by:</label>
-                                            <select>
-                                                <option value="popularity">Popularity Descending</option>
-                                                <option value="popularity">Popularity Ascending</option>
-                                                <option value="rating">Rating Descending</option>
-                                                <option value="rating">Rating Ascending</option>
-                                                <option value="date">Release date Descending</option>
-                                                <option value="date">Release date Ascending</option>
-                                            </select>
                                         </div>
+                                        @section Scripts{
+                                        <script>
+                                            $('.tab-links a').on('click', function (e) {
+                                                var currentAttrValue = $(this).attr('href');
+                                                $('#myTab li').removeClass('active').find('a[href="' + currentAttrValue + '"]').parent().addClass('active');
+                                            });
+                                        </script>
+                                        }
                                         <!-- movie cast -->
                                         <div class="mvcast-item">
                                             @if (@Model.MovieCasts.Count > 0)
@@ -184,7 +185,7 @@
                                                             </div>
 
                                                         </div>
-                                                        <p>@movieCast.Movie.ReleaseDate.Year</p>
+                                                        <p style="text-align: center;">@movieCast.Movie.ReleaseDate.Year</p>
                                                     </div>
                                                 }
                                             }
@@ -202,7 +203,7 @@
                                                             </div>
 
                                                         </div>
-                                                        <p>@movieCrew.Movie.ReleaseDate.Year</p>
+                                                        <p style="text-align: center;">@movieCrew.Movie.ReleaseDate.Year</p>
                                                     </div>
                                                 }
                                             }

@@ -15,7 +15,6 @@ namespace Movie247.Models
             MovieCrews = new HashSet<MovieCrew>();
             MovieGenres = new HashSet<MovieGenre>();
             MovieKeywords = new HashSet<MovieKeyword>();
-            MovieReviews = new HashSet<MovieReview>();
             MovieSources = new HashSet<MovieSource>();
         }
 
@@ -39,7 +38,7 @@ namespace Movie247.Models
         public virtual ICollection<MovieCrew> MovieCrews { get; set; }
         public virtual ICollection<MovieGenre> MovieGenres { get; set; }
         public virtual ICollection<MovieKeyword> MovieKeywords { get; set; }
-        public virtual ICollection<MovieReview> MovieReviews { get; set; }
         public virtual ICollection<MovieSource> MovieSources { get; set; }
+        public virtual ICollection<Favourite> FavouriteMovies { get; set; }
     }
 }

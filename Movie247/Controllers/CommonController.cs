@@ -1,33 +1,24 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Movie247.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Web;
 
 namespace Movie247.Controllers
 {
-    [NonViewComponent]
     public class CommonController : Controller
     {
-        // GET: CommonController
-        public static List<Genre> GetAllCategory()
+        public readonly MOVIEPROJECTContext _context;
+
+        public CommonController(MOVIEPROJECTContext context)
         {
-            List<Genre> lists = new List<Genre>();
-            using (var _context = new MOVIEPROJECTContext())
-            {
-                lists = _context.Genres.ToList();
-            }
-            return lists;
+            _context = context;
         }
-        [NonAction]
+
         public ActionResult GetCategory()
         {
-            List<Genre> lists = new();
-            using (var _context = new MOVIEPROJECTContext())
-            {
-                lists = _context.Genres.ToList();
-            }
+            List<Genre> lists = _context.Genres.ToList();
             return PartialView("_Genre", lists);
         }
 

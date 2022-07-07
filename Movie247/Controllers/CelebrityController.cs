@@ -41,13 +41,12 @@ namespace Movie247.Controllers
             {
                 return NotFound();
             }
-
             var person = personLogic.FindPersonById(id ?? 0);
+
             if (person == null)
             {
                 return NotFound();
             }
-
             return View(person);
         }
 

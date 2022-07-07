@@ -27,13 +27,12 @@ namespace Movie247.Models
         public virtual DbSet<MovieCrew> MovieCrews { get; set; }
         public virtual DbSet<MovieGenre> MovieGenres { get; set; }
         public virtual DbSet<MovieKeyword> MovieKeywords { get; set; }
-        public virtual DbSet<MovieReview> MovieReviews { get; set; }
+
         public virtual DbSet<MovieSource> MovieSources { get; set; }
         public virtual DbSet<Person> People { get; set; }
         public virtual DbSet<ProductionCompany> ProductionCompanies { get; set; }
         public virtual DbSet<ProductionCountry> ProductionCountries { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
-        public virtual DbSet<User> Users { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -351,44 +350,6 @@ namespace Movie247.Models
                     .HasConstraintName("FK_movie_keywords_movie_ID");
             });
 
-            modelBuilder.Entity<MovieReview>(entity =>
-            {
-                entity.ToTable("movie_review");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.CreateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("createAt")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.MovieId).HasColumnName("movieID");
-
-                entity.Property(e => e.Review)
-                    .HasColumnType("ntext")
-                    .HasColumnName("review");
-
-                entity.Property(e => e.UpdateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updateAt");
-
-                entity.Property(e => e.UserId).HasColumnName("userID");
-
-                entity.Property(e => e.Vote).HasColumnName("vote");
-
-                entity.HasOne(d => d.Movie)
-                    .WithMany(p => p.MovieReviews)
-                    .HasForeignKey(d => d.MovieId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_movie_review_movie_ID");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.MovieReviews)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_movie_review_user_ID");
-            });
-
             modelBuilder.Entity<MovieSource>(entity =>
             {
                 entity.ToTable("movie_source");
@@ -513,9 +474,9 @@ namespace Movie247.Models
                     .HasColumnName("updateAt");
             });
 
-            modelBuilder.Entity<Role>(entity =>
+            modelBuilder.Entity<Favourite>(entity =>
             {
-                entity.ToTable("role");
+                entity.ToTable("favourite");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
@@ -524,86 +485,29 @@ namespace Movie247.Models
                     .HasColumnName("createAt")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnName("name");
+                entity.Property(e => e.MovieId).HasColumnName("movie_id");
 
-                entity.Property(e => e.UpdateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updateAt");
-            });
-
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.ToTable("user");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Activated).HasColumnName("activated");
-
-                entity.Property(e => e.CreateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("createAt")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Description)
-                    .HasColumnType("ntext")
-                    .HasColumnName("description");
-
-                entity.Property(e => e.Email)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnName("email");
-
-                entity.Property(e => e.MiddleName)
-                    .HasMaxLength(50)
-                    .HasColumnName("middleName");
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(50)
-                    .HasColumnName("name");
-
-                entity.Property(e => e.Password)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("password");
-
-                entity.Property(e => e.PhoneNumber)
-                    .HasMaxLength(11)
-                    .IsUnicode(false)
-                    .HasColumnName("phoneNumber")
-                    .IsFixedLength(true);
-
-                entity.Property(e => e.RoleId).HasColumnName("roleId");
-
-                entity.Property(e => e.Salt)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("salt");
-
-                entity.Property(e => e.SurName)
-                    .HasMaxLength(50)
-                    .HasColumnName("surName");
+                entity.Property(e => e.UserId).HasColumnName("user_id");
 
                 entity.Property(e => e.UpdateAt)
                     .HasColumnType("datetime")
                     .HasColumnName("updateAt");
 
-                entity.Property(e => e.UserName)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("userName");
-
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.Users)
-                    .HasForeignKey(d => d.RoleId)
+                // foreign key with user Identity
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.FavoriteMovies)
+                    .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_user_role_ID");
-            });
+                    .HasConstraintName("FK_favourite_user_ID");
 
+                // foreign key with movie
+                entity.HasOne(d => d.Movie)
+                    .WithMany(p => p.FavouriteMovies)
+                    .HasForeignKey(d => d.MovieId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_favourite_movie_ID");
+
+            });
             OnModelCreatingPartial(modelBuilder);
         }
 

@@ -1,0 +1,210 @@
+﻿@using Movie247.Models
+@model Movie247.Models.Movie
+@{
+    string sourceUrl = (string)ViewData["Source"];
+}
+<div class="hero common-hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="hero-ct">
+                    <h1> movie listing</h1>
+                    <ul class="breadcumb">
+                        <li><a href="/Home">Home</a></li>
+                        <li> <span class="ion-ios-arrow-right"></span> <a href="/Movies/List">Movies</a></li>
+                        <li class="active"><span class="ion-ios-arrow-right"></span> <a>Watching : @Model.Title</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- blog detail section-->
+<div class="page-single">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9 col-sm-12 col-xs-12">
+                <div class="blog-detail-ct">
+                    <marquee style="color:white">
+                        You're watching @Model.Title. If you can't watch the movie, try
+                        reloading the page or try another resource link below
+                    </marquee>
+                    <div class="plyr__video-embed" id="player">
+                        @if (!sourceUrl.Contains(".m3u8"))
+                        {
+                            <iframe
+                            src="@sourceUrl?origin=https://plyr.io&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1"
+                            allowfullscreen allowtransparency
+                            width="100%" height="480px"
+                             allow="autoplay"></iframe>
+
+                        }
+                    </div>
+                    @section Scripts{
+                    <script src="~/web/js/hls.js"></script>
+                    <script>
+                        const player = new Plyr('#player');
+                        function ChangeLink(link) {
+                            // if link contains hls, then use hls.js
+                            var play = $('#player');
+                            if (link.includes("m3u8")) {
+                                // remove the iframe
+                                play.empty();
+                                // create a new video play
+                                var video = document.createElement('video');
+                                video.setAttribute('controls', 'controls');
+                                video.setAttribute('width', '100%');
+                                video.setAttribute('height', '480px');
+                                video.setAttribute('autoplay', 'autoplay');
+                                play.append(video);
+                                // create a source element
+                                play_stream(link);
+                            } else {
+                                // return to the iframe
+                                play.empty();
+                                play.append('<iframe src="' + link + '" allowfullscreen allowtransparency width="100%" height="480px" allow="autoplay"></iframe>');
+                            }
+                        }
+                    </script>
+                    <script>
+                        function play_stream(url) {
+                            var video = document.querySelector('video');
+                            var m3u8Url = decodeURIComponent(url);
+                            if (Hls.isSupported()) {
+                                var hls = new Hls();
+                                hls.loadSource(m3u8Url);
+                                hls.attachMedia(video);
+                                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                                    video.play();
+                                });
+                                document.title = url;
+                            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                                video.src = m3u8Url;
+                                video.addEventListener('loadedmetadata', function () {
+                                    video.play();
+                                });
+                                document.title = url;
+                            }
+                        }
+                    </script>
+                    <script>
+                        var source = "@ViewBag.Source";
+                        if (source.includes("m3u8")) {
+                            ChangeLink(source);
+                        }
+                    </script>
+                    }
+                    <div class="flex-it share-tag">
+                        <div class="right-it">
+                            <h4>Source: </h4>
+                            @foreach (var item in @Model.MovieSources)
+                            {
+                                <span>
+                                    <button onclick="ChangeLink('@item.LinkSource')">
+                                        <i class="fa fa-database"></i>
+                                        @item.Description
+                                    </button>
+                                </span>
+                            }
+                        </div>
+                        <div class="right-it">
+                            <h4>Tags</h4>
+                            @if (Model.MovieKeywords.Count > 0)
+                            {
+                                @foreach (MovieKeyword movieKeyword in Model.MovieKeywords)
+                                {
+                                    <span class="time">
+                                        <a href="#">
+                                            @movieKeyword.Keyword.KeywordName,
+                                        </a>
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="time">
+                                    <a>
+                                        No Keywords
+                                    </a>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                    <!-- comment items -->
+                    <div class="comments">
+                        <h4>04 Comments</h4>
+                        <div class="cmt-item flex-it">
+                            <img src="images/uploads/author.png" alt="">
+                            <div class="author-infor">
+                                <div class="flex-it2">
+                                    <h6><a href="#">Steve Perry</a></h6> <span class="time"> - 27 Mar 2017</span>
+                                </div>
+                                <p>
+                                    Even though Journey's classic vocalist Steve Perry didn’t reunite with the band
+                                    during their Rock Hall performance (to the dismay of hopeful fans), he did offer up
+                                    a touching speech.
+                                </p>
+                                <p><a class="rep-btn" href="#">+ Reply</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="comment-form">
+                        <h4>Leave a comment</h4>
+                        <form action="#" class="">
+                            <div class="movie-rate">
+                                <div class="rate-star">
+                                    <p>Rate This Movie: </p>
+                                    <i class="ion-ios-star"></i>
+                                    <i class="ion-ios-star"></i>
+                                    <i class="ion-ios-star"></i>
+                                    <i class="ion-ios-star"></i>
+                                    <i class="ion-ios-star"></i>
+                                    <i class="ion-ios-star"></i>
+                                    <i class="ion-ios-star"></i>
+                                    <i class="ion-ios-star"></i>
+                                    <i class="ion-ios-star-outline"></i>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <textarea name="message" id="" placeholder="Message"></textarea>
+                                </div>
+                            </div>
+                            <input class="submit" type="submit" placeholder="submit">
+                        </form>
+                    </div>
+                    <!-- comment form -->
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-12 col-xs-12">
+                <div class="sidebar">
+                    <div class="celebrities">
+                        <h4 class="sb-title">Related Movies</h4>
+                        <div class="slider-nav-celebrities" style="height: 800px;">
+                            @foreach (Movie movie in ViewBag.RelatedMovies)
+                            {
+                                <div class="celeb-item">
+                                    <a href="/Movie/Details/@movie.Id">
+                                        <img src="~/web/images/movie/poster/@movie.PosterPath" alt="" width="70"
+                                        height="70">
+                                    </a>
+                                    <div class="celeb-author" style="margin-left: 10px;">
+                                        <h6><a href="/Movie/Details/@movie.Id">@movie.Title</a></h6>
+                                        <span>Release: @movie.ReleaseDate.ToString("yyyy")</span>
+                                        <span>Popularity: @movie.ImdbAverage</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="ads">
+                        <img src="images/uploads/ads1.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end of  blog detail section-->
+<!-- end player -->
