@@ -1,0 +1,88 @@
+﻿@using Movie247.Models
+@model IEnumerable<MovieReview>
+@{
+    ViewData["RatedNav"] = "active";
+}
+<partial name="_TopMenuProfile" />
+<div class="page-single">
+    <div class="container">
+        <div class="row ipad-width2">
+            <partial name="_LeftMenuProfile" />
+            <div class="col-md-9 col-sm-12 col-xs-12">
+                @if (Model.Count() > 0)
+                {
+                    <div class="topbar-filter">
+                        <p>Found <span>@Model.Count() rates</span> in total</p>
+
+                    </div>
+                    @foreach (var item in Model)
+                    {
+                        <div class="movie-item-style-2 userrate">
+                            <img src="~/web/images/movie/poster/@item.Movie.PosterPath" alt="">
+                            <div class="mv-item-infor" style="width: 100%;">
+                                <h6><a href="/Movie/Details/@item.MovieId">@item.Movie.Title <span>(@item.Movie.ReleaseDate.Year)</span></a></h6>
+                                <div style="display: flex; align-items:center ;">
+                                    <p class="time sm-text" style="margin: 0 ;">your rate: </p>
+                                    <p class="rate" style="margin: 0px 6px;">
+                                        <i class="ion-android-star"></i><span>@item.Rating</span> /10
+                                    </p>
+                                </div>
+                                <p>
+                                    <span class="time sm-text" style="padding: 4px 2px;">your reviews:</span> @item.Comment
+                                </p>
+                                <p class="time sm">Create At: @item.CreateAt.Value.ToString("dd/MM/yyyy hh:mm:ss")</p>
+                                <div style="text-align: right;">
+
+                                    <button class="redbtn" style="padding: 4px;" onclick="Edit(@item.MovieId)">Edit</button>
+                                    <button class="redbtn" style="padding: 4px;" onclick="Delete(@item.MovieId)">Delete</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="topbar-filter">
+                        <p>Found <span>0 rates</span> in total</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+<script>
+    function Edit(id) {
+        window.location.href = `/Movie/Watch/${id}`;
+    }
+    function Delete(id) {
+        swal({
+            title: "Are you sure?",
+            text: "Do you want to delete this review?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                comment = {
+                    MovieId: id,
+                    Action: "Delete",
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/User/ReviewMovie",
+                    data: comment,
+                    success: function (response) {
+                        if (response.success) {
+                            showMessage('success', response.message, true);
+                        } else {
+                            showMessage('error', response.message);
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>
+}

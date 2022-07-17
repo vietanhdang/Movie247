@@ -5,37 +5,51 @@ using System.Linq;
 using Movie247.Helpers;
 using System.Threading.Tasks;
 using System;
+using Movie247.Data;
+using Movie247.Areas.Identity.Data;
 
 namespace Movie247.Logics
 {
     public class MovieLogic
     {
         // create  _context to access db
-        private readonly MOVIEPROJECTContext _context;
+        private readonly Movie247Context _context;
 
-        public MovieLogic(MOVIEPROJECTContext context)
+        public MovieLogic()
         {
-            _context = context;
+            _context = new Movie247Context();
         }
-
-
         // Get 5 trailer of movie latest
-        public List<Movie> Get5TrailerOfMovieLatest()
+        public async Task<List<Movie>> Get5TrailerOfMovieLatest()
         {
-            List<Movie> movies = new();
-            movies = _context.Movies.OrderByDescending(m => m.ReleaseDate).Take(5).ToList();
-            return movies;
+
+            return await _context.Movies.OrderByDescending(m => m.ReleaseDate).Take(5).ToListAsync();
+        }
+        public async Task<List<Movie>> Get12TopRatedMovies()
+        {
+            return await _context.Movies.OrderByDescending(m => m.ImdbAverage).Take(10).ToListAsync();
+        }
+        // get 12 movie favorite of user most
+        public async Task<List<Movie>> Get12MovieFavoriteOfUserMost()
+        {
+            return await _context.Movies.Include(m => m.MovieFavourites).Where(x => x.MovieFavourites.Count > 0).OrderByDescending(m => m.MovieFavourites.Count).Take(12).ToListAsync();
+        }
+        // get 12 movie most viewed of user most
+        public async Task<List<Movie>> Get12MovieMostViewedOfUserMost()
+        {
+            return await _context.Movies.OrderByDescending(m => m.Views).Take(12).ToListAsync();
+
         }
         // Get 12 movie with highest rate
-        public List<Movie> Get12MovieWithHighestRate()
+        public async Task<List<Movie>> Get12MovieNewest()
         {
             List<Movie> movies = new();
-            movies = _context.Movies
-                .OrderByDescending(m => m.ImdbAverage)
-                .Take(12)
-                .Include(x => x.MovieGenres)
-                .ThenInclude(x => x.Genre).ToList();
-            return movies;
+            return await _context.Movies
+               .OrderByDescending(m => m.CreateAt)
+               .Take(12)
+               .Include(x => x.MovieGenres)
+               .ThenInclude(x => x.Genre).ToListAsync();
+
         }
         // get latest and oldest year of movie
         public (int, int) GetLatestAndOldestYearOfMovie()
@@ -51,13 +65,13 @@ namespace Movie247.Logics
             movies = _context.Movies.OrderByDescending(m => m.ReleaseDate).Skip(Offset - 1).Take(Count).ToList();
             return movies;
         }
-        public List<Movie> GetMovieByMultipleCondition(FilterModel filter)
+        public async Task<List<Movie>> GetMovieByMultipleCondition(FilterModel filter)
         {
             var movies = from m in _context.Movies
                          select m;
             if (filter.Name != null)
             {
-                movies = movies.Where(m => m.Title.ToLower().Contains(filter.Name.ToLower()));
+                movies = movies.Where(m => m.Title.ToLower().Contains(filter.Name.Trim().ToLower()));
             }
             if (filter.CompanyId != null)
             {
@@ -85,7 +99,7 @@ namespace Movie247.Logics
             filter.TotalCount = movies.Distinct().Count();
             if (filter.TotalCount <= 0)
             {
-                return movies.ToList();
+                return await movies.ToListAsync();
             }
             filter.TotalPages = (int)Math.Ceiling((double)filter.TotalCount / filter.PageSize);
 
@@ -132,7 +146,7 @@ namespace Movie247.Logics
                     movies = movies.OrderBy(m => m.Views);
                 }
             }
-            return movies.Skip(from - 1).Take(filter.PageSize).ToList();
+            return await movies.Skip(from - 1).Take(filter.PageSize).ToListAsync();
         }
 
         // Get movie by id
@@ -145,9 +159,78 @@ namespace Movie247.Logics
                 .Include(movie => movie.MovieCompanies).ThenInclude(x => x.Company)
                 .Include(movie => movie.MovieCountries).ThenInclude(x => x.Country)
                 .Include(movie => movie.MovieCasts).ThenInclude(x => x.Person)
-                .Include(movie => movie.MovieKeywords).ThenInclude(x => x.Keyword)
                 .Include(movie => movie.MovieSources)
                 .FirstOrDefault(movie => movie.Id == id);
+            return movie;
+        }
+        public async Task<int> GetTotalReviews(int id)
+        {
+            int total = await _context.MovieReviews.Where(m => m.MovieId == id).CountAsync();
+            return total;
+        }
+        public async Task<List<MovieComment>> GetCommentMovieId(int id)
+        {
+            var qr = _context.MovieComments
+                      .Include(c => c.User)
+                     .Include(c => c.ParentMovieComment)
+                     .Include(c => c.MovieCommentChildren)
+                     .Where(c => c.MovieId == id);
+
+            var MovieComments = (await qr.ToListAsync())
+                             .Where(c => c.ParentMovieComment == null).ToList();
+            return MovieComments;
+        }
+        public List<MovieReview> GetReviewByMovieId(int id, int offset, int count, string SortBy, string OrderBy)
+        {
+            var reviews = _context.MovieReviews
+            .Include(x => x.User)
+            .Select(x => new MovieReview
+            {
+                Id = x.Id,
+                MovieId = x.MovieId,
+                UserId = x.UserId,
+                User = new Movie247User
+                {
+                    Firstname = x.User.Firstname,
+                    LastName = x.User.LastName,
+                    Image = x.User.Image
+                },
+                Comment = x.Comment,
+                CreateAt = x.CreateAt,
+                Rating = x.Rating
+            })
+            .Where(x => x.MovieId == id);
+            if (SortBy == "date")
+            {
+                if (OrderBy == "desc")
+                {
+                    reviews = reviews.OrderByDescending(x => x.CreateAt);
+                }
+                else
+                {
+                    reviews = reviews.OrderBy(x => x.CreateAt);
+                }
+            }
+            else if (SortBy == "rating")
+            {
+                if (OrderBy == "desc")
+                {
+                    reviews = reviews.OrderByDescending(x => x.Rating);
+                }
+                else
+                {
+                    reviews = reviews.OrderBy(x => x.Rating);
+                }
+            }
+            else
+            {
+                reviews = reviews.OrderBy(x => x.CreateAt);
+            }
+            return reviews.Skip(offset - 1).Take(count).ToList();
+        }
+        public Movie GetMovieFirstById(int id)
+        {
+            var movie = _context.Movies.FirstOrDefault(m => m.Id == id);
             return movie;
         }
 
@@ -156,7 +239,6 @@ namespace Movie247.Logics
             Movie movie = new Movie();
             movie = _context.Movies
                 .Include(movie => movie.MovieGenres).ThenInclude(x => x.Genre)
-                .Include(movie => movie.MovieKeywords).ThenInclude(x => x.Keyword)
                 .Include(movie => movie.MovieSources)
                 .FirstOrDefault(movie => movie.Id == id);
             return movie;

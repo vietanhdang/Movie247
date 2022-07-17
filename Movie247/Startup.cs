@@ -34,8 +34,6 @@ namespace Movie247
         {
             services.AddControllersWithViews();
             services.AddRazorPages();
-            services.AddDbContext<MOVIEPROJECTContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("AppDbContext")));
             var mailsettings = Configuration.GetSection("MailSettings");
             services.Configure<MailSettings>(mailsettings);
             services.AddTransient<IEmailSender, SendMailService>();
@@ -43,20 +41,36 @@ namespace Movie247
             {
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
                 options.Lockout.MaxFailedAccessAttempts = 3;
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = false;
             });
-            // services.AddDbContext<Movie247Context>(options =>
-            //        options.UseSqlServer(
-            //            Configuration.GetConnectionString("AppDbContext")));
-            // services.AddDefaultIdentity<Movie247User>(options => options.SignIn.RequireConfirmedAccount = true)
-            //     .AddEntityFrameworkStores<Movie247Context>();
-            services.AddAuthentication().AddFacebook(facebookOptions =>
+            services.AddAuthentication()
+            .AddFacebook(facebookOptions =>
             {
 
                 IConfigurationSection facebookAuthNSection = Configuration.GetSection("Authentication:Facebook");
                 facebookOptions.AppId = facebookAuthNSection["AppId"];
                 facebookOptions.AppSecret = facebookAuthNSection["AppSecret"];
                 facebookOptions.CallbackPath = "/login-with-facebook";
-            });
+            })
+            .AddGoogle(googleOptions =>
+            {
+                IConfigurationSection googleAuthNSection = Configuration.GetSection("Authentication:Google");
+                googleOptions.ClientId = googleAuthNSection["ClientId"];
+                googleOptions.ClientSecret = googleAuthNSection["ClientSecret"];
+                googleOptions.CallbackPath = "/login-with-google";
+            })
+            .AddCookie();
+            services.AddDbContext<Movie247Context>(options =>
+                   options.UseSqlServer(Configuration.GetConnectionString("AppDbContext")));
+
+            services.AddDefaultIdentity<Movie247User>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<Movie247Context>();
+            // show login path in the browser
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/Login");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,6 +90,7 @@ namespace Movie247
                 Secure = CookieSecurePolicy.Always,
                 MinimumSameSitePolicy = SameSiteMode.Strict
             });
+
             app.UseStaticFiles();
             app.UseStatusCodePages();
             app.UseRouting();
@@ -95,6 +110,18 @@ namespace Movie247
                 endpoints.MapControllerRoute(
                     name: "details",
                     pattern: "{controller=Movie}/{action=Details}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "login",
+                    pattern: "{controller=Account}/{action=Login}");
+                endpoints.MapControllerRoute(
+                  name: "register",
+                  pattern: "{controller=Account}/{action=Register}");
+                endpoints.MapControllerRoute(
+                    name: "confirm email",
+                    pattern: "{controller=ConfirmEmail}/{action=Index}");
+                endpoints.MapControllerRoute(
+                  name: "profile",
+                    pattern: "{controller=User}/{action=Profile}");
             });
         }
     }

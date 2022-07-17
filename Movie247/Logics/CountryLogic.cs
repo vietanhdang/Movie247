@@ -2,23 +2,24 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Movie247.Models;
+using Movie247.Data;
 
 namespace Movie247.Logics
 {
     public class CountryLogic
     {
-        private readonly MOVIEPROJECTContext _context;
+        private readonly Movie247Context _context;
 
-        public CountryLogic(MOVIEPROJECTContext context)
+        public CountryLogic()
         {
-            _context = context;
+            _context = new Movie247Context();
         }
 
-        public MultiSelectList GetAllCountriesAsMultiSelectList()
+        public async Task<MultiSelectList> GetAllCountriesAsMultiSelectList()
         {
-            var countries = _context.ProductionCountries;
-            var multiSelectList = new MultiSelectList(countries, "Id", "Name");
-            return multiSelectList;
+            var countries = await _context.ProductionCountries.ToListAsync();
+            return new MultiSelectList(countries, "Id", "Name");
+
         }
     }
 }

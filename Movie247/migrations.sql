@@ -33,7 +33,7 @@ GO
 CREATE TABLE [movie] (
     [ID] int NOT NULL IDENTITY,
     [title] nvarchar(200) NOT NULL,
-    [overview] ntext NULL,
+    [overview] nvarchar(4000) NULL,
     [release_date] date NOT NULL,
     [poster_path] varchar(300) NULL,
     [backdrop_path] varchar(300) NULL,
@@ -52,7 +52,7 @@ CREATE TABLE [person] (
     [ID] int NOT NULL IDENTITY,
     [name] nvarchar(50) NOT NULL,
     [profile_path] varchar(300) NULL,
-    [description] ntext NULL,
+    [description] nvarchar(4000) NULL,
     [createAt] datetime NULL DEFAULT ((getdate())),
     [updateAt] datetime NULL,
     [popularity] float NULL,
@@ -81,12 +81,34 @@ CREATE TABLE [production_country] (
 );
 GO
 
-CREATE TABLE [role] (
-    [ID] int NOT NULL IDENTITY,
-    [name] nvarchar(50) NOT NULL,
-    [createAt] datetime NULL DEFAULT ((getdate())),
-    [updateAt] datetime NULL,
-    CONSTRAINT [PK_role] PRIMARY KEY ([ID])
+CREATE TABLE [Roles] (
+    [Id] nvarchar(450) NOT NULL,
+    [Name] nvarchar(256) NULL,
+    [NormalizedName] nvarchar(256) NULL,
+    [ConcurrencyStamp] nvarchar(max) NULL,
+    CONSTRAINT [PK_Roles] PRIMARY KEY ([Id])
+);
+GO
+
+CREATE TABLE [Users] (
+    [Id] nvarchar(450) NOT NULL,
+    [Firstname] nvarchar(100) NULL,
+    [LastName] nvarchar(100) NULL,
+    [UserName] nvarchar(256) NULL,
+    [NormalizedUserName] nvarchar(256) NULL,
+    [Email] nvarchar(256) NULL,
+    [NormalizedEmail] nvarchar(256) NULL,
+    [EmailConfirmed] bit NOT NULL,
+    [PasswordHash] nvarchar(max) NULL,
+    [SecurityStamp] nvarchar(max) NULL,
+    [ConcurrencyStamp] nvarchar(max) NULL,
+    [PhoneNumber] nvarchar(max) NULL,
+    [PhoneNumberConfirmed] bit NOT NULL,
+    [TwoFactorEnabled] bit NOT NULL,
+    [LockoutEnd] datetimeoffset NULL,
+    [LockoutEnabled] bit NOT NULL,
+    [AccessFailedCount] int NOT NULL,
+    CONSTRAINT [PK_Users] PRIMARY KEY ([Id])
 );
 GO
 
@@ -121,6 +143,7 @@ CREATE TABLE [movie_source] (
     [description] nvarchar(200) NULL,
     [createAt] datetime NULL DEFAULT ((getdate())),
     [updateAt] datetime NULL,
+    [type] varchar(10) NULL,
     CONSTRAINT [PK_movie_source] PRIMARY KEY ([ID]),
     CONSTRAINT [FK_movie_source_movie_ID] FOREIGN KEY ([movie_id]) REFERENCES [movie] ([ID]) ON DELETE NO ACTION
 );
@@ -175,37 +198,78 @@ CREATE TABLE [movie_country] (
 );
 GO
 
-CREATE TABLE [user] (
+CREATE TABLE [RoleClaims] (
+    [Id] int NOT NULL IDENTITY,
+    [RoleId] nvarchar(450) NOT NULL,
+    [ClaimType] nvarchar(max) NULL,
+    [ClaimValue] nvarchar(max) NULL,
+    CONSTRAINT [PK_RoleClaims] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_RoleClaims_Roles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles] ([Id]) ON DELETE CASCADE
+);
+GO
+
+CREATE TABLE [movie_favourite] (
     [ID] int NOT NULL IDENTITY,
-    [userName] varchar(50) NOT NULL,
-    [surName] nvarchar(50) NULL,
-    [middleName] nvarchar(50) NULL,
-    [name] nvarchar(50) NULL,
-    [email] nvarchar(100) NOT NULL,
-    [phoneNumber] char(11) NULL,
-    [password] varchar(100) NOT NULL,
-    [salt] varchar(100) NULL,
-    [description] ntext NULL,
-    [activated] bit NOT NULL,
-    [roleId] int NOT NULL,
+    [movieID] int NOT NULL,
+    [userID] nvarchar(450) NOT NULL,
     [createAt] datetime NULL DEFAULT ((getdate())),
     [updateAt] datetime NULL,
-    CONSTRAINT [PK_user] PRIMARY KEY ([ID]),
-    CONSTRAINT [FK_user_role_ID] FOREIGN KEY ([roleId]) REFERENCES [role] ([ID]) ON DELETE NO ACTION
+    CONSTRAINT [PK_movie_favourite] PRIMARY KEY ([ID]),
+    CONSTRAINT [FK_movie_favourite_movie_ID] FOREIGN KEY ([movieID]) REFERENCES [movie] ([ID]) ON DELETE NO ACTION,
+    CONSTRAINT [FK_movie_favourite_user_ID] FOREIGN KEY ([userID]) REFERENCES [Users] ([Id]) ON DELETE NO ACTION
 );
 GO
 
 CREATE TABLE [movie_review] (
     [ID] int NOT NULL IDENTITY,
     [movieID] int NOT NULL,
-    [userID] int NOT NULL,
-    [review] ntext NULL,
+    [userID] nvarchar(450) NOT NULL,
+    [rating] smallint NULL,
+    [comment] nvarchar(300) NULL,
     [createAt] datetime NULL DEFAULT ((getdate())),
     [updateAt] datetime NULL,
-    [vote] smallint NULL,
     CONSTRAINT [PK_movie_review] PRIMARY KEY ([ID]),
     CONSTRAINT [FK_movie_review_movie_ID] FOREIGN KEY ([movieID]) REFERENCES [movie] ([ID]) ON DELETE NO ACTION,
-    CONSTRAINT [FK_movie_review_user_ID] FOREIGN KEY ([userID]) REFERENCES [user] ([ID]) ON DELETE NO ACTION
+    CONSTRAINT [FK_movie_review_user_ID] FOREIGN KEY ([userID]) REFERENCES [Users] ([Id]) ON DELETE NO ACTION
+);
+GO
+
+CREATE TABLE [UserClaims] (
+    [Id] int NOT NULL IDENTITY,
+    [UserId] nvarchar(450) NOT NULL,
+    [ClaimType] nvarchar(max) NULL,
+    [ClaimValue] nvarchar(max) NULL,
+    CONSTRAINT [PK_UserClaims] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_UserClaims_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
+);
+GO
+
+CREATE TABLE [UserLogins] (
+    [LoginProvider] nvarchar(128) NOT NULL,
+    [ProviderKey] nvarchar(128) NOT NULL,
+    [ProviderDisplayName] nvarchar(max) NULL,
+    [UserId] nvarchar(450) NOT NULL,
+    CONSTRAINT [PK_UserLogins] PRIMARY KEY ([LoginProvider], [ProviderKey]),
+    CONSTRAINT [FK_UserLogins_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
+);
+GO
+
+CREATE TABLE [UserRoles] (
+    [UserId] nvarchar(450) NOT NULL,
+    [RoleId] nvarchar(450) NOT NULL,
+    CONSTRAINT [PK_UserRoles] PRIMARY KEY ([UserId], [RoleId]),
+    CONSTRAINT [FK_UserRoles_Roles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_UserRoles_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
+);
+GO
+
+CREATE TABLE [UserTokens] (
+    [UserId] nvarchar(450) NOT NULL,
+    [LoginProvider] nvarchar(128) NOT NULL,
+    [Name] nvarchar(128) NOT NULL,
+    [Value] nvarchar(max) NULL,
+    CONSTRAINT [PK_UserTokens] PRIMARY KEY ([UserId], [LoginProvider], [Name]),
+    CONSTRAINT [FK_UserTokens_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
 );
 GO
 
@@ -233,6 +297,12 @@ GO
 CREATE INDEX [IX_movie_crew_personID] ON [movie_crew] ([personID]);
 GO
 
+CREATE INDEX [IX_movie_favourite_movieID] ON [movie_favourite] ([movieID]);
+GO
+
+CREATE INDEX [IX_movie_favourite_userID] ON [movie_favourite] ([userID]);
+GO
+
 CREATE INDEX [IX_movie_genre_genreID] ON [movie_genre] ([genreID]);
 GO
 
@@ -254,11 +324,42 @@ GO
 CREATE INDEX [IX_movie_source_movie_id] ON [movie_source] ([movie_id]);
 GO
 
-CREATE INDEX [IX_user_roleId] ON [user] ([roleId]);
+CREATE INDEX [IX_RoleClaims_RoleId] ON [RoleClaims] ([RoleId]);
+GO
+
+CREATE UNIQUE INDEX [RoleNameIndex] ON [Roles] ([NormalizedName]) WHERE [NormalizedName] IS NOT NULL;
+GO
+
+CREATE INDEX [IX_UserClaims_UserId] ON [UserClaims] ([UserId]);
+GO
+
+CREATE INDEX [IX_UserLogins_UserId] ON [UserLogins] ([UserId]);
+GO
+
+CREATE INDEX [IX_UserRoles_RoleId] ON [UserRoles] ([RoleId]);
+GO
+
+CREATE INDEX [EmailIndex] ON [Users] ([NormalizedEmail]);
+GO
+
+CREATE UNIQUE INDEX [UserNameIndex] ON [Users] ([NormalizedUserName]) WHERE [NormalizedUserName] IS NOT NULL;
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20220705133108_Init', N'5.0.17');
+VALUES (N'20220710070516_Movie247_V1', N'5.0.17');
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+ALTER TABLE [Users] ADD [Image] nvarchar(100) NULL;
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20220710094855_Movie247_V2_UserImage', N'5.0.17');
 GO
 
 COMMIT;

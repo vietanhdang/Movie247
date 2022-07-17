@@ -1,8 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using Movie247.Areas.Identity.Data
-@inject SignInManager<Movie247User> SignInManager
-@inject UserManager<Movie247User> UserManager
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE 7]>
 <html class="ie ie7 no-js" lang="en-US">
 <![endif]-->
@@ -13,16 +9,18 @@
 <html lang="en" class="no-js">
 
 <!-- 40414:39-->
+@using Movie247.Controllers
 
 <head>
     <!-- Basic need -->
     <title>@ViewData["Title"]</title>
     <meta charset="UTF-8">
-    <meta name="description" content="">
-    <meta name="keywords" content="">
-    <meta name="author" content="">
+    <meta name="description" content="This web contribute for everyone can watch movie free">
+    <meta name="keywords" content="films, film, movie247, movie, free film, watch movie free">
+    <meta name="author" content="Dang Viet Anh">
     <link rel="profile" href="#">
 
+    <link rel="shortcut icon" href="~/web/images/logo4.ico" />
     <!--Google Font-->
     <link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Dosis:400,700,500|Nunito:300,400,600' />
     <!-- Mobile specific meta -->
@@ -32,20 +30,28 @@
     <!-- CSS files -->
     <link rel="stylesheet" href="~/web/css/plugins.css">
     <link rel="stylesheet" href="~/web/css/style.css">
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.2/plyr.css" />
+    <link rel="stylesheet" href="~/web/css/select2.min.css">
+    <style>
+        .dropdown-menu.level1 li:hover a {
+            background-color: orangered;
+        }
 
+        .dropdown-menu.level1 li:hover {
+            background-color: orangered;
+        }
+    </style>
 </head>
 
 <body>
     <div id="preloader">
-        <img class="logo" src="~/web/images/logo1.png" alt="" width="119" height="58">
+        <img class="logo" src="~/web/images/logo6.png" alt="">
         <div id="status">
             <span></span>
             <span></span>
         </div>
     </div>
     <!-- BEGIN | Header -->
-    <header class="ht-header">
+    <header class="ht-header" class="sticky">
         <div class="container">
             <nav class="navbar navbar-default navbar-custom">
                 <!-- Brand and toggle get grouped for better mobile display -->
@@ -59,7 +65,7 @@
                         </div>
                     </div>
                     <a href="index-2.html">
-                        <img class="logo" src="~/web/images/logo1.png" alt="" width="119" height="58">
+                        <img class="logo" src="~/web/images/logo4.png" width="70%" alt="">
                     </a>
                 </div>
                 <!-- Collect the nav links, forms, and other content for toggling -->
@@ -81,39 +87,31 @@
                             <a class="btn btn-default dropdown-toggle lv1" data-toggle="dropdown" data-hover="dropdown">
                                 Genre <i class="fa fa-angle-down" aria-hidden="true"></i>
                             </a>
-                            <ul class="dropdown-menu level1">
-
-                                <li><a>1</a></li>
-
+                            <ul class="dropdown-menu level1" style="max-height: 50vh;overflow: auto;">
+                                @foreach (var i in CommonController.GetCategory())
+                                {
+                                    <li>
+                                        <a href="/Movie/List?GenreId=@i.Id">@i.Name</a>
+                                    </li>
+                                }
                             </ul>
                         </li>
-
                         <li class="dropdown first">
                             <a class="btn btn-default dropdown-toggle lv1" data-toggle="dropdown" data-hover="dropdown">
                                 Country <i class="fa fa-angle-down" aria-hidden="true"></i>
                             </a>
-                            <ul class="dropdown-menu level1">
-                                <li><a href="userfavoritegrid.html">user favorite grid</a></li>
-                                <li><a href="userfavoritelist.html">user favorite list</a></li>
-                                <li><a href="userprofile.html">user profile</a></li>
-                                <li class="it-last"><a href="userrate.html">user rate</a></li>
+                            <ul class="dropdown-menu level1" style="max-height: 50vh;overflow: auto;">
+                                @foreach (var i in CommonController.GetProductionCountry())
+                                {
+                                    <li>
+                                        <a href="/Movie/List?CountryId=@i.Id">@i.Name</a>
+                                    </li>
+                                }
                             </ul>
                         </li>
                     </ul>
                     <ul class="nav navbar-nav flex-child-menu menu-right">
-                        <li class="dropdown first">
-                            <a class="btn btn-default dropdown-toggle lv1" data-toggle="dropdown" data-hover="dropdown">
-                                pages <i class="fa fa-angle-down" aria-hidden="true"></i>
-                            </a>
-                            <ul class="dropdown-menu level1">
-                                <li><a href="landing.html">Landing</a></li>
-                                <li><a href="404.html">404 Page</a></li>
-                                <li class="it-last"><a href="comingsoon.html">Coming soon</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#">Help</a></li>
-                        @*<li class="loginLink"><a href="#">LOG In</a></li>
-                            <li class="btn signupLink"><a href="#">sign up</a></li>*@
+                        <li><a id="go-to-footer">Contact</a></li>
                         @await Html.PartialAsync("_LoginPartial")
                     </ul>
                 </div>
@@ -121,12 +119,13 @@
             </nav>
 
             <!-- top search form -->
-            <div class="top-search">
-                <select>
-                    <option value="united">MOVIE</option>
+            <form class="top-search" id="top-search">
+                <select name="name">
+                    <option value="movie">MOVIE</option>
+                    <option value="celebrity">CELEBRITY</option>
                 </select>
-                <input type="text" placeholder="Search for a movie that you are looking for">
-            </div>
+                <input type="text" placeholder="Search for a movie or celebrity that you are looking for">
+            </form>
         </div>
     </header>
 
@@ -139,270 +138,104 @@
         <div class="container">
             <div class="flex-parent-ft">
                 <div class="flex-child-ft item1">
-                    <a href="index-2.html"><img class="logo" src="~/web/images/logo1.png" alt=""></a>
+                    <a href="/"><img class="logo" src="~/web/images/logo4.png" alt=""></a>
                     <p>
-                        5th Avenue st, manhattan<br>
-                        New York, NY 10001
+                        HE151359 - Dang Viet Anh - Dai Hoc FPT<br>
+                        Lang Hoa Lac, Ha Noi
                     </p>
-                    <p>Call us: <a href="#">(+01) 202 342 6789</a></p>
+                    <p>Call me: <a href="#">(+84) 36863 9828</a></p>
                 </div>
                 <div class="flex-child-ft item2">
                     <h4>Resources</h4>
                     <ul>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Blockbuster</a></li>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">Help Center</a></li>
+                        <li><a href="/Movie/List">List Of Movie</a></li>
+                        <li><a href="/Celebrity/List">Celebrity</a></li>
                     </ul>
                 </div>
                 <div class="flex-child-ft item3">
-                    <h4>Legal</h4>
+                    <h4>Account</h4>
                     <ul>
-                        <li><a href="#">Terms of Use</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Security</a></li>
+                        <li><a href="/User">My Account</a></li>
+                        <li><a href="/User/Favourite">Watchlist</a></li>
+                        <li><a href="/User/Rated">Rated</a></li>
                     </ul>
                 </div>
                 <div class="flex-child-ft item4">
-                    <h4>Account</h4>
+                    <div class="backtotop">
+                        <p><a href="#" id="back-to-top">Back to top <i class="ion-ios-arrow-thin-up"></i></a></p>
+                    </div>
+                </div>
+
+                @* <div class="flex-child-ft item3">
+                    <h4>Legal</h4>
                     <ul>
-                        <li><a href="#">My Account</a></li>
-                        <li><a href="#">Watchlist</a></li>
-                        <li><a href="#">Collections</a></li>
-                        <li><a href="#">User Guide</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Security</a></li>
                     </ul>
-                </div>
-                <div class="flex-child-ft item5">
-                    <h4>Newsletter</h4>
-                    <p>Subscribe to our newsletter system now <br> to get latest news from us.</p>
-                    <form action="#">
-                        <input type="text" placeholder="Enter your email...">
-                    </form>
-                    <a href="#" class="btn">Subscribe now <i class="ion-ios-arrow-forward"></i></a>
-                </div>
+                    </div> *@
+
             </div>
         </div>
         <div class="ft-copyright">
             <div class="ft-left">
                 <p><a target="_blank" href="https://www.templateshub.net">Templates Hub</a></p>
             </div>
-            <div class="backtotop">
+            @* <div class="backtotop">
                 <p><a href="#" id="back-to-top">Back to top <i class="ion-ios-arrow-thin-up"></i></a></p>
-            </div>
+                </div> *@
         </div>
     </footer>
 
-    @if (!SignInManager.IsSignedIn(User))
-    {
-        <!-- end of footer section-->
-        <!--login form popup-->
-        <div class="login-wrapper" id="login-content">
-            <div class="login-content">
-                <a href="#" class="close">x</a>
-                <h3>Login</h3>
-                <form method="post" action="#" id="login-form">
-                    <div class="row">
-                        <label for="username">
-                            Username or Email:
-                            <input type="text" name="username" id="username" required="required" />
-                        </label>
-                    </div>
-
-                    <div class="row">
-                        <label for="password">
-                            Password:
-                            <input type="password" name="password" id="password" required="required" />
-                        </label>
-                    </div>
-                    <div class="row">
-                        <div class="remember">
-                            <div>
-                                <input type="checkbox" name="remember" value="Remember me"><span>Remember me</span>
-                            </div>
-                            <a href="#">Forget password ?</a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <button type="submit" id="login-button">Login</button>
-                    </div>
-                </form>
-                <div class="row">
-
-                    <p>Or via social</p>
-                    <div class="social-btn-2">
-                        @await Html.PartialAsync("_ExternalLogin")
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--end of login form popup-->
-        <!--signup form popup-->
-        <div class="login-wrapper" id="signup-content">
-            <div class="login-content">
-                <a href="#" class="close">x</a>
-                <h3>sign up</h3>
-                <form method="post" id="register-form">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label for="username-2">
-                                Username:
-                                <input type="text" name="username" id="username-2" required="required" />
-                            </label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="firstname-2">
-                                First Name:
-                                <input type="text" name="firstname" id="firstname-2" required="required" />
-                            </label>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="lastname-2">
-                                Last Name:
-                                <input type="text" name="lastname" id="lastname-2" required="required" />
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label for="email-2">
-                                your email:
-                                <input type="email" name="email" id="email-2" placeholder="" required="required" />
-                            </label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="password-2">
-                                Password:
-                                <input type="password" name="password" id="password-2" required="required" />
-                            </label>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="repassword-2">
-                                re-type Password:
-                                <input type="password" name="password" id="repassword-2" required="required" />
-                            </label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <button type="submit" id="register-button">Sign up</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <!--end of signup form popup-->
-    }
 
 
-
-
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/web/js/sweetalert.min.js"></script>
     <script src="~/web/js/jquery.js"></script>
     <script src="~/web/js/plugins.js"></script>
     <script src="~/web/js/plugins2.js"></script>
     <script src="~/web/js/custom.js"></script>
-
-    <script src="https://cdn.plyr.io/3.7.2/plyr.polyfilled.js"></script>
+    <script src="~/web/js/select2.min.js"></script>
     <script>
-        // using ajax to send the login data to the server
-        $(document).ready(function () {
-            // if button name is login
-            $("#login-button").click(function () {
-                $('#login-form').submit(function (e) {
-                    e.preventDefault();
-                    var username = $('#username').val();
-                    var password = $('#password').val();
-                    var remember = $('#remember').val();
-                    $.ajax({
-                        url: '/User/Login',
-                        type: 'POST',
-                        data: {
-                            Email: username,
-                            Password: password,
-                            RememberMe: remember
-                        },
-                        success: function (data) {
-                            if (data.success) {
-                                swal({
-                                    title: "Success",
-                                    text: "Login Successful",
-                                    icon: "success",
-                                    timer: 2000,
-                                    button: "OK",
-                                }).then(function () {
-                                    window.location.reload();
-                                });
-                            } else {
-                                // if data message is an array, it means that there are multiple errors
-                                if (data.message instanceof Array) {
-                                    swal("Login Failed", data.message.join('\n').replace(/<(?:.|\n)*?>/gm, ''), "error");
-                                } else {
-                                    swal("Login Failed", data.message, "error");
-                                }
-                            }
-                        }
-                    });
-                });
-            });
-
-            // if button name is register
-            $("#register-button").click(function () {
-                $("#register-form").submit(function (e) {
-                    e.preventDefault();
-                    var username = $('#username-2').val();
-                    var password = $('#password-2').val();
-                    var confirmPassword = $('#repassword-2').val();
-                    var email = $('#email-2').val();
-                    var firstName = $('#firstname-2').val();
-                    var lastName = $('#lastname-2').val();
-                    // animation swal waiting for the server response
-                    swal({
-                        title: "Please wait",
-                        text: "We are processing your request",
-                        buttons: false,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        allowEnterKey: false,
-                        onOpen: () => {
-                            swal.showLoading();
-                        }
-                    });
-                    $.ajax({
-                        url: '/User/Register',
-                        type: 'POST',
-                        data: {
-                            Email: email,
-                            Password: password,
-                            ConfirmPassword: confirmPassword,
-                            FirstName: firstName,
-                            LastName: lastName,
-                            Username: username
-                        },
-                        success: function (data) {
-                            if (data.success) {
-                                swal({
-                                    title: "Success",
-                                    text: data.message,
-                                    icon: "success",
-                                    timer: 2000,
-                                    button: "OK",
-                                });
-                            } else {
-                                // if data message is an array, it means that there are multiple errors
-                                if (data.message instanceof Array) {
-                                    swal("Register Failed", data.message.join('\n').replace(/<(?:.|\n)*?>/gm, ''), "error");
-                                } else {
-                                    swal("Register Failed", data.message, "error");
-                                }
-                            }
-                        }
-                    });
-                });
-            });
+        $("#top-search").on("submit", function (e) {
+            e.preventDefault();
+            var name = $("#top-search select[name=name]").val();
+            var value = $("#top-search input[type=text]").val();
+            if (name == "movie") {
+                window.location.href = "/Movie/List" + "?name=" + value;
+            } else {
+                window.location.href = "/Celebrity/List" + "?name=" + value;
+            }
         });
+        function waitingResponse() {
+            swal({
+                title: "Please wait",
+                text: "We are processing your request",
+                buttons: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                onOpen: () => {
+                    swal.showLoading();
+                }
+            });
+        }
+        function showMessage(status, message, reload) {
+            swal({
+                title: status == "success" ? "Success" : "Error",
+                text: message,
+                icon: status == "success" ? "success" : "error",
+                button: "OK",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false
+            }).then(function () {
+                if (reload) {
+                    if (status == "success") {
+                        window.location.reload();
+                    }
+                }
+            });
+        }
     </script>
     <!--
         <script src="~/lib/jquery/dist/jquery.min.js"></script>

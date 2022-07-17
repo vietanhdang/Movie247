@@ -1,8 +1,86 @@
 ﻿@using Movie247.Models
 @model Movie247.Models.Movie
 @{
+    ViewData["Title"] = "Watching: " + Model.Title;
     string sourceUrl = (string)ViewData["Source"];
+    MovieReview movieReview = ViewBag.ReviewdMovies;
+    string userId = ViewBag.UserId;
 }
+
+<style>
+    .source-link {
+        font-family: 'Dosis', sans-serif;
+    }
+
+        .source-link:hover {
+            text-decoration: underline;
+        }
+
+    .active {
+        font-weight: bold;
+        color: red;
+    }
+
+    .rate-star {
+        font-size: 36px;
+        color: #ffb400;
+    }
+
+        .rate-star i {
+            color: #f5b50a;
+            cursor: pointer;
+            animation: star-animation 1s infinite;
+        }
+
+    .text-success {
+        color: green;
+        font-size: 14px;
+    }
+
+    .btn-comment {
+        color: black;
+        padding: 4px;
+        outline: none;
+        border-radius: max(0px, min(8px, calc((100vw - 4px - 100%) * 9999)));
+    }
+
+        .btn-comment.cancel {
+            background-color: #ffb400;
+            color: white;
+        }
+
+        .btn-comment.reply {
+            background-color: #0084ff;
+            margin-left: 0px;
+            color: white;
+        }
+
+        .btn-comment.delete {
+            background-color: red;
+            color: white;
+        }
+
+        .btn-comment.edit {
+            background-color: #0084ff;
+            color: white;
+        }
+
+    .edit-comment {
+        border-radius: 20px;
+        overflow: hidden;
+        min-height: 100px;
+        text-align: justify;
+    }
+
+    .intput-comment {
+        color: black;
+        padding: 4px;
+        outline: none;
+        width: 70%;
+        border-radius: max(30px, min(8px, calc((100vw - 4px - 100%) * 9999)));
+    }
+</style>
+<link rel="stylesheet" href="~/web/css/plyr.css">
 <div class="hero common-hero">
     <div class="container">
         <div class="row">
@@ -11,7 +89,8 @@
                     <h1> movie listing</h1>
                     <ul class="breadcumb">
                         <li><a href="/Home">Home</a></li>
-                        <li> <span class="ion-ios-arrow-right"></span> <a href="/Movies/List">Movies</a></li>
+                        <li> <span class="ion-ios-arrow-right"></span> <a href="/Movie/List">Movies</a></li>
+                        <li> <span class="ion-ios-arrow-right"></span> <a href="/Movie/Details/@Model.Id">@Model.Title</a></li>
                         <li class="active"><span class="ion-ios-arrow-right"></span> <a>Watching : @Model.Title</a></li>
                     </ul>
                 </div>
@@ -29,151 +108,192 @@
                         You're watching @Model.Title. If you can't watch the movie, try
                         reloading the page or try another resource link below
                     </marquee>
-                    <div class="plyr__video-embed" id="player">
-                        @if (!sourceUrl.Contains(".m3u8"))
-                        {
-                            <iframe
-                            src="@sourceUrl?origin=https://plyr.io&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1"
-                            allowfullscreen allowtransparency
-                            width="100%" height="480px"
-                             allow="autoplay"></iframe>
 
-                        }
-                    </div>
-                    @section Scripts{
-                    <script src="~/web/js/hls.js"></script>
-                    <script>
-                        const player = new Plyr('#player');
-                        function ChangeLink(link) {
-                            // if link contains hls, then use hls.js
-                            var play = $('#player');
-                            if (link.includes("m3u8")) {
-                                // remove the iframe
-                                play.empty();
-                                // create a new video play
-                                var video = document.createElement('video');
-                                video.setAttribute('controls', 'controls');
-                                video.setAttribute('width', '100%');
-                                video.setAttribute('height', '480px');
-                                video.setAttribute('autoplay', 'autoplay');
-                                play.append(video);
-                                // create a source element
-                                play_stream(link);
-                            } else {
-                                // return to the iframe
-                                play.empty();
-                                play.append('<iframe src="' + link + '" allowfullscreen allowtransparency width="100%" height="480px" allow="autoplay"></iframe>');
-                            }
-                        }
-                    </script>
-                    <script>
-                        function play_stream(url) {
-                            var video = document.querySelector('video');
-                            var m3u8Url = decodeURIComponent(url);
-                            if (Hls.isSupported()) {
-                                var hls = new Hls();
-                                hls.loadSource(m3u8Url);
-                                hls.attachMedia(video);
-                                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                                    video.play();
-                                });
-                                document.title = url;
-                            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                                video.src = m3u8Url;
-                                video.addEventListener('loadedmetadata', function () {
-                                    video.play();
-                                });
-                                document.title = url;
-                            }
-                        }
-                    </script>
-                    <script>
-                        var source = "@ViewBag.Source";
-                        if (source.includes("m3u8")) {
-                            ChangeLink(source);
-                        }
-                    </script>
-                    }
+                    <video controls preload="metadata" id="player"
+                           poster="~/web/images/movie/backdrop/@Model.BackdropPath" height="100%" width="100%">
+                        <source src="" type="video/mp4" size="" />
+                    </video>
+
                     <div class="flex-it share-tag">
+                        <div class="right-it">
+                            <h4>Views: @Model.Views?.ToString("#,##0.###")</h4>
+                        </div>
                         <div class="right-it">
                             <h4>Source: </h4>
                             @foreach (var item in @Model.MovieSources)
                             {
                                 <span>
-                                    <button onclick="ChangeLink('@item.LinkSource')">
+                                    <button onclick="ChangeLink('@item.LinkSource', @item.Id)" class="source-link" data-id="@item.Id"
+                                        data-source="@item.LinkSource">
                                         <i class="fa fa-database"></i>
                                         @item.Description
                                     </button>
                                 </span>
                             }
                         </div>
-                        <div class="right-it">
-                            <h4>Tags</h4>
-                            @if (Model.MovieKeywords.Count > 0)
-                            {
-                                @foreach (MovieKeyword movieKeyword in Model.MovieKeywords)
-                                {
-                                    <span class="time">
-                                        <a href="#">
-                                            @movieKeyword.Keyword.KeywordName,
-                                        </a>
-                                    </span>
-                                }
-                            }
-                            else
-                            {
-                                <span class="time">
-                                    <a>
-                                        No Keywords
-                                    </a>
-                                </span>
-                            }
-                        </div>
                     </div>
+
                     <!-- comment items -->
-                    <div class="comments">
-                        <h4>04 Comments</h4>
-                        <div class="cmt-item flex-it">
-                            <img src="images/uploads/author.png" alt="">
-                            <div class="author-infor">
-                                <div class="flex-it2">
-                                    <h6><a href="#">Steve Perry</a></h6> <span class="time"> - 27 Mar 2017</span>
-                                </div>
-                                <p>
-                                    Even though Journey's classic vocalist Steve Perry didn’t reunite with the band
-                                    during their Rock Hall performance (to the dismay of hopeful fans), he did offer up
-                                    a touching speech.
-                                </p>
-                                <p><a class="rep-btn" href="#">+ Reply</a></p>
-                            </div>
-                        </div>
-                    </div>
                     <div class="comment-form">
-                        <h4>Leave a comment</h4>
-                        <form action="#" class="">
+                        <h4>
+                            Leave a review
+                            @if (movieReview != null)
+                            {
+                                <span class="text-success">Reviewed</span>
+                            }
+                        </h4>
+                        <form method="post" id="comment-form">
                             <div class="movie-rate">
                                 <div class="rate-star">
                                     <p>Rate This Movie: </p>
-                                    <i class="ion-ios-star"></i>
-                                    <i class="ion-ios-star"></i>
-                                    <i class="ion-ios-star"></i>
-                                    <i class="ion-ios-star"></i>
-                                    <i class="ion-ios-star"></i>
-                                    <i class="ion-ios-star"></i>
-                                    <i class="ion-ios-star"></i>
-                                    <i class="ion-ios-star"></i>
-                                    <i class="ion-ios-star-outline"></i>
+                                    @if (movieReview != null)
+                                    {
+                                        for (int i = 1; i <= 10; i++)
+                                        {
+                                            if (i <= movieReview.Rating)
+                                            {
+                                                <i class="ion-ios-star" onclick="RateMovie(@i)"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="ion-ios-star-outline" onclick="RateMovie(@i)"></i>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <i class="ion-ios-star-outline" onclick="RateMovie(1)"></i>
+                                        <i class="ion-ios-star-outline" onclick="RateMovie(2)"></i>
+                                        <i class="ion-ios-star-outline" onclick="RateMovie(3)"></i>
+                                        <i class="ion-ios-star-outline" onclick="RateMovie(4)"></i>
+                                        <i class="ion-ios-star-outline" onclick="RateMovie(5)"></i>
+                                        <i class="ion-ios-star-outline" onclick="RateMovie(6)"></i>
+                                        <i class="ion-ios-star-outline" onclick="RateMovie(7)"></i>
+                                        <i class="ion-ios-star-outline" onclick="RateMovie(8)"></i>
+                                        <i class="ion-ios-star-outline" onclick="RateMovie(9)"></i>
+                                        <i class="ion-ios-star-outline" onclick="RateMovie(10)"></i>
+                                    }
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <textarea name="message" id="" placeholder="Message"></textarea>
+                                    <textarea name="message" id="" placeholder="Your review here..." maxlength="300" style="height: 100px;">@movieReview?.Comment</textarea>
                                 </div>
+                                @if (movieReview != null)
+                                {
+                                    <div class="col-md-12" style="color:white;text-align: right;">
+                                        <span>Created: @movieReview.CreateAt.Value.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                                        @if (movieReview.UpdateAt != null)
+                                        {
+                                            <span> - (Updated: @movieReview.UpdateAt.Value.ToString("dd/MM/yyyy HH:mm:ss"))</span>
+                                        }
+                                    </div>
+
+                                }
                             </div>
-                            <input class="submit" type="submit" placeholder="submit">
+                            <div class="row">
+                                @if (movieReview != null)
+                                {
+                                    <input class="submit" type="submit" value="Edit">
+                                    <input class="submit" type="submit" value="Delete">
+                                }
+                                else
+                                {
+                                    <input class="submit" type="submit" value="Submit">
+                                }
+                            </div>
                         </form>
                     </div>
-                    <!-- comment form -->
+
+                    <!-- comment items -->
+                    <div class="flex-it share-tag">
+                        <h4>Comment</h4>
+                    </div>
+                    <div class="comments" id="review-item">
+                        <h4>04 Comments</h4>
+                        @foreach (MovieComment item in ViewBag.MovieComments as List<MovieComment>)
+                        {
+                            int level = 0;
+                            await RenderCategory(@item, @level);
+                        }
+                        @{
+                            async Task RenderCategory(MovieComment item, int level)
+                            {
+
+                                <div class="cmt-item flex-it" style="padding: 0 10px;padding-left: @(level * 50)px;justify-content:start; align-items:start; margin-top: @(level==0 ? 30:0)px; position: relative;">
+
+                                    <img src="~/web/images/users/@item.UserId/profile/@item.User.Image" style="width:50px; height: 50px;border-radius: 50%;margin: 20px 10px;z-index: 999;" alt="">
+                                    @* <span style="content:'';display: inline-block;width: 1px;height: @(item.MovieCommentChildren?.Count==0? "40px":"100%");background-color: #ffc107;margin-right: 10px;position: absolute;left: 32px;top:@(level==0 ? 84:0)px;z-index: 2;"></span> *@
+
+
+                                    @*
+                                        @if (level != 0 && item.MovieCommentChildren?.Count > 0)
+                                        {
+                                        for (int i = 0; i <= level; i++)
+                                        {
+                                        <span style="content:'';display: inline-block;width: 1px;height: calc(100%);background-color: #ffc107;margin-right: 10px;position: absolute;left:@(i*50+32)px;top:40px;z-index: 2;"></span>
+
+                                        }
+                                        }
+                                        @if (level == 0 && item.MovieCommentChildren?.Count > 0)
+                                        {
+                                        <span style="content:'';display: inline-block;width: 1px;height: 100%;background-color: #ffc107;margin-right: 10px;position: absolute;left:32px;top:40px;z-index: 2;"></span>
+
+                                        }
+                                        @if (level != 0 && item.MovieCommentChildren?.Count == 0)
+                                        {
+
+                                        }
+                                        @if (level != 0 && item.MovieCommentChildren?.Count == 0)
+                                        {
+                                        for (int i = 0; i < level; i++)
+                                        {
+                                        <span style="content:'';display: inline-block;width: 1px;height: calc(100%+40px);background-color: #ffc107;margin-right: 10px;position: absolute;left:@((level-1)*50+32)px;top:80px;z-index: 2;"></span>
+
+                                        }
+                                        }
+                                        <span style="content:'';display: inline-block;width: 1px;height: @(item.MovieCommentChildren?.Count==0? "40px":"calc(100% - 40px)");background-color: #ffc107;margin-right: 10px;position: absolute;left: @(level==0?32:level*50+32)px;top:80px;z-index: 2;"></span>
+                                    *@
+                                    @*Thanh kẻ ngang
+                                        @if (level != 0)
+                                        {
+                                        <span style="content:'';display: inline-block;width: 27px;height: 1px;background-color: #ffc107;margin-right: 10px;position: absolute;left: @(level==0?32:level*50-18)px;top:@(level==0 ? 84:40)px;"></span>
+                                        }
+                                    *@
+
+
+                                    <div class="author-infor" style="padding: 0;width: 100%;">
+                                        <div class="flex-it2">
+                                            <h6><a>@item.User.Firstname @item.User.LastName</a></h6> <span class="time"> - @item.CreateAt.Value.ToString("dd/MM/yyyy HH:mm:ss") @(item.ParentMovieComment==null? "": $" - reply to {item.ParentMovieComment.User.Firstname} {item.ParentMovieComment.User.LastName}" ) level: @level</span>
+                                        </div>
+                                        <p id="comment-item-@item.Id" style="margin-bottom: 0;">@item.Comment</p>
+                                        @if (item.User.Id == userId)
+                                        {
+                                            <p id="comment-edit-show-@item.Id"></p>
+                                            <p id="comment-action-@item.Id">
+                                                <button class="btn-comment edit" onclick="EditComment(@item.Id)">Edit</button>
+                                                <button id="" class="btn-comment delete" onclick="DeleteComment(@item.Id, @item.MovieId)">Delete</button>
+                                            </p>
+                                        }
+                                        else
+                                        {
+                                            <p><button id="reply-btn-@item.Id" class="btn-comment" onclick="ShowInput(@item.Id, @item.MovieId)">Reply</button></p>
+                                            @* <a id="reply-btn-@item.Id" onclick="ShowInput(@item.Id, @item.MovieId)" class="comment-text">Reply</a> *@
+                                        }
+                                        <p id="reply-input-@item.Id">
+                                        </p>
+                                    </div>
+                                </div>
+                                if (item.MovieCommentChildren?.Count > 0)
+                                {
+                                    foreach (var cReview in item.MovieCommentChildren)
+                                    {
+                                        await RenderCategory(cReview, level + 1);
+                                    }
+                                }
+                            }
+                        }
+                    </div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-12 col-xs-12">
@@ -186,7 +306,7 @@
                                 <div class="celeb-item">
                                     <a href="/Movie/Details/@movie.Id">
                                         <img src="~/web/images/movie/poster/@movie.PosterPath" alt="" width="70"
-                                        height="70">
+                                         height="70">
                                     </a>
                                     <div class="celeb-author" style="margin-left: 10px;">
                                         <h6><a href="/Movie/Details/@movie.Id">@movie.Title</a></h6>
@@ -197,10 +317,6 @@
                             }
                         </div>
                     </div>
-
-                    <div class="ads">
-                        <img src="images/uploads/ads1.png" alt="">
-                    </div>
                 </div>
             </div>
         </div>
@@ -208,3 +324,291 @@
 </div>
 <!-- end of  blog detail section-->
 <!-- end player -->
+@section Scripts{
+<script src="~/web/js/hls.js"></script>
+<script src="~/web/js/plyr.js"></script>
+<script>
+    function EditComment(id)
+    {
+        var comment = $("#comment-item-" + id).text();
+        $("#comment-item-" + id).hide();
+        $("#comment-action-" + id + " .edit").hide();
+         let html = `<textarea  class="edit-comment" cols="100" rows="10" id="comment-edit-${id}" name="comment">${comment}</textarea>`;
+        $("#comment-edit-show-" + id).html(html);
+        $("#comment-action-" + id).append(`<button class="btn-comment cancel" onclick="CancelEdit(${id})">Cancel</button>`);
+        $("#comment-action-" + id).append(`<button class="btn-comment reply" onclick="SaveEdit(${id})">Save</button>`);
+
+    }
+    function CancelEdit(id)
+    {
+        $("#comment-edit-" + id).remove();
+        $("#comment-action-" + id + " .cancel").remove();
+        $("#comment-action-" + id + " .reply").remove();
+        $("#comment-item-" + id).show();
+        $("#comment-action-" + id + " .edit").show();
+    }
+    function ShowInput(commentId, movieId){
+        let html = `
+        <input name="comment-value" class="intput-comment" placeholder="Reply..." />
+        <button class="btn-comment reply" onclick="ReplyComment(${commentId}, ${movieId})">Reply</button>
+        <button class="btn-comment cancel" onclick="CancelReply(${commentId}, ${movieId})">Cancel</button>
+        `;
+        $("#reply-input-" + commentId).append(html);
+        $("#reply-btn-" + commentId).hide();
+    }
+    function CancelReply(commentId, movieId){
+        $("#reply-input-" + commentId).empty();
+        $("#reply-btn-" + commentId).show();
+    }
+    function SaveEdit(commentId){
+        let commentValue = $("#comment-edit-" + commentId).val();
+        if (commentValue == "")
+        {
+            showMessage("error", "Comment is required");
+            return;
+        }
+        $.ajax({
+            url: "/User/EditComment",
+            type: "POST",
+            data: {
+                commentId: commentId,
+                comment: commentValue.trim()
+            },
+            success: function(response){
+                if(response.success){
+                    showMessage('success', response.message, true);
+                }
+                else{
+                    showMessage("error", response.message);
+                }
+            }
+        });
+    }
+    function ReplyComment(commentId, movieId){
+        let commentValue = $("#reply-input-" + commentId + " input").val();
+        if (commentValue == "")
+        {
+            showMessage("error", "Comment is required");
+            return;
+        }
+        $.ajax({
+            url: "/User/ReplyComment",
+            type: "POST",
+            data: {
+                commentId: commentId,
+                movieId: movieId,
+                reply: commentValue
+            },
+            success: function(response){
+                if(response.success){
+                    showMessage('success', response.message, true);
+                }
+                else{
+                    showMessage("error", response.message);
+                }
+            }
+        });
+    }
+    function DeleteComment(commentId, movieId){
+         swal({
+            title: "Are you sure?",
+            text: "Do you want to delete this comment?",
+            type: "warning",
+            buttons: ["Cancel", "Yes, delete it!"],
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                waitingResponse();
+                $.ajax({
+                url: "/User/DeleteComment",
+                type: "POST",
+                data: {
+                    commentId: commentId,
+                    movieId: movieId
+                },
+                success: function(response){
+                    if(response.success){
+                        showMessage('success', response.message, true);
+                    }
+                    else{
+                        showMessage("error", response.message);
+                    }
+                }
+            });
+            }
+        });
+    }
+
+     // when user hovers i in rate-star change color of star
+    function RateMovie(rate) {
+         var rateStar = $(".rate-star i");
+         for (var i = 0; i < rateStar.length; i++) {
+             if (i < rate) {
+                 // remove class ion-ios-star-outline
+                 $(rateStar[i]).removeClass("ion-ios-star-outline");
+                 // add class ion-ios-star
+                 $(rateStar[i]).addClass("ion-ios-star");
+             } else {
+                 // remove class ion-ios-star
+                 $(rateStar[i]).removeClass("ion-ios-star");
+                 // add class ion-ios-star-outline
+                 $(rateStar[i]).addClass("ion-ios-star-outline");
+             }
+         }
+     }
+     $("#comment-form input[type='submit']").click(function(e) {
+            e.preventDefault();
+            let rateStar = $("i[class='ion-ios-star']").last().index();
+            let comment = $("#comment-form textarea").val().trim().replace(/\s+/g, ' ');
+             var action = $(this).val();
+            if (rateStar ==-1){
+                showMessage('error', 'Please rate this movie');
+            }
+            if(comment == ''){
+                showMessage('error', 'Please enter your comment');
+            }else{
+                comment = {
+                MovieId: @Model.Id,
+                Comment: $("#comment-form textarea").val(),
+                Rate: rateStar,
+                Action: action,
+            };
+            $.ajax({
+                type: "POST",
+                url: "/User/ReviewMovie",
+                data: comment,
+                success: function(response) {
+                    if(response.success){
+                        showMessage('success', response.message, true);
+                    }else{
+                        showMessage('error', response.message);
+                    }
+                }
+            });
+            }
+        });
+     function formatStringTime(num){
+         return num<10 ? "0"+num : num;
+     }
+     const player = new Plyr('#player');
+     /*------------ save the lasttime before user unload this page--------------------------------------*/
+     window.addEventListener("beforeunload", function(event) {
+             var currentTime = Math.floor(player.currentTime);
+             if(currentTime > 0){
+                 $.ajax({
+                     url: "/Movie/AddWatchedTime",
+                     type: "POST",
+                     data: {
+                         movieId: @Model.Id,
+                         currentTime: currentTime,
+                     },
+                     success: function (data) {
+                         console.log(data);
+                     }
+                 });
+             }
+     });
+      /*----------------------update plyr current lasttime after user play movie---------------------------*/
+     var canSeek = false;
+     player.on('ready', function(e){
+         canSeek = true;
+     });
+     player.on('playing', function(e){
+         if(canSeek){
+             $.ajax({
+                 url: "/Movie/GetWatchedTime",
+                 type: "POST",
+                 data: {
+                     movieId: @Model.Id
+                 },
+                 success: function (data) {
+                     if (data.lastTimeWatch > 0) {
+                         player.pause();
+                         // convert seconds to minutes
+                         let hours = Math.floor(data.lastTimeWatch / 3600);
+                         @* var minutes = Math.floor(data.lastTimeWatch / 60); *@
+                         @* var seconds = data.lastTimeWatch - minutes * 60; *@
+                         let minutes = Math.floor((data.lastTimeWatch - hours * 3600) / 60);
+                         let seconds = data.lastTimeWatch - hours * 3600 - minutes * 60;
+                         let time = formatStringTime(hours) + ":" + formatStringTime(minutes) + ":" + formatStringTime(seconds);
+                         if(hours <= 0){
+                             time = formatStringTime(minutes) + ":" + formatStringTime(seconds);
+                         }
+                         swal({
+                             title: "Continue watching?",
+                             text: "You have watched " + time + " of this movie",
+                             buttons: ["Cancel", "Continue"],
+                             icon: "warning",
+                             dangerMode: true,
+                         }).then((willDelete) => {
+                             if (willDelete) {
+                                 player.currentTime = data.lastTimeWatch;
+                                 player.play();
+                             }else{
+                                 player.play();
+                             }
+                         });
+                     }
+                 }
+             });
+             canSeek = false;
+         }
+     });
+     /*-----------------------update source video to video tag-------------------------------------------*/
+     function ChangeLink(source_link, source_id) {
+         var video = document.querySelector('video');
+         play_stream(source_link, source_id);
+         video.play();
+     }
+     var source_link = $(".source-link").first().attr("data-source");
+     var source_id = $(".source-link").first().attr("data-id");
+     play_stream(source_link, source_id);
+     function play_stream(url, movieId) {
+         var video = document.querySelector('video');
+         var m3u8Url = decodeURIComponent(url);
+         if (Hls.isSupported()) {
+             var hls = new Hls();
+             hls.loadSource(m3u8Url);
+             hls.attachMedia(video);
+             //document.title = url;
+         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+             video.src = m3u8Url;
+             //document.title = url;
+         }
+         $(".source-link").each(function () {
+             if ($(this).attr("data-id") == movieId) {
+                 $(this).addClass("active");
+             }else{
+                 $(this).removeClass("active");
+             }
+         });
+     }
+      /*-----------------------------Update view of movie if user watch currentime / duration = 1%---------------------------------------*/
+     var checkSendAjax = false;
+     player.on('play', () => {
+         setInterval(function () {
+             let currentTime = player.currentTime;
+             // store current time in cookie for later use in the next page load
+             let duration = player.duration;
+             let time = currentTime / duration;
+             time_percent = time * 100;
+             if (time_percent > 1) {
+                 if (!checkSendAjax) {
+                     $.ajax({
+                         url: '/Movie/UpdateView',
+                         type: 'POST',
+                         data: {
+                             'movieId': @Model.Id,
+                         },
+                         success: function (data) {
+                             console.log(data);
+                         }
+                     });
+                 }
+                 checkSendAjax = true;
+             }
+         }, 3000);
+     });
+      /*-----------------------------------------------------------------------------------------------*/
+</script>
+}

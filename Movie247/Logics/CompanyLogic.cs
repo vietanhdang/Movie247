@@ -4,22 +4,22 @@ using Movie247.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Movie247.Data;
 
 namespace Movie247.Logics
 {
     public class CompanyLogic
     {
-        private readonly MOVIEPROJECTContext _context;
+        private readonly Movie247Context _context;
 
-        public CompanyLogic(MOVIEPROJECTContext context)
+        public CompanyLogic()
         {
-            _context = context;
+            _context = new Movie247Context();
         }
 
-        public List<ProductionCompany> GetAllCompanies()
+        public async Task<List<ProductionCompany>> GetAllCompanies()
         {
-            var companies = _context.ProductionCompanies.ToList();
-            return companies;
+            return await _context.ProductionCompanies.ToListAsync();
         }
         public ProductionCompany GetCompanyById(int id)
         {
@@ -28,11 +28,10 @@ namespace Movie247.Logics
                 .FirstOrDefault(m => m.Id == id);
             return company;
         }
-        public MultiSelectList GetAllCompaniesAsMultiSelectList()
+        public async Task<MultiSelectList> GetAllCompaniesAsMultiSelectList()
         {
-            var companies = GetAllCompanies();
-            var multiSelectList = new MultiSelectList(companies, "Id", "Name");
-            return multiSelectList;
+            var companies = await GetAllCompanies();
+            return new MultiSelectList(companies, "Id", "Name");
         }
     }
 }

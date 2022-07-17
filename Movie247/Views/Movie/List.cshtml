@@ -48,7 +48,6 @@
                         <label>Movies per page: @filterHelper.PageSize</label>
                         @{
                             PagingModel pagingModel = ViewBag.Paging as PagingModel;
-
                         }
                         <partial name="_Paging" model=@pagingModel />
                     </div>
@@ -149,14 +148,14 @@
                             </div>
                         </form>
                     </div>
-                    <div class="ads">
+                    @* <div class="ads">
                         <img src="~/web/images/uploads/ads1.png" alt="">
-                    </div>
+                    </div> *@
                     <div class="sb-facebook sb-it">
                         <h4 class="sb-title">Find us on Facebook</h4>
                         @*<iframe src="~/web/#" data-src="~/web/js/https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Ftemplatespoint.net%2F%3Ffref%3Dts&tabs=timeline&width=340&height=315px&small_header=true&adapt_container_width=false&hide_cover=false&show_facepile=true&appId" height="315" style="width:100%;border:none;overflow:hidden"></iframe>*@
                     </div>
-                    <div class="sb-twitter sb-it">
+                    @* <div class="sb-twitter sb-it">
                         <h4 class="sb-title">Tweet to us</h4>
                         <div class="slick-tw">
                             <div class="tweet item" id="">
@@ -166,7 +165,7 @@
                                 <!-- Put your 2nd twiter account id here -->
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                 </div>
             </div>
         </div>

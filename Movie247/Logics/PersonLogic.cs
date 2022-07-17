@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Movie247.Data;
 using Movie247.Helpers;
 using Movie247.Models;
 using System;
@@ -10,19 +11,18 @@ namespace Movie247.Logics
 {
     public class PersonLogic
     {
-        private readonly MOVIEPROJECTContext _context;
+        private readonly Movie247Context _context;
 
-        public PersonLogic(MOVIEPROJECTContext context)
+        public PersonLogic()
         {
-            _context = context;
+            _context = new Movie247Context();
         }
 
 
         // Get top 10 people who have the most imdb ratings
-        public List<Person> GetTop10People()
+        public async Task<List<Person>> GetTop10People()
         {
-            var people = _context.People.OrderByDescending(p => p.Popularity).Take(10).ToList();
-            return people;
+            return await _context.People.OrderByDescending(p => p.Popularity).Take(10).ToListAsync();
         }
         public Person FindPersonById(int id)
         {
@@ -37,7 +37,7 @@ namespace Movie247.Logics
             int oldestYear = _context.People.Min(m => m.Birthday.Value.Year);
             return (latestYear, oldestYear);
         }
-        public List<Person> FindPersonByFilter(FilterModel filter)
+        public async Task<List<Person>> FindPersonByFilter(FilterModel filter)
         {
             var people = from p in _context.People
                          select p;
@@ -64,7 +64,7 @@ namespace Movie247.Logics
             filter.TotalCount = people.Count();
             if (filter.TotalCount <= 0)
             {
-                return people.ToList();
+                return await people.ToListAsync();
             }
             filter.TotalPages = (int)Math.Ceiling((double)filter.TotalCount / filter.PageSize);
             if (filter.Page < 1)
@@ -118,7 +118,7 @@ namespace Movie247.Logics
                     people = people.OrderByDescending(p => p.Popularity);
                 }
             }
-            return people.Skip(from - 1).Take(filter.PageSize).ToList();
+            return await people.Skip(from - 1).Take(filter.PageSize).ToListAsync();
         }
     }
 }

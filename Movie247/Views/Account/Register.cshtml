@@ -1,0 +1,91 @@
+﻿@model Movie247.Controllers.Common.AccountController
+@using Microsoft.AspNetCore.Identity
+@using Movie247.Areas.Identity.Data
+
+@inject SignInManager<Movie247User> _signInManager
+<style>
+    .row span {
+        font-family: 'Dosis', sans-serif;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-decoration: underline;
+        color: red;
+        font-size: 14px;
+    }
+</style>
+<div class="page-single-2">
+    <div class="container">
+        <div class="row">
+            <div class="middle-content">
+                <a style="margin-top:120px"><img class="md-logo" src="" alt=""></a>
+                <img src="" alt="" style="width:40%">
+                <div class="overlay openform" style="position:relative; background:none">
+                    <div class="login-wrapper" id="login-content">
+                        <div class="login-content" style="padding: 30px 50px">
+                            <h3>sign up</h3>
+                            <form method="post" class="form-horizontal" role="form">
+                                <div class="row">
+                                    <span asp-validation-summary="ModelState" class="text-danger">
+                                        @Html.ValidationSummary(true)
+                                    </span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label asp-for="@Model.InputRegister.UserName" class="text-left"></label>
+                                        <input asp-for="@Model.InputRegister.UserName" class="form-control" />
+                                        <span asp-validation-for="@Model.InputRegister.UserName" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label asp-for="@Model.InputRegister.FirstName" class="text-left"></label>
+                                        <input asp-for="@Model.InputRegister.FirstName" class="form-control" />
+                                        <span asp-validation-for="@Model.InputRegister.FirstName" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="@Model.InputRegister.LastName" class="text-left"></label>
+                                        <input asp-for="@Model.InputRegister.LastName" class="form-control" />
+                                        <span asp-validation-for="@Model.InputRegister.LastName" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label asp-for="@Model.InputRegister.Email" class="text-left"></label>
+                                        <input asp-for="@Model.InputRegister.Email" class="form-control" />
+                                        <span asp-validation-for="@Model.InputRegister.Email" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label asp-for="@Model.InputRegister.Password" class="text-left"></label>
+                                        <input asp-for="@Model.InputRegister.Password" class="form-control" />
+                                        <span asp-validation-for="@Model.InputRegister.Password" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="@Model.InputRegister.ConfirmPassword" class="text-left"></label>
+                                        <input asp-for="@Model.InputRegister.ConfirmPassword" class="form-control" />
+                                        <span asp-validation-for="@Model.InputRegister.ConfirmPassword"
+                                              class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="text-left"></label>
+                                        <button type="submit">sign up</button>
+                                    </div>
+
+                                </div>
+                            </form>
+                            @await Html.PartialAsync("_ExternalLogin");
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}

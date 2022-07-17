@@ -1,0 +1,116 @@
+﻿@using Movie247.Models
+@model IEnumerable<MovieFavourite>
+@{
+    ViewData["FavouriteNav"] = "active";
+}
+<partial name="_TopMenuProfile" />
+<div class="page-single">
+    <div class="container">
+        <div class="row ipad-width">
+            <partial name="_LeftMenuProfile" />
+            <div class="col-md-9 col-sm-12 col-xs-12">
+                @if (Model.Count() > 0)
+                {
+                    <div class="topbar-filter user">
+                        <p>Found <span>@Model.Count()</span> in total</p>
+                        <label>Sort by:</label>
+                        <select>
+                            <option value="range">-- Choose option --</option>
+                            <option value="saab">-- Choose option 2--</option>
+                        </select>
+                    </div>
+                    <div class="flex-wrap-movielist grid-fav">
+                        @foreach (MovieFavourite favourite in Model)
+                        {
+                            <div class="movie-item-style-2 movie-item-style-1 style-3">
+                                <img src="~/web/images/movie/poster/@favourite.Movie.PosterPath" alt="">
+                                <div class="hvr-inner">
+                                    <a href="/Movie/Details/@favourite.MovieId">
+                                        Read more <i class="ion-android-arrow-dropright"></i>
+                                    </a>
+                                </div>
+                                <div class="hvr-inner" style="margin-top: 160px;margin-left: 40px;">
+                                    <a style="cursor: pointer;" onclick="DeleteFromFavourite(@favourite.MovieId)">
+                                        Delete <i class="ion-android-arrow-dropright"></i>
+                                    </a>
+                                </div>
+                                <div class="mv-item-infor">
+                                    <h6>
+                                        <a href="/Movie/Details/@favourite.MovieId">
+                                            @favourite.Movie.Title
+                                            (@favourite.Movie.ReleaseDate.Year)
+                                        </a>
+                                    </h6>
+                                    <p class="rate">
+                                        <i class="ion-android-star"></i><span>@favourite.Movie.ImdbAverage</span>/10
+                                    </p>
+                                    <p class="rate">Created At: @favourite.CreateAt.Value.ToString("dd/MM/yyyy hh:mm:ss")</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="topbar-filter">
+                        <label>Movies per page:</label>
+                        <select>
+                            <option value="range">5 Movies</option>
+                            <option value="saab">10 Movies</option>
+                        </select>
+
+                        <div class="pagination2">
+                            <span>Page 1 of 2:</span>
+                            <a class="active" href="#">1</a>
+                            <a href="#">2</a>
+                            <a href="#">3</a>
+                            <a href="#">...</a>
+                            <a href="#">78</a>
+                            <a href="#">79</a>
+                            <a href="#"><i class="ion-arrow-right-b"></i></a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="topbar-filter user">
+                        <p>Found <span>0 favourites</span> in total</p>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+<script>
+    function DeleteFromFavourite(movieId) {
+        // swal confirm delete
+        swal({
+            title: "Are you sure?",
+            text: "Do you want to delete this movie from your favourites?",
+            type: "warning",
+            buttons: ["Cancel", "Yes, delete it!"],
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                waitingResponse();
+                $.ajax({
+                    url: "/User/RemoveFromFavourite",
+                    type: "POST",
+                    data: {
+                        movieId: movieId
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            showMessage("success", response.message, true);
+                        } else {
+                            showMessage("error", response.message);
+                        }
+                    },
+                    error: function (response) {
+                        showMessage("error", "Something went wrong");
+                    }
+                });
+            }
+        });
+    }
+</script>
+}

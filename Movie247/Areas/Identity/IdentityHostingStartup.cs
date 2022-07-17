@@ -15,15 +15,16 @@ namespace Movie247.Areas.Identity
     {
         public void Configure(IWebHostBuilder builder)
         {
-            builder.ConfigureServices((context, services) =>
-            {
-                services.AddDbContext<Movie247Context>(options =>
-                    options.UseSqlServer(
-                        context.Configuration.GetConnectionString("AppDbContext")));
+            //builder.ConfigureServices((context, services) =>
+            //{
+            //    services.AddDbContext<Movie247Context>(options =>
+            //        options.UseSqlServer(context.Configuration.GetConnectionString("AppDbContext")));
 
-                services.AddDefaultIdentity<Movie247User>(options => options.SignIn.RequireConfirmedAccount = true)
-                    .AddEntityFrameworkStores<Movie247Context>();
-            });
+            //    services.AddDefaultIdentity<Movie247User>(options => options.SignIn.RequireConfirmedAccount = true)
+            //        .AddEntityFrameworkStores<Movie247Context>();
+            //    // show login path in the browser
+            //    services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/Login");
+            //});
         }
     }
 }

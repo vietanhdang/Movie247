@@ -1,0 +1,128 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Movie247.Areas.Identity.Data
+
+@inject UserManager<Movie247User> _userManager
+@inject SignInManager<Movie247User> _signInManager
+<style>
+    input[type="file"] {
+        display: none;
+    }
+
+    .custom-file-upload {
+        cursor: pointer;
+        padding: 2px !important;
+    }
+
+
+    .changeAvt {
+        display: flex;
+        animation: fadeIn 0.5s;
+        padding: 0;
+        margin-top: 10px;
+        justify-content: center;
+    }
+
+        .changeAvt input {
+            padding: 2px !important;
+            cursor: pointer;
+        }
+
+        .changeAvt a {
+            padding: 2px !important;
+            cursor: pointer;
+        }
+</style>
+<div class="col-md-3 col-sm-12 col-xs-12">
+    <div class="user-information">
+        <div class="user-img">
+            <a href="#">
+                @if (_userManager.GetUserAsync(User).Result.Image == null)
+                {
+                    <img style="width: 150px;height: 150px;object-fit:cover;" src="~/web/images/users/default.jpg" alt="">
+                }
+                else
+                {
+                    <img style="width: 150px;height: 150px;object-fit:cover;"
+                     src="~/web/images/users/@_userManager.GetUserId(User)/profile/@_userManager.GetUserAsync(User).Result.Image"
+                     alt="">
+                }
+                <br>
+            </a>
+            <form method="post" enctype="multipart/form-data" id="uploadForm">
+                <label class="custom-file-upload redbtn">
+                    <input type="file" name="image" id="imgInput" name="file" class="redbtn" style="background:
+                    none;border: none; padding: 2px;outline: none;animation: fadeIn 0.5s ease-in-out; ">
+                    Change avatar
+                </label>
+                <div class="changeAvt" style="display: none;">
+                    <input type="submit" class="redbtn" value="Change avatar" name="uploadFile" id="uploadFile"
+                           style="background-color: blue;">
+                    <a class="redbtn" id="cancel" style="background-color: red;">Cancel</a>
+                </div>
+            </form>
+        </div>
+        <div class="user-fav">
+            <p>Account Details</p>
+            <ul>
+                <li class="@ViewData["ProfileNav"]"><a href="/User/Profile">Profile</a></li>
+                <li class="@ViewData["FavouriteNav"]"><a href="/User/Favourite">Favorite movies</a></li>
+                <li class="@ViewData["RatedNav"]"><a href="/User/Rated">Rated movies</a></li>
+            </ul>
+        </div>
+        <div class="user-fav">
+            <p>Others</p>
+            <ul>
+                <li>
+                    @Html.ActionLink("Logout", "Logout", "Account", new {returnUrl = @Url.Action("Index", "Home", new {
+                    area = "" })}, new
+                    {@class="nav-link text-dark"})
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var time = setInterval(function () {
+        if (window.jQuery != undefined) {
+            window.clearInterval(time);
+            //Begin
+            $(document).ready(function () {
+                // if changeAvatar click then show input file and button upload
+                const prev = $(".user-img img").attr("src");
+                $("#imgInput").change(function () {
+                    const img = this.files[0];
+                    if (img) {
+                        $(".user-img img").attr("src", URL.createObjectURL(img));
+                        $(".changeAvt").show();
+                        $("#uploadForm").submit(function (e) {
+                            e.preventDefault();
+                            const formData = new FormData(this);
+                            $.ajax({
+                                url: "/User/UpdateImage",
+                                type: "POST",
+                                data: formData,
+                                contentType: false,
+                                cache: false,
+                                processData: false,
+                                success: function (data) {
+                                    if (data.success) {
+                                        showMessage("success", data.message, true);
+                                    } else {
+                                        showMessage("error", data.message);
+                                    }
+                                },
+                                error: function () {
+                                    showMessage("error", "Server error");
+                                }
+                            });
+                        });
+                        $("#cancel").click(function () {
+                            $(".changeAvt").hide();
+                            $(".user-img img").attr("src", prev);
+                        });
+                    }
+                });
+            });
+        };
+    }, 10);
+</script>

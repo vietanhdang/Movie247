@@ -1,0 +1,145 @@
+﻿@using Movie247.Areas.Identity.Data
+@model Movie247User
+
+@{
+    ViewData["ProfileNav"] = "active";
+}
+
+<partial name="_TopMenuProfile" />
+<div class="page-single">
+    <div class="container">
+        <div class="row ipad-width">
+            @* <partial name="_LeftMenuProfile" /> *@
+            @await Html.PartialAsync("_LeftMenuProfile")
+            <div class="col-md-9 col-sm-12 col-xs-12">
+                <div class="form-style-1 user-pro" action="#">
+                    <form class="user" id="user-profile" method="post">
+                        <h4>01. Profile details</h4>
+                        <div class="row">
+                            <div class="col-md-6 form-it">
+                                <label>Email Address</label>
+                                <input type="text" placeholder="@Model.Email" value="@Model.Email" disabled
+                                    style="background-color: #233a50">
+                            </div>
+                            <div class="col-md-6 form-it">
+                                <label>Username</label>
+                                <input type="text" placeholder="@Model.UserName" name="username" value="@Model.UserName"
+                                    required>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-it">
+                                <label>First Name</label>
+                                <input type="text" placeholder="@Model.Firstname" name="firstname" required
+                                    value="@Model.Firstname">
+                            </div>
+                            <div class="col-md-6 form-it">
+                                <label>Last Name</label>
+                                <input type="text" placeholder="@Model.LastName" name="lastname"
+                                    value="@Model.LastName">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <input class="submit" type="submit" value="save">
+                            </div>
+                        </div>
+                    </form>
+                    <form class="password" id="user-password" method="post">
+                        <h4>02. Change password</h4>
+                        @if (Model.PasswordHash != null)
+                        {
+                            <div class="row">
+                                <div class="col-md-6 form-it">
+                                    <label>Old Password</label>
+                                    <input type="password" name="oldPassword" placeholder="**********" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-it">
+                                    <label>New Password</label>
+                                    <input type="password" name="newPassword" placeholder="***************" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-it">
+                                    <label>Confirm New Password</label>
+                                    <input type="password" name="confirmPassword" placeholder="*************** " required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <input class="submit" type="submit" value="Update">
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <label> Because first time you login with Facebook, you need to set your password. </label>
+                            <p>
+                                <label>
+                                    <a style="color: red;" href="/Account/ForgotPassword" class="forgot-password">
+                                        Forgot
+                                        Password and Set New
+                                        Password
+                                    </a>
+                                </label>
+                            </p>
+
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<script>
+    $(document).ready(function () {
+        $('#user-profile').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var formData = form.serialize();
+            waitingResponse();
+            $.ajax({
+                type: 'POST',
+                url: '/User/UpdateProfile',
+                data: formData,
+                success: function (data) {
+                    if (data.success) {
+                        showMessage('success', data.message, true)
+                    } else {
+                        showMessage('error', data.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', 'Error occured while updating profile');
+                }
+            });
+        });
+        $('#user-password').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var formData = form.serialize();
+            waitingResponse();
+            $.ajax({
+                type: 'POST',
+                url: '/User/UpdatePassword',
+                data: formData,
+                success: function (data) {
+                    if (data.success) {
+                        showMessage('success', data.message).delay(3000);
+                    } else {
+                        showMessage('error', data.message);
+                    }
+                },
+                error: function () {
+                    showMessage('error', 'Error occured while updating password');
+                }
+            });
+        });
+    });
+</script>
+}

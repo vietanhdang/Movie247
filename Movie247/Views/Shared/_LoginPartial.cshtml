@@ -6,37 +6,37 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
+    <li class="dropdown first">
+        <a class="btn btn-default dropdown-toggle lv1" data-toggle="dropdown" data-hover="dropdown">
+            Quick Access <i class="fa fa-angle-down" aria-hidden="true"></i>
+        </a>
+        <ul class="dropdown-menu level1">
+            <li><a href="/User/Favourite">Favourite Movies</a></li>
+            <li><a href="/User/Rated">Rated Movies</a></li>
+        </ul>
+    </li>
     <li class="nav-item">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+        <a id="manage" class="nav-link text-dark" href="/User/Profile" title="Manage">
             Hello
-            @UserManager.GetUserName(User)!
+            @*@UserManager.GetUserName(User)!*@
+            @{
+                var a = UserManager.FindByIdAsync(UserManager.GetUserId(User)).Result;
+            }
+            @a.Firstname @a.LastName
         </a>
     </li>
     <li class="nav-item">
-        @Html.ActionLink("Logout", "Logout", "User", new {returnUrl = @Url.Action("Index", "Home", new { area = "" })}, new {@class="nav-link text-dark"})
+        @Html.ActionLink("Logout", "Logout", "Account", new {returnUrl = @Url.Action("Index", "Home", new { area = "" })},
+    new
+    {@class="nav-link text-dark"})
     </li>
 }
 else
 {
     <li class="nav-item loginLink">
-        <a class="nav-link text-dark" id="login">Login</a>
+        <a class="nav-link text-dark" href="/Account/Login">Login</a>
     </li>
     <li class="nav-item btn signupLink">
-        <a class="nav-link text-dark" id="register">Register</a>
+        <a class="nav-link text-dark" href="/Account/Register">Signup</a>
     </li>
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

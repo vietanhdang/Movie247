@@ -4,29 +4,29 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Movie247.Data;
 
 namespace Movie247.Logics
 {
     public class GenreLogic
     {
-        private readonly MOVIEPROJECTContext _context;
+        private readonly Movie247Context _context;
 
-        public GenreLogic(MOVIEPROJECTContext context)
+        public GenreLogic()
         {
-            _context = context;
+            _context = new Movie247Context();
         }
 
         // get all genres asynchronously
-        public List<Genre> GetAllGenres()
+        public async Task<List<Genre>> GetAllGenres()
         {
-            var genres = _context.Genres.Include(x => x.MovieGenres).ToList();
-            return genres;
+            return await _context.Genres.Include(x => x.MovieGenres).ToListAsync();
+
         }
-        public MultiSelectList GetAllGenresAsMultiSelectList()
+        public async Task<MultiSelectList> GetAllGenresAsMultiSelectList()
         {
-            var genres = GetAllGenres();
-            var multiSelectList = new MultiSelectList(genres, "Id", "Name");
-            return multiSelectList;
+            var genres = await GetAllGenres();
+            return new MultiSelectList(genres, "Id", "Name");
         }
 
     }

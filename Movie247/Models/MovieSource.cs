@@ -13,6 +13,7 @@ namespace Movie247.Models
         public string Description { get; set; }
         public DateTime? CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
+        public string Type { get; set; }
 
         public virtual Movie Movie { get; set; }
     }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Configuration;
+
 namespace Movie247.Helpers
 {
     public class FilterModel
@@ -22,10 +24,15 @@ namespace Movie247.Helpers
 
         public FilterModel()
         {
-            SortBy = "popularity";
-            OrderBy = "desc";
-            Page = 1;
-            PageSize = 12;
+            new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build()
+            .GetSection("ProductFilter")
+            .Bind(this);
+            // SortBy = "popularity";
+            // OrderBy = "desc";
+            // Page = 1;
+            // PageSize = 12;
             TotalPages = 0;
         }
     }

@@ -13,24 +13,24 @@
                 <a href="#"><i class="ion-social-youtube"></i></a>
             </div>
             <div class="slick-multiItemSlider">
-                @foreach (Movie movie in ViewBag.top12HighesRate)
+                @foreach (Movie movie in ViewBag.top12NewestMovies)
                 {
                     <div class="movie-item">
                         <div class="mv-img">
-                            <a href="#">
+                            <a href="/Movie/Details/@movie.Id">
                                 <img src="~/web/images/movie/poster/@movie.PosterPath" alt="" width="285" height="437">
                             </a>
                         </div>
-                        <div class="title-in">
+                        <div class="title-in" style="margin: 20px;background: rgba(0,0,0,0.5);">
                             <div class="cate">
                                 @foreach (var item in movie.MovieGenres)
                                 {
-                                    <span class="orange">
+                                    <span class="orange" style="padding:0px;margin-right: 4px;">
                                         <a href="/Movie/List?GenreId=@item.GenreId">@item.Genre.Name</a>
                                     </span>
                                 }
                             </div>
-                            <h6><a href="#">@movie.Title</a></h6>
+                            <h6><a href="/Movie/Details/@movie.Id">@movie.Title</a></h6>
                             <p><i class="ion-android-star"></i><span>@movie.ImdbAverage</span> /10</p>
                         </div>
                     </div>
@@ -45,93 +45,104 @@
         <div class="row ipad-width">
             <div class="col-md-8">
                 <div class="title-hd">
-                    <h2>Coming soon</h2>
-                    <a href="#" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
+                    <h2>Most Viewed</h2>
+                    <a href="/Movie/List" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
                 </div>
                 <div class="tabs">
                     <div class="tab-content">
                         <div id="tab1" class="tab active">
                             <div class="row">
-                                <div class="slick-multiItem">
-                                    <div class="slide-it">
+                                <div class="slick-multiItemSlider">
+                                    @foreach (Movie movie in ViewBag.top12MovieMostViewedOfUserMost)
+                                    {
                                         <div class="movie-item">
                                             <div class="mv-img">
-                                                <img src="~/web/images/uploads/mv-item1.jpg" alt="" width="185"
-                                                    height="284">
+                                                <img src="~/web/images/movie/poster/@movie.PosterPath" alt="" width="185"
+                                                 height="284">
                                             </div>
                                             <div class="hvr-inner">
-                                                <a href="moviesingle.html">
+                                                <a href="/Movie/Details/@movie.Id">
                                                     Read more <i class="ion-android-arrow-dropright"></i>
                                                 </a>
                                             </div>
                                             <div class="title-in">
-                                                <h6><a href="#">Interstellar</a></h6>
-                                                <p><i class="ion-android-star"></i><span>7.4</span> /10</p>
+                                                <h6><a href="/Movie/Details/@movie.Id">@movie.Title</a></h6>
+                                                <p>
+                                                    <i class="ion-eye"></i><span>@movie.Views.Value.ToString("#,##0")</span>
+                                                </p>
                                             </div>
                                         </div>
-                                    </div>
+                                    }
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="title-hd">
-                    <h2>popular</h2>
-                    <a href="#" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
+                    <h2>Top rated</h2>
+                    <a href="/Movie/List" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
                 </div>
                 <div class="tabs">
                     <div class="tab-content">
                         <div id="tab1" class="tab active">
                             <div class="row">
-                                <div class="slick-multiItem">
-                                    <div class="slide-it">
+                                <div class="slick-multiItemSlider">
+                                    @foreach (Movie movie in ViewBag.top12TopRatedMovies)
+                                    {
                                         <div class="movie-item">
                                             <div class="mv-img">
-                                                <img src="~/web/images/uploads/mv-item1.jpg" alt="" width="185"
-                                                    height="284">
+                                                <img src="~/web/images/movie/poster/@movie.PosterPath" alt="" width="185"
+                                                 height="284">
                                             </div>
                                             <div class="hvr-inner">
-                                                <a href="moviesingle.html">
+                                                <a href="/Movie/Details/@movie.Id">
                                                     Read more <i class="ion-android-arrow-dropright"></i>
                                                 </a>
                                             </div>
                                             <div class="title-in">
-                                                <h6><a href="#">Interstellar</a></h6>
-                                                <p><i class="ion-android-star"></i><span>7.4</span> /10</p>
+                                                <h6><a href="/Movie/Details/@movie.Id">@movie.Title</a></h6>
+                                                <p>
+                                                    <i class="ion-android-star"></i><span>@movie.ImdbAverage</span> /10
+                                                </p>
                                             </div>
                                         </div>
-                                    </div>
+                                    }
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="title-hd">
-                    <h2>top rated</h2>
-                    <a href="#" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
+                    <h2>most favorite</h2>
+                    <a href="/Movie/List" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
                 </div>
                 <div class="tabs">
                     <div class="tab-content">
                         <div id="tab1" class="tab active">
                             <div class="row">
-                                <div class="slick-multiItem">
-                                    <div class="slide-it">
+                                <div class="slick-multiItemSlider">
+                                    @foreach (Movie movie in ViewBag.top12MovieFavoriteOfUserMost)
+                                    {
                                         <div class="movie-item">
                                             <div class="mv-img">
-                                                <img src="~/web/images/uploads/mv-item1.jpg" alt="" width="185"
-                                                    height="284">
+                                                <img src="~/web/images/movie/poster/@movie.PosterPath" alt="" width="185"
+                                                 height="284">
                                             </div>
                                             <div class="hvr-inner">
-                                                <a href="moviesingle.html">
+                                                <a href="/Movie/Details/@movie.Id">
                                                     Read more <i class="ion-android-arrow-dropright"></i>
                                                 </a>
                                             </div>
                                             <div class="title-in">
-                                                <h6><a href="#">Interstellar</a></h6>
-                                                <p><i class="ion-android-star"></i><span>7.4</span> /10</p>
+                                                <h6><a href="/Movie/Details/@movie.Id">@movie.Title</a></h6>
+                                                <p>
+                                                    @* <i class="ion-android-star"></i><span>@movie.ImdbAverage</span> /10
+                                                    *@
+                                                    <i class="ion-heart"></i><span>@movie.MovieFavourites.Count().ToString("#,##0")</span>
+                                                </p>
                                             </div>
                                         </div>
-                                    </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -169,43 +180,43 @@
 </div>
 
 
-@* <div class="trailers">
+<div class="trailers">
     <div class="container">
-    <div class="row ipad-width">
-    <div class="col-md-12">
-    <div class="title-hd">
-    <h2>in theater</h2>
-    <a href="#" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
-    </div>
-    <div class="videos">
-    <div class="slider-for-2 video-ft">
-    @foreach (Movie movie in ViewBag.top5TrailerLatest)
-    {
+        <div class="row ipad-width">
+            <div class="col-md-12">
+                <div class="title-hd">
+                    <h2>Trailers</h2>
+                    <a href="/Movie/List" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
+                </div>
+                <div class="videos">
+                    <div class="slider-for-2 video-ft">
+                        @foreach (Movie movie in ViewBag.top5TrailerLatest)
+                        {
 
-    <div>
-    <iframe class="item-video" src="@($"https://www.youtube.com/embed/{@movie.Trailer}")"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen></iframe>
+                            <div>
+                                <iframe class="item-video" src="@($"https://www.youtube.com/embed/{@movie.Trailer}")"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen></iframe>
+                            </div>
+                        }
+                    </div>
+                    <div class="slider-nav-2 thumb-ft">
+                        @foreach (Movie movie in ViewBag.top5TrailerLatest)
+                        {
+                            <div class="item">
+                                <div class="trailer-img">
+                                    <img src="~/web/images/movie/poster/@movie.PosterPath" alt="@movie.Title" width="4096"
+                                     height="2737">
+                                </div>
+                                <div class="trailer-infor">
+                                    <h4 class="desc">@movie.Title</h4>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    }
-    </div>
-    <div class="slider-nav-2 thumb-ft">
-    @foreach (Movie movie in ViewBag.top5TrailerLatest)
-    {
-    <div class="item">
-    <div class="trailer-img">
-    <img src="~/web/images/movie/poster/@movie.PosterPath" alt="@movie.Title" width="4096"
-    height="2737">
-    </div>
-    <div class="trailer-infor">
-    <h4 class="desc">@movie.Title</h4>
-    </div>
-    </div>
-    }
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div> *@
+</div>

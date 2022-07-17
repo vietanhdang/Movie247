@@ -4,112 +4,111 @@
 @{
     ViewData["Title"] = "Details";
 }
-<div class="hero hero3">
+
+<div class="hero common-hero">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <!-- <h1> movie listing - list</h1>
-                <ul class="breadcumb">
-                    <li class="active"><a href="#">Home</a></li>
-                    <li> <span class="ion-ios-arrow-right"></span> movie listing</li>
-                </ul> -->
+                <div class="hero-ct">
+                    <h1> @Model.Name Company</h1>
+                    <ul class="breadcumb">
+                        <li><a href="/">Home</a></li>
+                        <li class="active"> <span class="ion-ios-arrow-right"></span> <a>movie in @Model.Name</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <!-- celebrity single section-->
-
-<div class="page-single movie-single cebleb-single">
+<div class="page-single">
     <div class="container">
         <div class="row ipad-width">
             <div class="col-md-4 col-sm-12 col-xs-12">
-                <div class="mv-ceb">
-                    <img src="~/web/images/company/@Model.FilePath" alt="">
-                </div>
-            </div>
-            <div class="col-md-8 col-sm-12 col-xs-12">
-                <div class="movie-single-ct">
-                    <h1 class="bd-hd">@Html.DisplayFor(model => model.Name)</h1>
-                    <p class="ceb-single">Company</p>
-                    <div class="social-link cebsingle-socail">
-                        <a href="#"><i class="ion-social-facebook"></i></a>
-                        <a href="#"><i class="ion-social-twitter"></i></a>
-                        <a href="#"><i class="ion-social-googleplus"></i></a>
-                        <a href="#"><i class="ion-social-linkedin"></i></a>
-                    </div>
-                    <div class="movie-tabs">
-                        <div class="tabs">
-                            <ul class="tab-links tabs-mv">
-                                <li class="active"><a href="#overviewceb">Overview</a></li>
-                            </ul>
-                            <div class="tab-content">
-                                <div id="overviewceb" class="tab active">
-                                    <div class="row">
-                                        <div class="col-md-8 col-sm-12 col-xs-12">
-                                            <p></p>
-                                            <p>@(Model.Description??="Updating . . .")</p>
-                                            <div class="mvsingle-item ov-item">
-                                                <a class="img-lightbox" data-fancybox-group="gallery" href="images/uploads/image11.jpg"><img src="images/uploads/image1.jpg" alt=""></a>
-                                                <a class="img-lightbox" data-fancybox-group="gallery" href="images/uploads/image21.jpg"><img src="images/uploads/image2.jpg" alt=""></a>
-                                                <a class="img-lightbox" data-fancybox-group="gallery" href="images/uploads/image31.jpg"><img src="images/uploads/image3.jpg" alt=""></a>
-                                                <div class="vd-it">
-                                                    <img class="vd-img" src="images/uploads/image4.jpg" alt="">
-                                                    <a class="fancybox-media hvr-grow" href="https://www.youtube.com/embed/o-0hcF97wy0"><img src="images/uploads/play-vd.png" alt=""></a>
-                                                </div>
-                                            </div>
-                                            <div class="title-hd-sm">
-                                                <h4>filmography</h4>
-                                                <a href="#" class="time">Full Filmography<i class="ion-ios-arrow-right"></i></a>
-                                            </div>
-                                            <!-- movie cast -->
-                                            <div class="mvcast-item">
-                                                @foreach (MovieCompany movieCompany in Model.MovieCompanies)
-                                                {
-                                                    <div class="cast-it">
-                                                        <div class="cast-left cebleb-film">
-                                                            <img style="width:100px" src="~/web/images/movie/poster/@movieCompany.Movie.PosterPath" alt="">
-                                                            <div>
-                                                                <p class="time"></p>
-                                                            </div>
-
-                                                        </div>
-                                                        <p>@Html.ActionLink(@movieCompany.Movie.Title,"Details","Movie", new {id = movieCompany.Movie.Id})</p>
-                                                    </div>
-                                                }
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 col-xs-12 col-sm-12">
-                                            <div class="sb-it">
-                                                <h6>Fullname:  </h6>
-                                                <p><a href="#"></a></p>
-                                            </div>
-                                            <div class="sb-it">
-                                                <h6>Date of Birth: </h6>
-                                                <p></p>
-                                            </div>
-                                            <div class="sb-it">
-                                                <h6>Keywords:</h6>
-                                                <p class="tags">
-                                                    <span class="time"><a href="#">jackman</a></span>
-                                                    <span class="time"><a href="#">wolverine</a></span>
-                                                    <span class="time"><a href="#">logan</a></span>
-                                                    <span class="time"><a href="#">blockbuster</a></span>
-                                                    <span class="time"><a href="#">final battle</a></span>
-                                                </p>
-                                            </div>
-                                            <div class="ads">
-                                                <img src="images/uploads/ads1.png" alt="">
-                                            </div>
-                                        </div>
-                                    </div>
+                <div class="sidebar">
+                    <div class="searh-form">
+                        <h4 class="sb-title">Information</h4>
+                        <div class="row" style="color:white">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <h5 class="sb-title">Name: @Model.Name</h5>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <h4 class="sb-title">Image Cover</h4>
+                                    <img src="/web/images/company/@(Model.FilePath!=null?Model.FilePath:"default.jpg")"
+                                         style="background-color: white;" alt="">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <h4 class="sb-title">Description</h4>
+                                    <p>@Model.Description</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-8 col-sm-12">
+                @if (Model.MovieCompanies.Count() > 0)
+                {
+                    <div class="topbar-filter user">
+                        <p>Found <span>@Model.MovieCompanies.Count() Movie</span> in total</p>
+                    </div>
+                    <div class="flex-wrap-movielist grid-fav">
+                        @foreach (MovieCompany movieCompany in Model.MovieCompanies)
+                        {
+                            <div class="movie-item-style-2 movie-item-style-1 style-3" style="margin-right: 35px;">
+                                <img src="~/web/images/movie/poster/@movieCompany.Movie.PosterPath" alt="">
+                                <div class="hvr-inner">
+                                    <a href="/Movie/Details/@movieCompany.MovieId">
+                                        Read more <i class="ion-android-arrow-dropright"></i>
+                                    </a>
+                                </div>
+                                <div class="mv-item-infor">
+                                    <h6>
+                                        <a href="/Movie/Details/@movieCompany.MovieId">
+                                            @movieCompany.Movie.Title
+                                            (@movieCompany.Movie.ReleaseDate.Year)
+                                        </a>
+                                    </h6>
+                                    <p class="rate">
+                                        <i class="ion-android-star"></i><span>@movieCompany.Movie.ImdbAverage</span>/10
+                                    </p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    @* <div class="topbar-filter">
+                        <label>Movies per page:</label>
+                        <select>
+                        <option value="range">5 Movies</option>
+                        <option value="saab">10 Movies</option>
+                        </select>
+
+                        <div class="pagination2">
+                        <span>Page 1 of 2:</span>
+                        <a class="active" href="#">1</a>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#">...</a>
+                        <a href="#">78</a>
+                        <a href="#">79</a>
+                        <a href="#"><i class="ion-arrow-right-b"></i></a>
+                        </div>
+                        </div> *@
+                }
+                else
+                {
+                    <div class="topbar-filter user">
+                        <p>Found <span>0</span> in total</p>
+                    </div>
+                }
+
+            </div>
         </div>
     </div>
-</div>
 </div>
 <!-- celebrity single section-->

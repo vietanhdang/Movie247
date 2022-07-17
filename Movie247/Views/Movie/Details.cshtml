@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = @Model.Title;
 }
+
 <div class="hero mv-single-hero"
      style="background: url('/web/images/movie/backdrop/@Model.BackdropPath'); background-size: cover;">
     <div class="container">
@@ -38,18 +39,26 @@
                             @if (@Model.MovieSources.Count > 0)
                             {
                                 <div>
-                                    <a href="/Movie/Watch/@Model.Id" class="item item-1 yellowbtn"> <i class="icon icon ion-ios-eye"></i>  Watch Now</a>
+                                    <a href="/Movie/Watch/@Model.Id" class="item item-1 yellowbtn">
+                                        <i class="icon icon ion-ios-eye"></i> Watch Now
+                                    </a>
                                 </div>
-                                <div><a href="/Movie/Watch/@Model.Id" class="item item-2 yellowbtn"><i class="icon icon ion-ios-eye"></i> </a></div>
+                                <div>
+                                    <a href="/Movie/Watch/@Model.Id" class="item item-2 yellowbtn">
+                                        <i class="icon icon ion-ios-eye"></i>
+                                    </a>
+                                </div>
                             }
                             else
                             {
                                 <div>
-                                    <a class="item item-1 yellowbtn"> <i class="icon ion-eye-disabled"></i>  No streaming link</a>
+                                    <a class="item item-1 yellowbtn">
+                                        <i class="icon ion-eye-disabled"></i> No streaming
+                                        link
+                                    </a>
                                 </div>
                                 <div><a class="item item-2 yellowbtn"><i class="icon ion-eye-disabled"></i> </a></div>
                             }
-
                         </div>
                     </div>
                 </div>
@@ -58,7 +67,9 @@
                 <div class="movie-single-ct main-content">
                     <h1 class="bd-hd">@Model.Title <span>@Model.ReleaseDate.Year</span></h1>
                     <div class="social-btn">
-                        <a href="#" class="parent-btn"><i class="ion-heart"></i> Add to Favorite</a>
+                        <a class="parent-btn" style="cursor: pointer;" onclick="AddToFavourite(@Model.Id)">
+                            <i class="ion-heart"></i> Add to Favorite
+                        </a>
                         <div class="hover-bnt">
                             <a href="#" class="parent-btn"><i class="ion-android-share-alt"></i>share</a>
                             <div class="hvr-item">
@@ -74,7 +85,7 @@
                             <i class="ion-android-star"></i>
                             <p>
                                 <span>@Model.ImdbAverage</span> /10<br>
-                                <span class="rv"> Reviews</span>
+                                <span class="rv">@ViewBag.GetTotalReviews Reviews</span>
                             </p>
                         </div>
                     </div>
@@ -112,41 +123,6 @@
                                                         <p style="text-align: center;">@movieCast.Character</p>
                                                     </div>
                                                 }
-                                            </div>
-                                            <div class="title-hd-sm">
-                                                <h4>User reviews</h4>
-                                                <a href="#reviews" class="time">
-                                                    See All  Reviews <i class="ion-ios-arrow-right"></i>
-                                                </a>
-                                            </div>
-                                            <!-- movie user review -->
-                                            <div class="mv-user-review-item">
-                                                @* @if (@Model.MovieReviews.Count > 0)
-                                                    {
-                                                    @foreach (MovieReview mr in Model.MovieReviews.OrderByDescending(x =>
-                                                    x.CreateAt).Take(3))
-                                                    {
-                                                    <h3></h3>
-                                                    <div class="no-star">
-                                                    @for (int i = 0; i < 10; i++)
-                                                    {
-                                                    if (i < mr.Vote)
-                                                    {
-                                                    <i class="ion-android-star"></i>
-                                                    }
-                                                    else
-                                                    {
-                                                    <i class="ion-android-star last"></i>
-                                                    }
-                                                    }
-                                                    </div>
-                                                    <p class="time">
-                                                    @mr.CreateAt by <a href="#"> @mr.User.SurName</a>
-                                                    </p>
-                                                    <p>@mr.Review</p>
-                                                    }
-
-                                                    }*@
                                             </div>
                                         </div>
                                         <div class="col-md-4 col-xs-12 col-sm-12">
@@ -199,17 +175,11 @@
                                             <div class="sb-it">
                                                 <h6>Keywords:</h6>
                                                 <p class="tags">
-                                                    @if (Model.MovieKeywords.Count > 0)
-                                                    {
-                                                        @foreach (MovieKeyword movieKeyword in Model.MovieKeywords)
-                                                        {
-                                                            <span class="time">
-                                                                <a href="#">
-                                                                    @movieKeyword.Keyword.KeywordName,
-                                                                </a>
-                                                            </span>
-                                                        }
-                                                    }
+                                                    <span class="time">
+                                                        <a href="#">
+
+                                                        </a>
+                                                    </span>
                                                 </p>
                                             </div>
                                             <div class="ads">
@@ -225,73 +195,51 @@
                                                 <h3>Related Movies To</h3>
                                                 <h2>@Model.Title</h2>
                                             </div>
-                                            <a href="#" class="redbtn">Write Review</a>
+                                            <a href="/Movie/Watch/@Model.Id" class="redbtn"
+                                               style="margin: 0 20px;">Write Review</a>
                                         </div>
                                         <div class="topbar-filter">
-                                            <p>Found <span> Reviews reviews</span> in total</p>
-                                            <label>Filter by:</label>
-                                            <select>
-                                                <option value="popularity">Popularity Descending</option>
-                                                <option value="popularity">Popularity Ascending</option>
-                                                <option value="rating">Rating Descending</option>
-                                                <option value="rating">Rating Ascending</option>
-                                                <option value="date">Release date Descending</option>
-                                                <option value="date">Release date Ascending</option>
-                                            </select>
+                                            <p>Found <span>@ViewBag.GetTotalReviews Reviews reviews</span> in total</p>
                                         </div>
-                                        @*@if (@Model.MovieReviews.Count > 0)
+                                        <div id="review-item">
+                                            @if (@ViewBag.GetTotalReviews > 0)
                                             {
-                                            @foreach (MovieReview mr in Model.MovieReviews.OrderByDescending(x =>
-                                            x.CreateAt).Take(3))
-                                            {
-                                            if (!String.IsNullOrEmpty(mr.Review))
-                                            {
-                                            <div class="mv-user-review-item">
-                                            <div class="user-infor">
-                                            <img src="images/uploads/userava1.jpg" alt="">
-                                            <div>
-                                            <h3></h3>
-                                            <div class="no-star">
-                                            @for (int i = 0; i < 10; i++)
-                                            {
-                                            if (i < mr.Vote)
-                                            {
-                                            <i class="ion-android-star"></i>
+                                                @foreach (MovieReview mr in ViewBag.GetReviews as List<MovieReview>)
+                                                {
+                                                    <div class="mv-user-review-item">
+                                                        <div class="user-infor">
+                                                            <img src="~/web/images/users/@mr.UserId/profile/@mr.User.Image"
+                                                         alt="">
+                                                            <div>
+                                                                <h3></h3>
+                                                                <div class="no-star">
+                                                                    @for (int i = 0; i < 10; i++)
+                                                                    {
+                                                                        if (i < mr.Rating)
+                                                                        {
+                                                                            <i class="ion-android-star"></i>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <i class="ion-android-star last"></i>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                                <p class="time">
+                                                                    @mr.CreateAt.Value.ToString("dd/MM/yyyy HH:mm:ss") by <a href="#"> @mr.User.Firstname @mr.User.LastName</a>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <p>@mr.Comment</p>
+                                                    </div>
+                                                }
                                             }
-                                            else
-                                            {
-                                            <i class="ion-android-star last"></i>
-                                            }
-                                            }
-                                            </div>
-                                            <p class="time">
-                                            @mr.CreateAt by <a href="#"> @mr.User.SurName</a>
-                                            </p>
-                                            </div>
-                                            </div>
-                                            <p>@mr.Review</p>
-                                            </div>
-                                            }
-
-                                            }
-
-                                            }*@
-                                        <div class="topbar-filter">
-                                            <label>Reviews per page:</label>
-                                            <select>
-                                                <option value="range">5 Reviews</option>
-                                                <option value="saab">10 Reviews</option>
-                                            </select>
-                                            <div class="pagination2">
-                                                <span>Page 1 of 6:</span>
-                                                <a class="active" href="#">1</a>
-                                                <a href="#">2</a>
-                                                <a href="#">3</a>
-                                                <a href="#">4</a>
-                                                <a href="#">5</a>
-                                                <a href="#">6</a>
-                                                <a href="#"><i class="ion-arrow-right-b"></i></a>
-                                            </div>
+                                        </div>
+                                        <div class="topbar-filter" style="justify-content: center;">
+                                            <button id="load-more" onclick="LoadMoreReview(@Model.Id)" class="redbtn">
+                                                Load
+                                                more
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -299,7 +247,6 @@
                                     <div class="row">
                                         <h3>Cast & Crew of</h3>
                                         <h2>@Model.Title</h2>
-                                        <!-- //== -->
                                         <div class="title-hd-sm">
                                             <h4>Directors</h4>
                                         </div>
@@ -317,8 +264,6 @@
                                                 </div>
                                             }
                                         </div>
-                                        <!-- //== -->
-                                        <!-- //== -->
                                         <div class="title-hd-sm">
                                             <h4>Cast</h4>
                                         </div>
@@ -336,8 +281,6 @@
                                                 </div>
                                             }
                                         </div>
-                                        <!-- //== -->
-
                                     </div>
                                 </div>
                                 <div id="moviesrelated" class="tab">
@@ -393,19 +336,6 @@
                                         }
                                         <div class="topbar-filter">
                                         </div>
-                                        @section Scripts{
-                                        <script>
-                                            $('a[data-toggle="tooltip"]').tooltip({
-                                                animated: 'fade',
-                                                placement: 'bottom',
-                                                html: true
-                                            });
-                                            $('.tab-links a').on('click', function (e) {
-                                                var currentAttrValue = $(this).attr('href');
-                                                $('#myTab li').removeClass('active').find('a[href="' + currentAttrValue + '"]').parent().addClass('active');
-                                            });
-                                        </script>
-                                        }
                                     </div>
                                 </div>
                             </div>
@@ -416,3 +346,110 @@
         </div>
     </div>
 </div>
+@section Scripts{
+<script>
+    let numOfItem = $("#review-item").children().length;
+    if (numOfItem == @ViewBag.GetTotalReviews) {
+        $("#load-more").hide();
+    }
+    function FormatDateTime(datetime) {
+        var date = new Date(datetime);
+        var month = date.getMonth() + 1;
+        var day = date.getDate();
+        var year = date.getFullYear();
+        var hour = date.getHours();
+        var minute = date.getMinutes();
+        var second = date.getSeconds();
+        minute = minute < 10 ? '0' + minute : minute;
+        second = second < 10 ? '0' + second : second;
+        var strTime = month + '/' + day + '/' + year + ' ' + hour + ':' + minute + ':' + second;
+        return strTime;
+    }
+    function showStar(star) {
+        var star_html = "";
+        for (var i = 1; i <= 10; i++) {
+            if (i <= star) {
+                star_html += "<i class='ion-android-star' style='margin-right:4px;'></i>";
+            } else {
+                star_html += "<i class='ion-android-star last' style='margin-right:4px;'></i>";
+            }
+        }
+        return star_html;
+    }
+    function LoadComment(data) {
+        data.forEach(element => {
+            let html = `<div class="mv-user-review-item">
+                        <div class="user-infor">
+                            <img src="http://localhost:14014/web/images/users/${element.userId}/profile/${element.user.image}" alt="">
+                            <div>
+                                <h3></h3>
+                                <div class="no-star">
+                                    ${showStar(element.rating)}
+                                </div>
+                                <p class="time">
+                                    CreateAt ${FormatDateTime(element.createAt)} by <a
+                                href="#"> ${element.user.firstname ?? ""} ${element.user.lastname ?? ""}</a>
+                                </p>
+                            </div>
+                        </div>
+                        <p>${element.comment}</p>
+                    </div>`;
+            $("#review-item").append(html);
+        })
+    }
+    function LoadMoreReview(movieId) {
+        numOfItem = $("#review-item").children().length;
+        if (numOfItem == @ViewBag.GetTotalReviews) {
+            $("#load-more").hide();
+        } else {
+            $.ajax({
+                url: "/Movie/LoadMoreReview",
+                type: "POST",
+                data: {
+                    movieId: movieId,
+                    page: numOfItem,
+                },
+                success: function (data) {
+                    if (numOfItem == @ViewBag.GetTotalReviews-1) {
+                        $("#load-more").hide();
+                    }
+                    LoadComment(data.data);
+                }
+            });
+        }
+    }
+    function AddToFavourite(movieId) {
+        waitingResponse();
+        $.ajax({
+            url: "/User/AddToFavourite",
+            type: "POST",
+            data: {
+                movieId: movieId
+            },
+            success: function (response) {
+                if (response.success) {
+                    showMessage("success", response.message);
+                } else {
+                    showMessage("error", response.message);
+                }
+            },
+            error: function (response) {
+                if (response.status == 401) {
+                    showMessage("error", "You must be logged in to add to favourite");
+                } else {
+                    showMessage("error", "Something went wrong");
+                }
+            }
+        });
+    }
+    $('a[data-toggle="tooltip"]').tooltip({
+        animated: 'fade',
+        placement: 'bottom',
+        html: true
+    });
+    $('.tab-links a').on('click', function (e) {
+        var currentAttrValue = $(this).attr('href');
+        $('#myTab li').removeClass('active').find('a[href="' + currentAttrValue + '"]').parent().addClass('active');
+    });
+</script>
+}
