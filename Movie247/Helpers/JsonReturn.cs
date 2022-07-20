@@ -19,6 +19,14 @@ namespace Movie247.Helpers
                 Data = data
             });
         }
+        public static JsonResult Success(object data)
+        {
+            return new JsonResult(new JsonObject()
+            {
+                Success = true,
+                Data = data
+            });
+        }
         public static JsonResult Success(string message)
         {
             return new JsonResult(new JsonObject()

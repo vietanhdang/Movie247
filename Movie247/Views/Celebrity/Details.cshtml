@@ -39,12 +39,6 @@
                     {
                         <p class="ceb-single">Directing</p>
                     }
-                    <div class="social-link cebsingle-socail">
-                        <a href="#"><i class="ion-social-facebook"></i></a>
-                        <a href="#"><i class="ion-social-twitter"></i></a>
-                        <a href="#"><i class="ion-social-googleplus"></i></a>
-                        <a href="#"><i class="ion-social-linkedin"></i></a>
-                    </div>
                     <div class="movie-tabs">
                         <div class="tabs">
                             <ul class="tab-links tabs-mv" id="myTab">
@@ -56,29 +50,36 @@
                                     <div class="row">
                                         <div class="col-md-8 col-sm-12 col-xs-12">
                                             <p></p>
-                                            <p>@(string.IsNullOrEmpty(Model.Description)?"Updating ..." :
-                                                Model.Description)</p>
+                                            <p>
+                                                @(string.IsNullOrEmpty(Model.Description)?"Updating ..." :
+                                                Html.Raw(Model.Description))
+                                            </p>
                                             <div class="mvsingle-item ov-item">
                                                 <a class="img-lightbox" data-fancybox-group="gallery"
-                                                    href="images/uploads/image11.jpg"><img
-                                                        src="images/uploads/image1.jpg" alt=""></a>
+                                                    href="images/uploads/image11.jpg">
+                                                    <img src="images/uploads/image1.jpg" alt="">
+                                                </a>
                                                 <a class="img-lightbox" data-fancybox-group="gallery"
-                                                    href="images/uploads/image21.jpg"><img
-                                                        src="images/uploads/image2.jpg" alt=""></a>
+                                                    href="images/uploads/image21.jpg">
+                                                    <img src="images/uploads/image2.jpg" alt="">
+                                                </a>
                                                 <a class="img-lightbox" data-fancybox-group="gallery"
-                                                    href="images/uploads/image31.jpg"><img
-                                                        src="images/uploads/image3.jpg" alt=""></a>
+                                                    href="images/uploads/image31.jpg">
+                                                    <img src="images/uploads/image3.jpg" alt="">
+                                                </a>
                                                 <div class="vd-it">
                                                     <img class="vd-img" src="images/uploads/image4.jpg" alt="">
                                                     <a class="fancybox-media hvr-grow"
-                                                        href="https://www.youtube.com/embed/o-0hcF97wy0"><img
-                                                            src="images/uploads/play-vd.png" alt=""></a>
+                                                        href="https://www.youtube.com/embed/o-0hcF97wy0">
+                                                        <img src="images/uploads/play-vd.png" alt="">
+                                                    </a>
                                                 </div>
                                             </div>
                                             <div class="title-hd-sm tab-links tabs-mv">
                                                 <h4>filmography</h4>
-                                                <a href="#filmography" class="time">Full Filmography<i
-                                                        class="ion-ios-arrow-right"></i></a>
+                                                <a href="#filmography" class="time">
+                                                    Full Filmography<i class="ion-ios-arrow-right"></i>
+                                                </a>
 
                                             </div>
                                             <!-- movie cast -->

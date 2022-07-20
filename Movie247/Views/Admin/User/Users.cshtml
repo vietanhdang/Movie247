@@ -1,0 +1,300 @@
+@using Microsoft.AspNetCore.Identity
+@using Movie247.Controllers.Admin
+@model List<Movie247UserWithRoles>
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Users Management";
+}
+<link href="~/admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">List of Users</h1>
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <button class="btn btn-circle btn-primary" data-toggle="modal" data-target="#modal-role-add">
+                <i class="fas fa-plus"></i> Add Role
+            </button>
+            <button class="btn btn-circle btn-primary" data-toggle="modal" data-target="#modal-role-edit">
+                <i class="fas fa-edit"></i> Edit Role
+            </button>
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="20%">First/N</th>
+                        <th width="10%">Last/N</th>
+                        <th width="10%">User Name</th>
+                        <th width="10%">Email</th>
+                        <th width="5%">Confirmed</th>
+                        <th width="25%">Role</th>
+                        <th width="20%">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Firstname</td>
+                            <td>@item.LastName</td>
+                            <td>@item.UserName</td>
+                            <td>@item.Email</td>
+                            <td>
+                                <span
+                                class="badge @(item.EmailConfirmed ? "badge-success":"badge-danger")">@item.EmailConfirmed</span>
+                            </td>
+                            <td>@item.Roles</td>
+                            <td class="text-center">
+                                <button class="btn btn-circle btn-primary" data-toggle="modal" data-toggle="tooltip"
+                                data-placement="top" title="Edit Role Of @item.UserName"
+                                onclick=" editUserRole('@item.Id', '@item.Roles' )">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                @if (item.LockoutEnabled)
+                                {
+                                    <button class="btn btn-circle btn-danger" data-toggle="modal" data-toggle="tooltip"
+                                data-placement="top" title="Lock @item.UserName"
+                                onclick="LockAndUnlock('@item.Id', false)">
+                                        <i class="fas fa-lock"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-circle btn-success" data-toggle="modal" data-toggle="tooltip"
+                                data-placement="top" title="Unlock @item.UserName"
+                                onclick="LockAndUnlock('@item.Id', true)">
+                                        <i class="fas fa-unlock"></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-role-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-role-edit">Edit Role</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <td>Action</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (IdentityRole item in ViewBag.roles)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="text" id="role-@item.Id" class="form-control" id="name" placeholder="Name"
+                                    value="@item.Name">
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" onclick="editRole('@item.Id')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button type="button" class="btn btn-danger" onclick="deleteRole('@item.Id')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-role-add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Role</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="form-add-role">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" onclick="addRole()">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-user-edit-role" tabindex="-1" role="dialog" aria-labelledby="modal-user-edit-role"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-user-edit-role">Edit Role</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="form-edit-role">
+                    <div class="form-group">
+                        @foreach (IdentityRole item in ViewBag.roles)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="@item.Id" name="@item.Name">
+                                <label class="form-check-label" for="@item.Id">
+                                    @item.Name
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-update-user-role" data-id="">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<!-- Page level plugins -->
+<script src="~/admin/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="~/admin/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Page level custom scripts -->
+<script src="~/admin/js/demo/datatables-demo.js"></script>
+<script>
+    /* =============================== Edit User Role ================================= */
+    function editUserRole(id, roles) {
+        $('#modal-user-edit-role').find('input').each(function () {
+            // get value of label for checkbox
+            var label = $(`label[for=${$(this).attr('id')}]`).text().trim();
+            if (roles.includes(label)) {
+                $(this).prop('checked', true);
+            } else {
+                $(this).prop('checked', false);
+            }
+        });
+        $('#btn-update-user-role').data('id', id);
+        $('#modal-user-edit-role').modal('show');
+    }
+    $('#btn-update-user-role').click(function () {
+        event.preventDefault();
+        var id = $(this).data('id');
+        var roles = [];
+        $('#modal-user-edit-role').find('input').each(function () {
+            if ($(this).is(':checked')) {
+                roles.push($(this).attr('name').trim());
+            }
+        });
+        $.ajax({
+            url: '/admin/users/EditUserRole',
+            type: 'POST',
+            data: {
+                userId: id,
+                role: roles
+            },
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message);
+                }
+            }
+        });
+    });
+
+    /* =============================== Add, Edit, Delete Role ================================= */
+    function addRole() {
+        event.preventDefault();
+        $.ajax({
+            url: "/admin/role/add",
+            type: "POST",
+            data: $('#form-add-role').serialize(),
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message);
+                }
+            }
+        });
+    }
+    function deleteRole(id) {
+        event.preventDefault();
+        $.ajax({
+            url: "/admin/role/delete/" + id,
+            type: "POST",
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message);
+                }
+            }
+        });
+    }
+    function editRole(id) {
+        event.preventDefault();
+        $.ajax({
+            url: "/admin/role/edit/",
+            type: "POST",
+            data: {
+                id: id,
+                name: $('#role-' + id).val()
+            },
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message);
+                }
+            }
+        });
+    }
+    /* =============================== Lock And Unlock User ================================= */
+    function LockAndUnlock(id, status) {
+        $.ajax({
+            url: "/admin/users/LockAndUnlock",
+            type: "POST",
+            data: {
+                userId: id,
+                isLocked: status
+            },
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message);
+                }
+            }
+        });
+    }
+</script>
+
+
+}

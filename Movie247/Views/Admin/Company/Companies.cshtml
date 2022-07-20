@@ -1,0 +1,206 @@
+@using Movie247.Models
+@model List<ProductionCompany>
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "List Company";
+
+}
+<style>
+    table {
+        margin: 0 auto;
+        width: 100%;
+        clear: both;
+        border-collapse: collapse;
+        table-layout: fixed; // ***********add this
+        word-wrap: break-word; // ***********and this
+    }
+</style>
+<link href="~/admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">List of Company</h1>
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-company-edit">
+                <i class="fas fa-plus"></i> Add Company
+            </button>
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" cellspacing="0" id="dataTable" name="dataTable">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>CreateAt</th>
+                        <th>UpdateAt</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="@item.Id">
+                            <td><img src="~/web/images/company/@item.FilePath" width="100" /></td>
+                            <td name="name">@item.Name</td>
+                            <td name="description"
+                            style="-webkit-line-clamp: 5;-webkit-box-orient: vertical;overflow: hidden;display: -webkit-box;">
+                                @item.Description</td>
+                            <td style="width: 10%;">@item.CreateAt</td>
+                            <td style="width: 10%;">@item.UpdateAt</td>
+                            <td class="text-center" style="width: 20%;">
+                                <button type="button" class="btn btn-circle btn-primary" data-toggle="modal"
+                                onclick="editCompany(@item.Id)" title="Edit info @item.Name" data-toggle="tooltip"
+                                data-placement="top">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-circle btn-danger" data-toggle="modal"
+                                onclick="deleteCompany(@item.Id)" title="Delete @item.Name" data-toggle="tooltip"
+                                data-placement="top">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <a href="/Company/Details/@item.Id" type="button" class="btn btn-circle btn-success" title="View @item.Name in website"
+                                    data-toggle="tooltip" data-placement="top">
+                                     <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- modal edit -->
+<div class="modal fade" id="modal-company-edit" tabindex="-1" role="dialog" aria-labelledby="modal-movie-edit"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="form-company-edit" enctype="multipart/form-data">
+                    <input type="hidden" name="Id" id="id" />
+                    <div class="form-group row">
+                        <div class="col-md-12 text-center">
+                            <img src="" id="image" width="100" />
+                        </div>
+                        <div class="col-md-12 text-center mt-2">
+                            <input type="file" class="form-control" id="uploadImg" name="Image" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" name="Name" placeholder="Name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="Description" rows="3"
+                            placeholder="Description" maxlength="4000"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="save-company">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<!-- Page level plugins -->
+<script src="~/admin/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="~/admin/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="~/admin/vendor/ckeditor/ckeditor.js"></script>
+<!-- Page level custom scripts -->
+<script src="~/admin/js/demo/datatables-demo.js"></script>
+<script>
+    $("#dataTable").DataTable({
+        // fixed columns
+        "scrollX": true,
+        responsive: true,
+        autoWidth: false,
+        columnDefs: [{
+            width: "20%",
+            targets: [0, 1, 2, 3, 4, 5]
+        }],
+    });
+    $("select[name='show']").val(@ViewBag.show);
+    CKEDITOR.replace('description');
+    function editCompany(id) {
+        var modal = $("#modal-company-edit");
+        // assign value edit movie to modal
+        modal.find("#id").val(id);
+        modal.find("#image").attr("src", $("#" + id).find("img").attr("src"));
+        modal.find("#name").val($("#" + id).find("td[name='name']").text());
+        modal.find("#description").val($("#" + id).find("td[name='description']").text());
+        CKEDITOR.instances.description.setData($("#" + id).find("td[name='description']").text());
+        modal.modal("show");
+    }
+    $("#uploadImg").change(function () {
+        var modal = $("#modal-company-edit");
+        var file = this.files[0];
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            modal.find("#image").attr("src", e.target.result);
+        };
+        reader.readAsDataURL(file);
+    });
+    $("#save-company").click(function () {
+        event.preventDefault();
+        var modal = $("#modal-company-edit");
+        var form = $("#form-company-edit");
+        var id = modal.find("#id").val();
+        modal.find("#description").val(CKEDITOR.instances.description.getData());
+        $.ajax({
+            url: "/Admin/Companies/Edit",
+            type: "POST",
+            data: new FormData(form[0]),
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.success) {
+                    showMessage('success', response.message, true);
+                } else {
+                    showMessage('error', response.message, true);
+                }
+            }
+        });
+    });
+    function deleteCompany(id) {
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this company!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: "/Admin/Celebrities/Delete",
+                    type: "POST",
+                    data: {
+                        id: id
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            showMessage('success', data.message, true);
+                        } else {
+                            showMessage('error', data.message, true);
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>
+}

@@ -68,6 +68,7 @@ namespace Movie247.Logics
         public async Task<List<Movie>> GetMovieByMultipleCondition(FilterModel filter)
         {
             var movies = from m in _context.Movies
+                         where m.MovieStatus == true
                          select m;
             if (filter.Name != null)
             {
@@ -149,7 +150,6 @@ namespace Movie247.Logics
             return await movies.Skip(from - 1).Take(filter.PageSize).ToListAsync();
         }
 
-        // Get movie by id
         public Movie GetMovieById(int id)
         {
             Movie movie = new Movie();
@@ -160,8 +160,25 @@ namespace Movie247.Logics
                 .Include(movie => movie.MovieCountries).ThenInclude(x => x.Country)
                 .Include(movie => movie.MovieCasts).ThenInclude(x => x.Person)
                 .Include(movie => movie.MovieSources)
-                .FirstOrDefault(movie => movie.Id == id);
+                .FirstOrDefault(movie => movie.Id == id && movie.MovieStatus == true);
             return movie;
+        }
+        public Movie GetMovieByIdAdmin(int id)
+        {
+            Movie movie = new Movie();
+            movie = _context.Movies
+                .Include(movie => movie.MovieCrews)
+                .Include(movie => movie.MovieGenres)
+                .Include(movie => movie.MovieCompanies)
+                .Include(movie => movie.MovieCountries)
+                .Include(movie => movie.MovieCasts)
+                .Include(movie => movie.MovieSources)
+                .FirstOrDefault(movie => movie.Id == id && movie.MovieStatus == true);
+            return movie;
+        }
+        public async Task<List<Movie>> GetAllMovie()
+        {
+            return await _context.Movies.OrderByDescending(c => c.UpdateAt ?? c.CreateAt).ToListAsync();
         }
         public async Task<int> GetTotalReviews(int id)
         {
@@ -171,7 +188,7 @@ namespace Movie247.Logics
         public async Task<List<MovieComment>> GetCommentMovieId(int id)
         {
             var qr = _context.MovieComments
-                      .Include(c => c.User)
+                     .Include(c => c.User)
                      .Include(c => c.ParentMovieComment)
                      .Include(c => c.MovieCommentChildren)
                      .Where(c => c.MovieId == id);
@@ -179,6 +196,10 @@ namespace Movie247.Logics
             var MovieComments = (await qr.ToListAsync())
                              .Where(c => c.ParentMovieComment == null).ToList();
             return MovieComments;
+        }
+        public async Task<int> GetTotalCommentMovieId(int id)
+        {
+            return await _context.MovieComments.Where(c => c.MovieId == id).CountAsync();
         }
         public List<MovieReview> GetReviewByMovieId(int id, int offset, int count, string SortBy, string OrderBy)
         {
@@ -257,6 +278,16 @@ namespace Movie247.Logics
                 .Where(movie => movie.Id != movieId)
                 .Take(12).OrderByDescending(m => m.ReleaseDate).ToList();
             return movie;
+        }
+        public int UpdateView(Movie movie)
+        {
+            movie.Views++;
+            _context.Update(movie);
+            return _context.SaveChanges();
+        }
+        public async Task<MovieReview> GetReviewByUserId(int movieId, string userId)
+        {
+            return await _context.MovieReviews.FirstOrDefaultAsync(x => x.MovieId == movieId && x.UserId == userId);
         }
     }
 }

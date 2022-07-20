@@ -1,0 +1,250 @@
+@using Movie247.Models
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@using X.PagedList.Web.Common
+@model X.PagedList.IPagedList<Person>
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "List Celebrities";
+
+}
+<style>
+    table {
+        margin: 0 auto;
+        width: 100%;
+        clear: both;
+        border-collapse: collapse;
+        table-layout: fixed;
+        // ***********add this word-wrap: break-word;
+        // ***********and this
+    }
+</style>
+<link href="~/admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">List of Celebrities</h1>
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-person-edit">
+                <i class="fas fa-plus"></i> Add Person
+            </button>
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <form method="GET">
+                <label>
+                    Search: <input type="text" id="search" class="form-control" placeholder="Search" name="search"
+                                   value="@ViewBag.search" />
+                </label>
+                <label>
+                    Show:
+                    <select id="show" class="form-control" name="show">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </label>
+                <button class="btn btn-primary" id="btn-search">Search</button>
+            </form>
+            <table class="table table-bordered" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th width="10%">Name</th>
+                        <th>Birthday</th>
+                        <th>Popularity</th>
+                        <th>Description</th>
+                        <th>CreateAt</th>
+                        <th>UpdateAt</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="@item.Id">
+                            <td><img src="~/web/images/person/@item.ProfilePath" width="100" /></td>
+                            <td name="name">@item.Name</td>
+                            <td name="birthday">@item.Birthday.Value.ToString("dd/MM/yyyy")</td>
+                            <td name="popularity">@item.Popularity</td>
+                            <td name="description"
+                            style="-webkit-line-clamp: 7;-webkit-box-orient: vertical;overflow: hidden;display: -webkit-box;">
+                                @item.Description
+                            </td>
+                            <td>@item.CreateAt</td>
+                            <td>@item.UpdateAt</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-circle btn-primary" data-toggle="modal"
+                                    onclick="editPerson(@item.Id)" title="Edit info @item.Name" data-toggle="tooltip"
+                                    data-placement="top">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-circle btn-danger" data-toggle="modal"
+                                    onclick="deletePerson(@item.Id)" title="Delete @item.Name" data-toggle="tooltip"
+                                    data-placement="top">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-end">
+                @Html.PagedListPager(Model, page=> Url.Action("Celebrities", "Admin",
+                new { page = page, show = ViewBag.show, search = ViewBag.search } ),
+                new PagedListRenderOptions {
+                LiElementClasses = new string[] { "page-item" },
+                PageClasses = new string[] { "page-link" }
+                })
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal edit -->
+<div class="modal fade" id="modal-person-edit" tabindex="-1" role="dialog" aria-labelledby="modal-movie-edit"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="form-movie-edit" enctype="multipart/form-data">
+                    <input type="hidden" name="Id" id="id" />
+                    <div class="form-group row">
+                        <div class="col-md-12 text-center">
+                            <img src="" id="image" width="100" />
+                        </div>
+                        <div class="col-md-12 text-center mt-2">
+                            <input type="file" class="form-control" id="uploadImg" name="Image" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" name="Name" placeholder="Name" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="birthday">Birthday</label>
+                            <input type="date" class="form-control" id="birthday" name="Birthday"
+                                   placeholder="Birthday" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="popularity">Popularity</label>
+                            <input type="number" class="form-control" id="popularity" name="Popularity"
+                                   placeholder="Popularity" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="Description" rows="3"
+                                  placeholder="Description" maxlength="4000"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="save-person">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<!-- Page level plugins -->
+<script src="~/admin/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="~/admin/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="~/admin/vendor/ckeditor/ckeditor.js"></script>
+<!-- Page level custom scripts -->
+<script src="~/admin/js/demo/datatables-demo.js"></script>
+<script>
+    $("#dataTable").DataTable({
+        // fixed columns
+        "scrollX": true,
+        responsive: true,
+        autoWidth: false,
+        columnDefs: [{
+            width: "20%",
+            targets: [0, 1, 2, 3, 4, 5]
+        }],
+    });
+    $("select[name='show']").val(@ViewBag.show);
+    CKEDITOR.replace('description');
+    function editPerson(id) {
+        var modal = $("#modal-person-edit");
+        // assign value edit movie to modal
+        modal.find("#id").val(id);
+        modal.find("#image").attr("src", $("#" + id).find("img").attr("src"));
+        modal.find("#name").val($("#" + id).find("td[name='name']").text());
+        modal.find("#popularity").val($("#" + id).find("td[name='popularity']").text());
+        var birthday = $("#" + id).find("td[name='birthday']").text();
+        birthday = birthday.split("/");
+        birthday = birthday[2] + "-" + birthday[1] + "-" + birthday[0];
+        modal.find("#birthday").val(birthday);
+        modal.find("#description").val($("#" + id).find("td[name='description']").text());
+        CKEDITOR.instances.description.setData($("#" + id).find("td[name='description']").text());
+        modal.modal("show");
+    }
+    $("#uploadImg").change(function () {
+        var modal = $("#modal-person-edit");
+        var file = this.files[0];
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            modal.find("#image").attr("src", e.target.result);
+        };
+        reader.readAsDataURL(file);
+    });
+    $("#save-person").click(function () {
+        event.preventDefault();
+        var modal = $("#modal-person-edit");
+        var form = $("#form-movie-edit");
+        var id = modal.find("#id").val();
+        modal.find("#description").val(CKEDITOR.instances.description.getData());
+        $.ajax({
+            url: "/Admin/Celebrities/Edit",
+            type: "POST",
+            data: new FormData(form[0]),
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.success) {
+                    showMessage('success', response.message, true);
+                } else {
+                    showMessage('error', response.message, true);
+                }
+            }
+        });
+    });
+    function deletePerson(id) {
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this person!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: "/Admin/Companies/Delete",
+                    type: "POST",
+                    data: {
+                        id: id
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            showMessage('success', data.message, true);
+                        } else {
+                            showMessage('error', data.message, true);
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>
+}

@@ -1,0 +1,220 @@
+﻿@using Movie247.Models
+@model List<Movie>
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "List Movies";
+}
+<link href="~/admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">List of Movies</h1>
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    @* <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#modal-role-add">
+        <i class="fas fa-plus"></i> Add Role
+        </button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#modal-role-edit">
+        <i class="fas fa-edit"></i> Edit Role
+        </button>
+        </h6>
+        </div> *@
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="5%">ID</th>
+                        <th width="5%">Poster</th>
+                        <th width="20%">Title</th>
+                        <th width="5%">Imdb</th>
+                        <th width="5%">Duration</th>
+                        <th width="5%">Release Date</th>
+                        <th width="10%">Created At</th>
+                        <th width="10%">Updated At</th>
+                        <th width="20%">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="@item.Id">
+                            <td>@item.Id</td>
+                            <td><img src="~/web/images/movie/poster/@item.PosterPath" width="100" /></td>
+                            <td name="title">@item.Title</td>
+                            <td name="imdb">@item.ImdbAverage</td>
+                            <td name="duration">@item.Duration</td>
+                            <td name="releaseDate">@item.ReleaseDate.ToString("dd/MM/yyyy")</td>
+                            <td name="createdAt">@item.CreateAt</td>
+                            <td name="updatedAt">@item.UpdateAt</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-circle btn-primary m-1" data-toggle="modal"
+                                    onclick="editMovie(@item.Id)" title="Edit quick Movie @item.Title" data-toggle="tooltip"
+                                    data-placement="top">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <a href="/Admin/Movies/Edit/@item.Id" class="btn btn-circle btn-warning m-1"
+                               title="Edit detail Movie @item.Title" data-toggle="tooltip" data-placement="top">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="/Movie/Details/@item.Id" class="btn btn-circle btn-info m-1"
+                               title="View detail Movie @item.Title" data-toggle="tooltip" data-placement="top">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                                @if (item.MovieStatus ?? true)
+                                {
+                                    <button type="button" class="btn btn-circle btn-success m-1" onclick="hideAndShowMovie(@item.Id, false)"
+                                    title="Hide Movie @item.Title" data-toggle="tooltip" data-placement="top">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-circle btn-danger m-1" onclick="hideAndShowMovie(@item.Id, true)"
+                                    data-toggle="tooltip" data-placement="top" title="Show Movie @item.Title">
+                                        <i class="fas fa-eye-slash"></i>
+                                    </button>
+                                }
+                                <button type="button" class="btn btn-circle btn-danger m-1" onclick="deleteMovie(@item.Id)"
+                                    title="Delete Movie @item.Title">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- modal edit -->
+<div class="modal fade" id="modal-movie-edit" tabindex="-1" role="dialog" aria-labelledby="modal-movie-edit"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-movie-edit">Edit Quick Movie</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="form-movie-edit">
+                    <input type="hidden" name="Id" id="id" />
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" class="form-control" id="title" name="Title" placeholder="Title" />
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label for="imdb">Imdb</label>
+                            <input type="number" class="form-control" id="imdb" name="ImdbAverage" placeholder="Imdb" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="duration">Duration</label>
+                            <input type="number" class="form-control" id="duration" name="Duration"
+                                   placeholder="Duration" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="releaseDate">Release Date</label>
+                            <input type="date" class="form-control" id="releaseDate" name="ReleaseDate"
+                                   placeholder="Release Date" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="save-edit-quick-movie">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<!-- Page level plugins -->
+<script src="~/admin/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="~/admin/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<!-- Page level custom scripts -->
+<script src="~/admin/js/demo/datatables-demo.js"></script>
+<script>
+     $('#dataTable').DataTable({
+        // order by created at desc and updated at desc
+        order: [[7, "desc"]]
+    });
+    function editMovie(id) {
+        var modal = $("#modal-movie-edit");
+        // assign value edit movie to modal
+        modal.find("#id").val(id);
+        modal.find("#title").val($("#" + id).find("td[name='title']").text());
+        modal.find("#imdb").val($("#" + id).find("td[name='imdb']").text());
+        modal.find("#duration").val($("#" + id).find("td[name='duration']").text());
+        // convert date to string
+        var date = $("#" + id).find("td[name='releaseDate']").text();
+        var date = date.split("/");
+        var date = date[2] + "-" + date[1] + "-" + date[0];
+        modal.find("#releaseDate").val(date);
+        // show modal
+        modal.modal("show");
+    }
+    $("#save-edit-quick-movie").click(function () {
+        event.preventDefault();
+        var form = $("#form-movie-edit");
+        $.ajax({
+            url: "/Admin/Movies/Edit",
+            type: "POST",
+            data: form.serialize(),
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message, true);
+                }
+            }
+        });
+    });
+    function hideAndShowMovie(movieId, status) {
+        $.ajax({
+            url: '/Admin/Movies/HideAndShow',
+            type: 'POST',
+            data: {
+                movieId: movieId,
+                status: status
+            },
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message, true);
+                }
+            }
+        });
+    }
+    function deleteMovie(movieId) {
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will delete all information about this movie!, Company, Genre, Country, Director, Actor, ...",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: '/Admin/Movies/Delete',
+                    type: 'DELETE',
+                    data: {
+                        movieId: movieId
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            showMessage('success', data.message, true);
+                        } else {
+                            showMessage('error', data.message);
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>
+}

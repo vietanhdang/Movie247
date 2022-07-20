@@ -1,0 +1,381 @@
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Add Movie";
+    IEnumerable<SelectListItem> genres = ViewBag.genres;
+    IEnumerable<SelectListItem> companies = ViewBag.companies;
+    IEnumerable<SelectListItem> countries = ViewBag.countries;
+    IEnumerable<SelectListItem> persons = ViewBag.persons;
+}
+<style>
+    .error {
+        color: red;
+        font-size: 1.125rem;
+        position: relative;
+        line-height: 1.5;
+        width: 12.5rem;
+    }
+</style>
+<link rel="stylesheet" href="~/web/css/select2.min.css" />
+<!-- Page Heading -->
+<h1 class="h3 mb-4 text-gray-800">Add Movie</h1>
+
+<form class="row mb-2" enctype="multipart/form-data" method="post" id="form-add-movie">
+
+    <div class="col-lg-8">
+        <!-- Circle Buttons -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Movie Information</h6>
+            </div>
+            <div class="card-body row">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" class="form-control" id="title" name="Title" placeholder="Title" required>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="year">Release Date</label>
+                                <input type="date" class="form-control" id="year" name="ReleaseDate" placeholder="Year"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="duration">Duration</label>
+                                <input type="number" class="form-control" id="duration" name="Duration"
+                                    placeholder="Duration">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="imdb">IMDB</label>
+                                <input type="number" class="form-control" id="imdb" name="ImdbAverage"
+                                    placeholder="IMDB" min="0" max="10" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <div class="form-group">
+                                <label for="poster">Poster</label>
+                                <input type="file" class="form-control-file" id="poster" name="Poster">
+                            </div>
+                            <div class="form-group">
+                                <label for="poster">Poster - Preview</label>
+                                <div>
+                                    <img src="" class="img-thumbnail rounded" id="poster-preview">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <div class="form-group">
+                                <label for="backdrop">Backdrop</label>
+                                <input type="file" class="form-control-file" id="backdrop" name="Backdrop">
+                            </div>
+                            <div class="form-group">
+                                <label for="backdrop">Backdrop - Preview</label>
+                                <div>
+                                    <img src="" class="img-thumbnail rounded" id="backdrop-preview">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="trailer-preview">Trailer - Preview</label>
+                                <iframe width="400" height="200" src="" title="YouTube video player" frameborder="0"
+                                    id="trailer-preview"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen style="display: inherit;" class="embed-responsive-item"></iframe>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="trailer">Trailer</label>
+                                <input type="text" class="form-control" id="trailer" name="trailer"
+                                    placeholder="Trailer link https://www.youtube.com/watch?v=">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="overview">Overview</label>
+                        <textarea class="form-control" id="overview" name="Overview" rows="3"
+                            name="Overview"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select class="form-control" id="status" name="MovieStatus">
+                            <option value="true">Available</option>
+                            <option value="false">Not Available</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Movie Countries</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="countries">Countries</label>
+                    <select class="form-control select2" id="countries" name="Countries" multiple required>
+                        @foreach (var item in countries)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Movie Companies</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="companies">Companies</label>
+                    <select class="form-control select2" id="companies" name="Companies" multiple required>
+                        @foreach (var item in companies)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Movie Genres</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="genres">Genres</label>
+                    <select class="form-control select2" id="genres" name="Genres" multiple required>
+                        @foreach (var item in genres)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Movie Actors</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="actors">Actors</label>
+                    <select class="form-control select2" id="actors" name="Actors" multiple required>
+                        @foreach (var item in persons)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Movie Directors</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="directors">Directors</label>
+                    <select class="form-control select2" id="directors" name="Directors" multiple required>
+                        @foreach (var item in persons)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Movie Sources</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="sources">Sources</label>
+                    <select class="form-control tag" id="sources" name="Sources" multiple>
+
+                    </select>
+                    <span class="text-secondary">Guide: Must right format: Description @("@@") LinkSource(m3u8) (ex:
+                        720P @("@@") https://...)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary" id="save">
+            <i class="fa fa-save"></i> Save
+        </button>
+    </div>
+</form>
+@section Scripts{
+<script src="~/admin/vendor/ckeditor/ckeditor.js"></script>
+<script src="~/web/js/select2.min.js"></script>
+<script src="~/web/js/jquery.validate.js"></script>
+<script>
+    CKEDITOR.replace('overview');
+    $(document).ready(function () {
+        $('.select2').select2({
+            allowClear: true,
+            placeholder: 'Select an option',
+        });
+        $('.tag').select2({
+            tags: true,
+            allowClear: true,
+            placeholder: 'Insert link source',
+        });
+    });
+</script>
+<script>
+    $("#backdrop").change(function () {
+        $("#backdrop-preview").attr("src", URL.createObjectURL(event.target.files[0]));
+    });
+    $("#poster").change(function () {
+        $("#poster-preview").attr("src", URL.createObjectURL(event.target.files[0]));
+    });
+    $("#trailer").change(function () {
+        try {
+            let link = $("#trailer").val();
+            let param = link.split("=")[1];
+            let param2 = param.split("&")[0];
+            $(this).val(param2);
+            $("#trailer-preview").attr("src", "https://www.youtube.com/embed/" + param2);
+        } catch (e) {
+            $("#trailer-preview").attr("src", "");
+            showMessage("danger", "Invalid link");
+            $(this).val("");
+        }
+    });
+    $("#form-add-movie").validate({
+        rules: {
+            title: {
+                required: true,
+                minlength: 3,
+                maxlength: 100,
+            },
+            overview: {
+                required: true,
+                minlength: 10,
+                maxlength: 1000,
+            },
+            backdrop: {
+                required: true,
+                length: 1,
+            },
+            poster: {
+                required: true,
+                length: 1,
+            },
+            trailer: {
+                required: true,
+            },
+            countries: {
+                required: true,
+            },
+            companies: {
+                required: true,
+            },
+            genres: {
+                required: true,
+            },
+            actors: {
+                required: true,
+            },
+            directors: {
+                required: true,
+            },
+            sources: {
+                required: true,
+            },
+        },
+        messages: {
+            title: {
+                required: "Please enter a title",
+                minlength: "Title must be at least 3 characters",
+                maxlength: "Title must be at most 100 characters",
+            },
+            overview: {
+                required: "Please enter an overview",
+                minlength: "Overview must be at least 10 characters",
+                maxlength: "Overview must be at most 1000 characters",
+            },
+            backdrop: {
+                required: "Please choose a backdrop",
+                length: "Please choose a backdrop",
+            },
+            poster: {
+                required: "Please choose a poster",
+                length: "Please choose a poster",
+            },
+            trailer: {
+                required: "Please enter a trailer",
+            },
+            countries: {
+                required: "Please choose a country",
+            },
+            companies: {
+                required: "Please choose a company",
+            },
+            genres: {
+                required: "Please choose a genre",
+            },
+            actors: {
+                required: "Please choose an actor",
+            },
+            directors: {
+                required: "Please choose a director",
+            },
+            sources: {
+                required: "Please choose a source",
+            },
+        },
+        errorElement: "em",
+        errorPlacement: function (error, element) {
+            error.addClass("invalid-feedback");
+            if (element.prop("type") === "checkbox") {
+                error.insertAfter(element.next("label"));
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass("is-invalid").removeClass("is-valid");
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).addClass("is-valid").removeClass("is-invalid");
+        },
+        submitHandler: function (form) {
+            let overview = CKEDITOR.instances.overview.getData();
+            $("#overview").val(overview);
+            $.ajax({
+                url: "/admin/movies/add",
+                type: "POST",
+                data: new FormData(form),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (data) {
+                    if (data.success) {
+                        showMessage("success", data.message, true);
+                    } else {
+                        showMessage("danger", data.message);
+                    }
+                }
+            });
+        }
+    });
+
+</script>
+}

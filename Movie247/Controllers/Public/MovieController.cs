@@ -58,10 +58,46 @@ namespace Movie247.Controllers
             string SortBy = config.GetSection("SortBy").Get<string>();
             string OrderBy = config.GetSection("OrderBy").Get<string>();
             Movie movie = new MovieLogic().GetMovieById(id);
+            if (movie == null)
+            {
+                ViewData["message"] = "Movie not found";
+                ViewData["ActionLinkFromController"] = "<a href='/Movie/List' class='redbtn'>Back to Movies</a>";
+                return View("_Redirect");
+            }
+            ViewData["TotalCommentCount"] = await new MovieLogic().GetTotalCommentMovieId(id);
             ViewData["RelatedMovies"] = new MovieLogic().GetMovieInGenreById(movie.MovieGenres.ToList(), id);
             ViewData["GetTotalReviews"] = await new MovieLogic().GetTotalReviews(id);
             ViewData["GetReviews"] = new MovieLogic().GetReviewByMovieId(id, 1, loadNumberOfReview, SortBy, OrderBy);
             return View("Details", movie);
+        }
+
+        [Authorize(Roles = "Watch")]
+        public async Task<IActionResult> Watch(int id)
+        {
+            Movie movie = new MovieLogic().GetSourceMovieById(id);
+            if (movie == null)
+            {
+                ViewData["message"] = "Movie not found";
+                ViewData["ActionLinkFromController"] = "<a href='/Movie/List' class='redbtn'>Back to Movies</a>";
+                return View("_Redirect");
+            }
+            if (movie.MovieSources.Count == 0)
+            {
+                return RedirectToAction("Details", "Movie", new { id = id });
+            }
+            var config = _configuration.GetSection("LoadReview");
+            int loadNumberOfReview = config.GetSection("loadNumberOfReview").Get<int>();
+            string SortBy = config.GetSection("SortBy").Get<string>();
+            string OrderBy = config.GetSection("OrderBy").Get<string>();
+            var movieReview = await new MovieLogic().GetReviewByUserId(id, _userManager.GetUserId(User));
+            ViewData["TotalCommentCount"] = await new MovieLogic().GetTotalCommentMovieId(id);
+            ViewData["GetTotalReviews"] = await new MovieLogic().GetTotalReviews(id);
+            ViewData["GetReviews"] = new MovieLogic().GetReviewByMovieId(id, 1, loadNumberOfReview, SortBy, OrderBy);
+            ViewData["UserId"] = _userManager.GetUserId(User);
+            ViewData["MovieComments"] = await new MovieLogic().GetCommentMovieId(id);
+            ViewData["ReviewdMovies"] = movieReview;
+            ViewData["RelatedMovies"] = new MovieLogic().GetMovieInGenreById(movie.MovieGenres.ToList(), id);
+            return View(movie);
         }
         public JsonResult LoadMoreReview(int movieId, int page)
         {
@@ -106,41 +142,6 @@ namespace Movie247.Controllers
             return JsonReturn.Error("");
         }
 
-        [Authorize]
-        public async Task<IActionResult> Watch(int id)
-        {
-            var config = _configuration.GetSection("LoadReview");
-            int loadNumberOfReview = config.GetSection("loadNumberOfReview").Get<int>();
-            string SortBy = config.GetSection("SortBy").Get<string>();
-            string OrderBy = config.GetSection("OrderBy").Get<string>();
-            Movie movie = new MovieLogic().GetSourceMovieById(id);
-            var movieReview = _context.MovieReviews.FirstOrDefault(x => x.MovieId == id && x.UserId == _userManager.GetUserId(User));
-            if (movie.MovieSources.Count == 0)
-            {
-                return RedirectToAction("Details", "Movie", new { id = id });
-            }
-            //var setting = new JsonSerializerSettings();
-            //setting.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            ViewData["GetTotalReviews"] = await new MovieLogic().GetTotalReviews(id);
-            ViewData["GetReviews"] = new MovieLogic().GetReviewByMovieId(id, 1, loadNumberOfReview, SortBy, OrderBy);
-            ViewData["UserId"] = _userManager.GetUserId(User);
-            ViewData["MovieComments"] = await new MovieLogic().GetCommentMovieId(id);
-            ViewData["ReviewdMovies"] = movieReview;
-            ViewData["RelatedMovies"] = new MovieLogic().GetMovieInGenreById(movie.MovieGenres.ToList(), id);
-            return View(movie);
-        }
-        public JsonResult DeleteComment(int commentId)
-        {
-            string userId = _userManager.GetUserId(User);
-            var comment = _context.MovieComments.FirstOrDefault(x => x.Id == commentId && x.UserId == userId);
-            if (comment != null)
-            {
-                _context.MovieComments.Remove(comment);
-                _context.SaveChanges();
-            }
-            return Json(new { success = true });
-        }
-
         public JsonResult UpdateView(int movieId)
         {
             // find movie by id
@@ -148,9 +149,7 @@ namespace Movie247.Controllers
             if (movie != null)
             {
                 // update view count
-                movie.Views++;
-                _context.Update(movie);
-                if (_context.SaveChanges() != 0)
+                if (new MovieLogic().UpdateView(movie) != 0)
                 {
                     return Json(new { success = true });
                 }

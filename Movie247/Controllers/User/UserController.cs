@@ -16,6 +16,7 @@ using Movie247.Logics;
 using Movie247.Models;
 using System.Linq;
 using Movie247.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Movie247.Controllers.User
 {
@@ -43,18 +44,21 @@ namespace Movie247.Controllers.User
         public Movie247User Movie247User { get; set; }
 
         /*DO GET ACTIONS*/
+        [Authorize]
         public async Task<IActionResult> Profile()
         {
             var user = await _userManager.GetUserAsync(User);
             ViewData["Title"] = $"Profile of {user.UserName}";
             return View("Profile", user);
         }
+        [Authorize]
         public IActionResult Favourite()
         {
             var movies = new UserLogic().GetFavouriteMovies(_userManager.GetUserId(User));
             ViewData["Title"] = "Favourite Movies";
             return View("Favourite", movies);
         }
+        [Authorize]
         public IActionResult Rated()
         {
             var reviews = new UserLogic().GetReviews(_userManager.GetUserId(User));
@@ -158,7 +162,7 @@ namespace Movie247.Controllers.User
                         System.IO.File.Delete(oldImagePath);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                 }

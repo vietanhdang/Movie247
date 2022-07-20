@@ -38,13 +38,15 @@
                                 <div class="form-group">
                                     <h4 class="sb-title">Image Cover</h4>
                                     <img src="/web/images/company/@(Model.FilePath!=null?Model.FilePath:"default.jpg")"
-                                         style="background-color: white;" alt="">
+                                        style="background-color: white;" alt="">
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <h4 class="sb-title">Description</h4>
-                                    <p>@Model.Description</p>
+                                    <div style="color:white ;">
+                                        @Html.Raw(@Model.Description)
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -81,24 +83,6 @@
                             </div>
                         }
                     </div>
-                    @* <div class="topbar-filter">
-                        <label>Movies per page:</label>
-                        <select>
-                        <option value="range">5 Movies</option>
-                        <option value="saab">10 Movies</option>
-                        </select>
-
-                        <div class="pagination2">
-                        <span>Page 1 of 2:</span>
-                        <a class="active" href="#">1</a>
-                        <a href="#">2</a>
-                        <a href="#">3</a>
-                        <a href="#">...</a>
-                        <a href="#">78</a>
-                        <a href="#">79</a>
-                        <a href="#"><i class="ion-arrow-right-b"></i></a>
-                        </div>
-                        </div> *@
                 }
                 else
                 {

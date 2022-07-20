@@ -5,7 +5,7 @@
 }
 
 <div class="hero mv-single-hero"
-     style="background: url('/web/images/movie/backdrop/@Model.BackdropPath'); background-size: cover;">
+    style="background: url('/web/images/movie/backdrop/@Model.BackdropPath'); background-size: cover;">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -32,7 +32,7 @@
                             </div>
                             <div>
                                 <a href="https://www.youtube.com/embed/@Model.Trailer"
-                                   class="item item-2 redbtn fancybox-media hvr-grow"><i class="ion-play"></i></a>
+                                    class="item item-2 redbtn fancybox-media hvr-grow"><i class="ion-play"></i></a>
                             </div>
                         </div>
                         <div class="btn-transform transform-vertical">
@@ -85,7 +85,8 @@
                             <i class="ion-android-star"></i>
                             <p>
                                 <span>@Model.ImdbAverage</span> /10<br>
-                                <span class="rv">@ViewBag.GetTotalReviews Reviews</span>
+                                <span class="rv">@ViewBag.GetTotalReviews Reviews @ViewBag.TotalCommentCount
+                                    Comment</span>
                             </p>
                         </div>
                     </div>
@@ -101,7 +102,7 @@
                                 <div id="overview" class="tab active">
                                     <div class="row">
                                         <div class="col-md-8 col-sm-12 col-xs-12">
-                                            <p>@Model.Overview</p>
+                                            <p>@Html.Raw(@Model.Overview)</p>
                                             <div class="title-hd-sm tab-links tabs-mv">
                                                 <h4>cast</h4>
                                                 <a href="#cast" class="time">
@@ -115,8 +116,8 @@
                                                     <div class="cast-it">
                                                         <div class="cast-left">
                                                             <img style="width:100px"
-                                                             src="~/web/images/person/@movieCast.Person.ProfilePath"
-                                                             alt="">
+                                                            src="~/web/images/person/@movieCast.Person.ProfilePath"
+                                                            alt="">
                                                             @Html.ActionLink(movieCast.Person.Name, "Details","Celebrity",
                                                         new {id = movieCast.PersonId})
                                                         </div>
@@ -141,7 +142,7 @@
                                                 <p>
                                                     @foreach (MovieGenre genre in Model.MovieGenres)
                                                     {
-                                                        <a href="#">@genre.Genre.Name, </a>
+                                                        <a href="/Movie/List?GenreId=@genre.GenreId">@genre.Genre.Name, </a>
                                                     }
                                                 </p>
                                             </div>
@@ -164,7 +165,8 @@
                                                 <p>
                                                     @foreach (MovieCountry mc in @Model.MovieCountries)
                                                     {
-                                                        <a href="#">@mc.Country?.Name, </a>
+                                                        <a href="/Movie/List?CountryId=@mc.CountryId">@mc.Country?.Name,
+                                                        </a>
                                                     }
                                                 </p>
                                             </div>
@@ -172,19 +174,9 @@
                                                 <h6>Run Time:</h6>
                                                 <p>@Model.Duration min</p>
                                             </div>
-                                            <div class="sb-it">
-                                                <h6>Keywords:</h6>
-                                                <p class="tags">
-                                                    <span class="time">
-                                                        <a href="#">
-
-                                                        </a>
-                                                    </span>
-                                                </p>
-                                            </div>
-                                            <div class="ads">
+                                            @* <div class="ads">
                                                 <img src="images/uploads/ads1.png" alt="">
-                                            </div>
+                                                </div>*@
                                         </div>
                                     </div>
                                 </div>
@@ -196,7 +188,7 @@
                                                 <h2>@Model.Title</h2>
                                             </div>
                                             <a href="/Movie/Watch/@Model.Id" class="redbtn"
-                                               style="margin: 0 20px;">Write Review</a>
+                                                style="margin: 0 20px;">Write Review</a>
                                         </div>
                                         <div class="topbar-filter">
                                             <p>Found <span>@ViewBag.GetTotalReviews Reviews reviews</span> in total</p>
@@ -209,7 +201,7 @@
                                                     <div class="mv-user-review-item">
                                                         <div class="user-infor">
                                                             <img src="~/web/images/users/@mr.UserId/profile/@mr.User.Image"
-                                                         alt="">
+                                                        alt="">
                                                             <div>
                                                                 <h3></h3>
                                                                 <div class="no-star">
@@ -226,7 +218,8 @@
                                                                     }
                                                                 </div>
                                                                 <p class="time">
-                                                                    @mr.CreateAt.Value.ToString("dd/MM/yyyy HH:mm:ss") by <a href="#"> @mr.User.Firstname @mr.User.LastName</a>
+                                                                    @mr.CreateAt.Value.ToString("dd/MM/yyyy HH:mm:ss") by <a
+                                                                href="#"> @mr.User.Firstname @mr.User.LastName</a>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -256,7 +249,7 @@
                                                 <div class="cast-it">
                                                     <div class="cast-left">
                                                         <img style="width:100px"
-                                                         src="~/web/images/person/@movieCrew.Person.ProfilePath" alt="">
+                                                        src="~/web/images/person/@movieCrew.Person.ProfilePath" alt="">
                                                         @Html.ActionLink(movieCrew.Person.Name, "Details","Celebrity", new
                                                     {id = movieCrew.PersonId})
                                                     </div>
@@ -273,7 +266,7 @@
                                                 <div class="cast-it">
                                                     <div class="cast-left">
                                                         <img style="width:100px"
-                                                         src="~/web/images/person/@movieCast.Person.ProfilePath" alt="">
+                                                        src="~/web/images/person/@movieCast.Person.ProfilePath" alt="">
                                                         @Html.ActionLink(movieCast.Person.Name, "Details","Celebrity", new
                                                     {id = movieCast.PersonId})
                                                     </div>
@@ -317,7 +310,7 @@
                                                         Director: @foreach (var item in @movie.MovieCrews)
                                                         {
                                                             <a href="/Celebrity/Details/@item.PersonId" data-toggle="tooltip"
-                                                       title="<img src='/web/images/person/@item.Person.ProfilePath' />">@item.Person.Name</a>
+                                                        title="<img src='/web/images/person/@item.Person.ProfilePath' />">@item.Person.Name</a>
                                                         }
                                                     </p>
                                                     <p>
@@ -326,7 +319,7 @@
                                                        x.Person.Popularity).Take(5))
                                                         {
                                                             <a href="/Celebrity/Details/@item.PersonId" data-toggle="tooltip"
-                                                       title="<img src='/web/images/person/@item.Person.ProfilePath' />">@item.Person.Name</a>
+                                                        title="<img src='/web/images/person/@item.Person.ProfilePath' />">@item.Person.Name</a>
 
                                                         }
                                                         ...
@@ -437,7 +430,7 @@
                 if (response.status == 401) {
                     showMessage("error", "You must be logged in to add to favourite");
                 } else {
-                    showMessage("error", "Something went wrong");
+                    showMessage("error", "You must be logged in to add to favourite");
                 }
             }
         });

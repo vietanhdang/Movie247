@@ -207,10 +207,9 @@
 
                     <!-- comment items -->
                     <div class="flex-it share-tag">
-                        <h4>Comment</h4>
+                        <h4>@ViewBag.TotalCommentCount Comment</h4>
                     </div>
                     <div class="comments" id="review-item">
-                        <h4>04 Comments</h4>
                         @foreach (MovieComment item in ViewBag.MovieComments as List<MovieComment>)
                         {
                             int level = 0;

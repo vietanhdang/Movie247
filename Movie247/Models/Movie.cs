@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -25,6 +26,7 @@ namespace Movie247.Models
         public DateTime ReleaseDate { get; set; }
         public string PosterPath { get; set; }
         public string BackdropPath { get; set; }
+        [Range(0, 10)]
         public double? ImdbAverage { get; set; }
         public long? Views { get; set; }
         public string Duration { get; set; }

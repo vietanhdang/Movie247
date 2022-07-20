@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
@@ -34,6 +35,8 @@ namespace Movie247
         {
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddDbContext<Movie247Context>(options =>
+                   options.UseSqlServer(Configuration.GetConnectionString("AppDbContext")));
             var mailsettings = Configuration.GetSection("MailSettings");
             services.Configure<MailSettings>(mailsettings);
             services.AddTransient<IEmailSender, SendMailService>();
@@ -47,6 +50,27 @@ namespace Movie247
                 options.Password.RequireUppercase = true;
                 options.Password.RequireLowercase = false;
             });
+            //services.AddDefaultIdentity<Movie247User>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<Movie247Context>();
+            services.AddDefaultIdentity<Movie247User>()
+                            .AddRoles<IdentityRole>()
+                            .AddEntityFrameworkStores<Movie247Context>();
+
+            // show login path in the browser
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "Movie247";
+                options.Cookie.HttpOnly = true;
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Redirect/AccessDenied";
+                // options.SlidingExpiration = true;
+                // options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+            });
+            services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                options.ValidationInterval = TimeSpan.Zero; // TimeSpan.FromSeconds(10)
+            });
+            // if admin lock a user, the user will be locked out of the system
             services.AddAuthentication()
             .AddFacebook(facebookOptions =>
             {
@@ -64,13 +88,6 @@ namespace Movie247
                 googleOptions.CallbackPath = "/login-with-google";
             })
             .AddCookie();
-            services.AddDbContext<Movie247Context>(options =>
-                   options.UseSqlServer(Configuration.GetConnectionString("AppDbContext")));
-
-            services.AddDefaultIdentity<Movie247User>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<Movie247Context>();
-            // show login path in the browser
-            services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/Login");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -105,6 +122,9 @@ namespace Movie247
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute(
+                    name: "admin",
+                    pattern: "admin/{controller}/{action}/{id?}");
+                endpoints.MapControllerRoute(
                     name: "list of movie",
                     pattern: "{controller=Movie}/{action=List}/{id?}");
                 endpoints.MapControllerRoute(
@@ -122,6 +142,9 @@ namespace Movie247
                 endpoints.MapControllerRoute(
                   name: "profile",
                     pattern: "{controller=User}/{action=Profile}");
+                endpoints.MapControllerRoute(
+                name: "admin",
+                  pattern: "{controller=admin}/{action=movies}/{id?}");
             });
         }
     }
