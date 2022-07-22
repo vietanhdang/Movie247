@@ -25,7 +25,7 @@ namespace Movie247.Controllers.Admin
     {
         public string Roles { get; set; }
     }
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Editor")]
     public class AdminController : Controller
     {
         RoleManager<IdentityRole> _roleManager;
@@ -42,6 +42,7 @@ namespace Movie247.Controllers.Admin
         }
         /*===================================*/
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Users()
         {
             var roles = await _roleManager.Roles.ToListAsync();
@@ -63,6 +64,7 @@ namespace Movie247.Controllers.Admin
             return View("User/Users", users);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [Route("/Admin/Users/EditUserRole")]
         public async Task<JsonResult> EditUserRole(string userId, string[] role)
         {
@@ -95,6 +97,7 @@ namespace Movie247.Controllers.Admin
             }
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [Route("/Admin/Users/LockAndUnlock")]
         public async Task<JsonResult> LockAndUnlock(string userId, bool isLocked)
         {
@@ -148,6 +151,7 @@ namespace Movie247.Controllers.Admin
             var companies = await _context.ProductionCompanies.Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() }).ToListAsync();
             var persons = await _context.People.Select(p => new SelectListItem { Text = p.Name, Value = p.Id.ToString() }).ToListAsync();
             var countries = await _context.ProductionCountries.Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() }).ToListAsync();
+
             ViewData["genres"] = genres;
             ViewData["companies"] = companies;
             ViewData["countries"] = countries;
@@ -369,6 +373,7 @@ namespace Movie247.Controllers.Admin
             }
         }
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         [Route("/Admin/Movies/Delete")]
         public async Task<JsonResult> Delete(int movieId)
         {

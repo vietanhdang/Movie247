@@ -9,16 +9,13 @@
 <h1 class="h3 mb-2 text-gray-800">List of Movies</h1>
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
-    @* <div class="card-header py-3">
+    <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#modal-role-add">
-        <i class="fas fa-plus"></i> Add Role
-        </button>
-        <button class="btn btn-primary" data-toggle="modal" data-target="#modal-role-edit">
-        <i class="fas fa-edit"></i> Edit Role
-        </button>
+        <a class="btn btn-primary" href="/admin/movies/Add">
+        <i class="fas fa-plus"></i> Add Movie
+        </a>
         </h6>
-        </div> *@
+        </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -38,18 +35,20 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr id="@item.Id">
+                        <tr>
                             <td>@item.Id</td>
                             <td><img src="~/web/images/movie/poster/@item.PosterPath" width="100" /></td>
-                            <td name="title">@item.Title</td>
-                            <td name="imdb">@item.ImdbAverage</td>
-                            <td name="duration">@item.Duration</td>
-                            <td name="releaseDate">@item.ReleaseDate.ToString("dd/MM/yyyy")</td>
-                            <td name="createdAt">@item.CreateAt</td>
-                            <td name="updatedAt">@item.UpdateAt</td>
+                            <td>@item.Title</td>
+                            <td>@item.ImdbAverage</td>
+                            <td>@item.Duration</td>
+                            <td>@item.ReleaseDate.ToString("dd/MM/yyyy")</td>
+                            <td>@item.CreateAt</td>
+                            <td>@item.UpdateAt</td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-circle btn-primary m-1" data-toggle="modal"
-                                    onclick="editMovie(@item.Id)" title="Edit quick Movie @item.Title" data-toggle="tooltip"
+                                    data-title="@item.Title" data-imdb="@item.ImdbAverage" data-duration="@item.Duration"
+                                    data-releasedate="@item.ReleaseDate.ToString("dd/MM/yyyy")" data-id="@item.Id"
+                                    onclick="editMovie(this)" title="Edit quick Movie @item.Title" data-toggle="tooltip"
                                     data-placement="top">
                                     <i class="fas fa-pencil-alt"></i>
                                 </button>
@@ -142,15 +141,16 @@
         // order by created at desc and updated at desc
         order: [[7, "desc"]]
     });
-    function editMovie(id) {
+    function editMovie(e) {
         var modal = $("#modal-movie-edit");
         // assign value edit movie to modal
-        modal.find("#id").val(id);
-        modal.find("#title").val($("#" + id).find("td[name='title']").text());
-        modal.find("#imdb").val($("#" + id).find("td[name='imdb']").text());
-        modal.find("#duration").val($("#" + id).find("td[name='duration']").text());
+        $("#id").val($(e).data("id"));
+        $("#title").val($(e).data("title"));
+        $("#imdb").val($(e).data("imdb"));
+        $("#duration").val($(e).data("duration"));
+        $("#releaseDate").val($(e).data("releasedate"));
         // convert date to string
-        var date = $("#" + id).find("td[name='releaseDate']").text();
+        var date = $(e).data("releasedate");
         var date = date.split("/");
         var date = date[2] + "-" + date[1] + "-" + date[0];
         modal.find("#releaseDate").val(date);

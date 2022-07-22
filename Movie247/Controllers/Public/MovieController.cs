@@ -71,7 +71,8 @@ namespace Movie247.Controllers
             return View("Details", movie);
         }
 
-        [Authorize(Roles = "Watch")]
+        // [Authorize(Roles = "Watch")]
+        [Authorize]
         public async Task<IActionResult> Watch(int id)
         {
             Movie movie = new MovieLogic().GetSourceMovieById(id);

@@ -32,6 +32,10 @@ namespace Movie247.Controllers
             ViewData["top12MovieMostViewedOfUserMost"] = await new MovieLogic().Get12MovieMostViewedOfUserMost();
             return View();
         }
+        public IActionResult Error()
+        {
+            return View("_Redirect");
+        }
 
     }
 }

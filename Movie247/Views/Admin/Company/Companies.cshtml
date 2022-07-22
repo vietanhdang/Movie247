@@ -139,13 +139,18 @@
     function editCompany(id) {
         var modal = $("#modal-company-edit");
         // assign value edit movie to modal
-        modal.find("#id").val(id);
-        modal.find("#image").attr("src", $("#" + id).find("img").attr("src"));
-        modal.find("#name").val($("#" + id).find("td[name='name']").text());
-        modal.find("#description").val($("#" + id).find("td[name='description']").text());
+        $("#id").val(id);
+        $("#image").attr("src", $("#" + id).find("img").attr("src"));
+        $("#name").val($("#" + id).find("td[name='name']").text());
+        $("#description").val($("#" + id).find("td[name='description']").text());
         CKEDITOR.instances.description.setData($("#" + id).find("td[name='description']").text());
         modal.modal("show");
     }
+    $("#modal-company-edit").on("hidden.bs.modal", function () {
+        $("#image").attr("src", "");
+        CKEDITOR.instances.description.setData("");
+        $("#form-company-edit").trigger("reset")
+    });
     $("#uploadImg").change(function () {
         var modal = $("#modal-company-edit");
         var file = this.files[0];

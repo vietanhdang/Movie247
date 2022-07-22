@@ -99,8 +99,10 @@ namespace Movie247
             }
             else
             {
+               
                 app.UseExceptionHandler("/Home/Error");
             }
+
             app.UseCookiePolicy(new CookiePolicyOptions()
             {
                 HttpOnly = HttpOnlyPolicy.Always,
@@ -109,12 +111,12 @@ namespace Movie247
             });
 
             app.UseStaticFiles();
-            app.UseStatusCodePages();
+            // app.UseStatusCodePages();
+            app.UseStatusCodePagesWithReExecute("/Redirect/{0}");
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages(); // This one!

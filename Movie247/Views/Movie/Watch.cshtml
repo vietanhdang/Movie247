@@ -210,6 +210,14 @@
                         <h4>@ViewBag.TotalCommentCount Comment</h4>
                     </div>
                     <div class="comments" id="review-item">
+                        <div class="row">
+								<div class="col-md-12">
+									<textarea name="message" placeholder="Message" class="edit-comment" id="comment-input"></textarea>
+								</div>
+                                <div class="col-md-12">
+                                    <button class="submit redbtn" onclick="AddComment('@Model.Id')">Submit</button>
+                                </div>
+						</div>
                         @foreach (MovieComment item in ViewBag.MovieComments as List<MovieComment>)
                         {
                             int level = 0;
@@ -226,38 +234,38 @@
 
 
                                     @*
-                                        @if (level != 0 && item.MovieCommentChildren?.Count > 0)
-                                        {
-                                        for (int i = 0; i <= level; i++)
-                                        {
-                                        <span style="content:'';display: inline-block;width: 1px;height: calc(100%);background-color: #ffc107;margin-right: 10px;position: absolute;left:@(i*50+32)px;top:40px;z-index: 2;"></span>
+                                    //    @if (level != 0 && item.MovieCommentChildren?.Count > 0)
+                                    //    {
+                                    //    for (int i = 0; i <= level; i++)
+                                    //    {
+                                    //    <span style="content:'';display: inline-block;width: 1px;height: calc(100%);background-color: #ffc107;margin-right: 10px;position: absolute;left:@(i*50+32)px;top:40px;z-index: 2;"></span>
 
-                                        }
-                                        }
-                                        @if (level == 0 && item.MovieCommentChildren?.Count > 0)
-                                        {
-                                        <span style="content:'';display: inline-block;width: 1px;height: 100%;background-color: #ffc107;margin-right: 10px;position: absolute;left:32px;top:40px;z-index: 2;"></span>
+                                    //    }
+                                    //    }
+                                    //    @if (level == 0 && item.MovieCommentChildren?.Count > 0)
+                                    //    {
+                                    //    <span style="content:'';display: inline-block;width: 1px;height: 100%;background-color: #ffc107;margin-right: 10px;position: absolute;left:32px;top:40px;z-index: 2;"></span>
 
-                                        }
-                                        @if (level != 0 && item.MovieCommentChildren?.Count == 0)
-                                        {
+                                    //    }
+                                    //    @if (level != 0 && item.MovieCommentChildren?.Count == 0)
+                                    //    {
 
-                                        }
-                                        @if (level != 0 && item.MovieCommentChildren?.Count == 0)
-                                        {
-                                        for (int i = 0; i < level; i++)
-                                        {
-                                        <span style="content:'';display: inline-block;width: 1px;height: calc(100%+40px);background-color: #ffc107;margin-right: 10px;position: absolute;left:@((level-1)*50+32)px;top:80px;z-index: 2;"></span>
+                                    //    }
+                                    //    @if (level != 0 && item.MovieCommentChildren?.Count == 0)
+                                    //    {
+                                    //    for (int i = 0; i < level; i++)
+                                    //    {
+                                    //    <span style="content:'';display: inline-block;width: 1px;height: calc(100%+40px);background-color: #ffc107;margin-right: 10px;position: absolute;left:@((level-1)*50+32)px;top:80px;z-index: 2;"></span>
 
-                                        }
-                                        }
-                                        <span style="content:'';display: inline-block;width: 1px;height: @(item.MovieCommentChildren?.Count==0? "40px":"calc(100% - 40px)");background-color: #ffc107;margin-right: 10px;position: absolute;left: @(level==0?32:level*50+32)px;top:80px;z-index: 2;"></span>
-                                    *@
-                                    @*Thanh kẻ ngang
-                                        @if (level != 0)
-                                        {
-                                        <span style="content:'';display: inline-block;width: 27px;height: 1px;background-color: #ffc107;margin-right: 10px;position: absolute;left: @(level==0?32:level*50-18)px;top:@(level==0 ? 84:40)px;"></span>
-                                        }
+                                    //    }
+                                    //    }
+                                    //    <span style="content:'';display: inline-block;width: 1px;height: @(item.MovieCommentChildren?.Count==0? "40px":"calc(100% - 40px)");background-color: #ffc107;margin-right: 10px;position: absolute;left: @(level==0?32:level*50+32)px;top:80px;z-index: 2;"></span>
+                                    
+                                    Thanh kẻ ngang
+                                    //    @if (level != 0)
+                                    //    {
+                                    //    <span style="content:'';display: inline-block;width: 27px;height: 1px;background-color: #ffc107;margin-right: 10px;position: absolute;left: @(level==0?32:level*50-18)px;top:@(level==0 ? 84:40)px;"></span>
+                                    //    }
                                     *@
 
 
@@ -434,6 +442,30 @@
                     }
                 }
             });
+            }
+        });
+    }
+    function AddComment(movieId){
+       let commentValue =$("#comment-input").val();
+        if (commentValue == "")
+        {
+            showMessage("error", "Comment is required");
+            return;
+        }
+        $.ajax({
+            url: "/User/AddComment",
+            type: "POST",
+            data: {
+                movieId: movieId,
+                comment: commentValue,
+            },
+            success: function(response){
+                if(response.success){
+                    showMessage('success', response.message, true);
+                }
+                else{
+                    showMessage("error", response.message);
+                }
             }
         });
     }

@@ -11,6 +11,18 @@
             Quick Access <i class="fa fa-angle-down" aria-hidden="true"></i>
         </a>
         <ul class="dropdown-menu level1">
+            @if (User.IsInRole("Admin"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="/admin" title="Admin">Admin management</a>
+                </li>
+            }
+            @if(User.IsInRole("Editor"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="/admin" title="Editor">Editor management</a>
+                </li>
+            }
             <li><a href="/User/Favourite">Favourite Movies</a></li>
             <li><a href="/User/Rated">Rated Movies</a></li>
         </ul>

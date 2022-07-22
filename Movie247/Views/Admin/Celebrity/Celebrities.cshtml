@@ -178,10 +178,10 @@
     function editPerson(id) {
         var modal = $("#modal-person-edit");
         // assign value edit movie to modal
-        modal.find("#id").val(id);
-        modal.find("#image").attr("src", $("#" + id).find("img").attr("src"));
-        modal.find("#name").val($("#" + id).find("td[name='name']").text());
-        modal.find("#popularity").val($("#" + id).find("td[name='popularity']").text());
+        $("#id").val(id);
+        $("#image").attr("src", $("#" + id).find("img").attr("src"));
+        $("#name").val($("#" + id).find("td[name='name']").text());
+        $("#popularity").val($("#" + id).find("td[name='popularity']").text());
         var birthday = $("#" + id).find("td[name='birthday']").text();
         birthday = birthday.split("/");
         birthday = birthday[2] + "-" + birthday[1] + "-" + birthday[0];
@@ -190,6 +190,11 @@
         CKEDITOR.instances.description.setData($("#" + id).find("td[name='description']").text());
         modal.modal("show");
     }
+    $("#modal-person-edit").on("hidden.bs.modal", function () {
+        $("#image").attr("src", "");
+        CKEDITOR.instances.description.setData("");
+        $("#form-movie-edit").trigger("reset")
+    });
     $("#uploadImg").change(function () {
         var modal = $("#modal-person-edit");
         var file = this.files[0];

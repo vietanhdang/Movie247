@@ -404,5 +404,25 @@ namespace Movie247.Controllers.User
                 return JsonReturn.Error("Comment not found");
             }
         }
+        public JsonResult AddComment(int movieId, string comment)
+        {
+            var userId = _userManager.GetUserId(User);
+            MovieComment movieComment = new MovieComment
+            {
+                MovieId = movieId,
+                UserId = userId,
+                Comment = comment,
+                CreateAt = DateTime.Now
+            };
+            _context.MovieComments.Add(movieComment);
+            if (_context.SaveChanges() > 0)
+            {
+                return JsonReturn.Success("Comment submitted successfully");
+            }
+            else
+            {
+                return JsonReturn.Error("Comment submission failed");
+            }
+        }
     }
 }

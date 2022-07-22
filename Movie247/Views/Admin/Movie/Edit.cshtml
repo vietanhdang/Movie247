@@ -1,10 +1,11 @@
 @{
     Layout = "_LayoutAdmin";
-    ViewData["Title"] = "Edit Movie";
+    ViewData["Title"] = "Edit Movie " + Model.Title;
     IEnumerable<SelectListItem> genres = ViewBag.genres;
     IEnumerable<SelectListItem> companies = ViewBag.companies;
     IEnumerable<SelectListItem> countries = ViewBag.countries;
     IEnumerable<SelectListItem> persons = ViewBag.persons;
+    IEnumerable<MovieSource> movieSources = ViewBag.movieSource;
 }
 @using Movie247.Models
 @model Movie
@@ -37,29 +38,29 @@
                     <div class="form-group">
                         <label for="title">Title</label>
                         <input type="text" class="form-control" id="title" name="Title" placeholder="Title"
-                            value="@Model.Title" required>
+                               value="@Model.Title" required>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="year">Release Date</label>
                                 <input type="date" class="form-control" id="year"
-                                    value="@Model.ReleaseDate.ToString("yyyy-MM-dd")" name="ReleaseDate"
-                                    placeholder="Year" required>
+                                       value="@Model.ReleaseDate.ToString("yyyy-MM-dd")" name="ReleaseDate"
+                                       placeholder="Year" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="duration">Duration</label>
                                 <input type="number" class="form-control" id="duration" name="Duration"
-                                    placeholder="Duration" value="@Model.Duration" required>
+                                       placeholder="Duration" value="@Model.Duration" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="imdb">IMDB</label>
                                 <input type="number" class="form-control" id="imdb" name="ImdbAverage"
-                                    placeholder="IMDB" min="0" max="10" step="0.1" value="@Model.ImdbAverage">
+                                       placeholder="IMDB" min="0" max="10" value="@Model.ImdbAverage">
                             </div>
                         </div>
                     </div>
@@ -74,7 +75,7 @@
                                 <label for="poster">Poster - Preview</label>
                                 <div>
                                     <img class="img-thumbnail rounded" id="poster-preview"
-                                        src="~/web/images/movie/poster/@Model.PosterPath" alt="Poster">
+                                         src="~/web/images/movie/poster/@Model.PosterPath" alt="Poster">
                                 </div>
                             </div>
                         </div>
@@ -88,7 +89,7 @@
                                 <label for="backdrop">Backdrop - Preview</label>
                                 <div>
                                     <img src="~/web/images/movie/backdrop/@Model.BackdropPath"
-                                        class="img-thumbnail rounded" id="backdrop-preview">
+                                         class="img-thumbnail rounded" id="backdrop-preview">
                                 </div>
                             </div>
                         </div>
@@ -98,24 +99,24 @@
                             <div class="form-group">
                                 <label for="trailer-preview">Trailer - Preview</label>
                                 <iframe width="400" height="200" title="YouTube video player" frameborder="0"
-                                    id="trailer-preview"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    src="https://www.youtube.com/embed/@Model.Trailer" allowfullscreen
-                                    style="display: inherit;" class="embed-responsive-item"></iframe>
+                                        id="trailer-preview"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        src="https://www.youtube.com/embed/@Model.Trailer" allowfullscreen
+                                        style="display: inherit;" class="embed-responsive-item"></iframe>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="trailer">Trailer</label>
                                 <input type="text" class="form-control" id="trailer" name="trailer"
-                                    placeholder="Trailer link https://www.youtube.com/watch?v=" value="@Model.Trailer">
+                                       placeholder="Trailer link https://www.youtube.com/watch?v=" value="@Model.Trailer">
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="overview">Overview</label>
                         <textarea class="form-control" id="overview" name="Overview" rows="3"
-                            name="Overview">@Model.Overview</textarea>
+                                  name="Overview">@Model.Overview</textarea>
                     </div>
                     <div class="form-group">
                         <label for="status">Status</label>
@@ -255,7 +256,7 @@
                     <select class="form-control tag" id="sources" name="Sources" multiple>
                         @foreach (var item in Model.MovieSources)
                         {
-                            @($"{item.Description} @@@ {item.LinkSource}")
+                            <option selected>@($"{item.Description} @@ {item.LinkSource}")</option>
                         }
                     </select>
                     <span class="text-secondary">

@@ -21,5 +21,20 @@ namespace Movie247.Controllers
             ViewData["returnUrl"] = returnUrl;
             return View("_AccessDenied");
         }
+        [Route("/Redirect/{statusCode}")]
+        public IActionResult ErrorPage(int statusCode)
+        {
+            switch (statusCode)
+            {
+                case 404:
+                    ViewData["message"] = "Page Not Found";
+                    ViewData["title"] = "Page Not Found";
+                    break;
+                default:
+                    break;
+            }
+
+            return View("_Redirect");
+        }
     }
 }
