@@ -80,21 +80,18 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            @* <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+            <li class="nav-item @(((string)ViewBag.Title).Contains("Dashb")?"bg-success":"")">
+                <a class="nav-link" href="/Admin/Dashboard">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span>
                 </a>
-                </li>*@
+             </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider">
 
             <!-- Heading -->
-            <div class="sidebar-heading">
-                Company - Celebrity - Movie
-            </div>
-
+            
             @* <!-- Nav Item - Company -->
                 <li class="nav-item">
                 <a class="nav-link collapsed @(((string)ViewBag.Title).Contains("Company")?"bg-success":"")" " href=" #"
@@ -116,7 +113,29 @@
                 </div>
                 </div>
                 </li> *@
-            <!-- Nav Item - Company -->
+           
+            <div class="sidebar-heading">
+                Company - Celebrity - Movie
+            </div>
+
+            <!-- Nav Item - Genre -->
+            <li class="nav-item @(((string)ViewBag.Title).Contains("Genre")?"bg-success":"")">
+                <a class="nav-link" href="/admin/genres">
+                <i class="fas fa-fw fa-list"></i>
+                <span>Genre Management</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Country -->
+            <li class="nav-item @(((string)ViewBag.Title).Contains("Country")?"bg-success":"")">
+                <a class="nav-link" href="/admin/countries">
+                <i class="fas fa-fw fa-flag"></i>
+                <span>Country Management</span>
+                </a>
+            </li>
+
+            
+             <!-- Nav Item - Company -->
             <li class="nav-item @(((string)ViewBag.Title).Contains("Company")?"bg-success":"")" ">
                 <a class=" nav-link @(((string)ViewBag.Title).Contains("Company")?"bg-success":"")" "
                    href=" /admin/Companies">

@@ -32,7 +32,7 @@
                         @foreach (Movie movie in ViewData["Movies"] as List<Movie>)
                         {
                             <div class="movie-item-style-2 movie-item-style-1">
-                                <img src="~/web/images/movie/poster/@movie.PosterPath" alt="">
+                                <img src="~/web/images/movie/poster/@movie.PosterPath" alt="" style="width:100%;height:255px;">
                                 <div class="hvr-inner">
 
                                     <a href="Details/@movie.Id"> Read more <i class="ion-android-arrow-dropright"></i> </a>
@@ -150,7 +150,7 @@
                     </div>
                     @* <div class="ads">
                         <img src="~/web/images/uploads/ads1.png" alt="">
-                    </div> *@
+                        </div> *@
                     <div class="sb-facebook sb-it">
                         <h4 class="sb-title">Find us on Facebook</h4>
                         @*<iframe src="~/web/#" data-src="~/web/js/https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Ftemplatespoint.net%2F%3Ffref%3Dts&tabs=timeline&width=340&height=315px&small_header=true&adapt_container_width=false&hide_cover=false&show_facepile=true&appId" height="315" style="width:100%;border:none;overflow:hidden"></iframe>*@
@@ -158,14 +158,14 @@
                     @* <div class="sb-twitter sb-it">
                         <h4 class="sb-title">Tweet to us</h4>
                         <div class="slick-tw">
-                            <div class="tweet item" id="">
-                                <!-- Put your twiter id here -->
-                            </div>
-                            <div class="tweet item" id="">
-                                <!-- Put your 2nd twiter account id here -->
-                            </div>
+                        <div class="tweet item" id="">
+                        <!-- Put your twiter id here -->
                         </div>
-                    </div> *@
+                        <div class="tweet item" id="">
+                        <!-- Put your 2nd twiter account id here -->
+                        </div>
+                        </div>
+                        </div> *@
                 </div>
             </div>
         </div>

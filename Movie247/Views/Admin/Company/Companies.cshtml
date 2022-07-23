@@ -133,6 +133,10 @@
             width: "20%",
             targets: [0, 1, 2, 3, 4, 5]
         }],
+        "order": [
+            [4, "desc"],
+            [3, "desc"] 
+        ]
     });
     $("select[name='show']").val(@ViewBag.show);
     CKEDITOR.replace('description');

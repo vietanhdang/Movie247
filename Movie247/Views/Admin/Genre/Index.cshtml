@@ -1,0 +1,195 @@
+@using Movie247.Models;
+@model List<Genre>;
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Genre Management";
+}
+<link href="~/admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">List Genre</h1>
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-genre-add">
+                <i class="fas fa-plus"></i> Add Genre
+            </button>
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="20%">Name</th>
+                        <th width="20%">Description</th>
+                        <th width="20%">Created Date</th>
+                        <th width="20%">Updated Date</th>
+                        <th width="10%">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Description</td>
+                            <td>@item.CreateAt</td>
+                            <td>@item.UpdateAt</td>
+                            <td>
+                                <button class="btn btn-circle btn-primary" data-toggle="modal" data-toggle="tooltip"
+                                data-id="@item.Id" data-name="@item.Name" data-description="@item.Description"
+                                data-placement="top" title="Edit @item.Name" onclick="editGenre(this)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-circle btn-danger" data-toggle="modal" data-toggle="tooltip"
+                                data-placement="top" title="Delete @item.Name" onclick="deleteGenre(@item.Id)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-genre-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Genre</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="form-edit-genre">
+                    <input type="hidden" name="Id" id="id" value="">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="submitEdit(this)">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-genre-add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Genre</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="form-add-genre">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="submitAdd(this)">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+<!-- Page level plugins -->
+<script src="~/admin/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="~/admin/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Page level custom scripts -->
+<script src="~/admin/js/demo/datatables-demo.js"></script>
+<script>
+    /* =============================== Start Edit Genre =============================== */
+    // if update date is not null then order by update date or order by create date datatable
+    $("#dataTable").DataTable({
+        "order": [
+            [3, "desc"],
+            [2, "desc"] 
+        ]
+    });
+    function editGenre(e) {
+        var id = $(e).data('id');
+        var name = $(e).data('name');
+        var description = $(e).data('description');
+        $('#id').val(id);
+        $('#name').val(name);
+        $('#description').val(description);
+        $('#modal-genre-edit').modal('show');
+    }
+    $("#modal-genre-edit").on("hidden.bs.modal", function () {
+        $('#form-edit-genre').trigger('reset');
+    });
+
+    /* =============================== Add, Edit, Delete Genre ================================= */
+    function submitEdit(e) {
+        $.ajax({
+            url: "/Admin/Genres/Edit",
+            type: "POST",
+            data: $('#form-edit-genre').serialize(),
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message);
+                }
+            }
+        });
+    }
+    function submitAdd(e) {
+        $.ajax({
+            url: "/Admin/Genres/Add",
+            type: "POST",
+            data: $('#form-add-genre').serialize(),
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message);
+                }
+            }
+        });
+    }
+    function deleteGenre(id) {
+        $.ajax({
+            url: "/Admin/Genres/Delete",
+            type: "POST",
+            data: {
+                id: id
+            },
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message);
+                }
+            }
+        });
+    }
+    /* =============================== Show Message ================================= */
+</script>
+}

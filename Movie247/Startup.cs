@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
@@ -12,11 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Movie247.Areas.Identity.Data;
 using Movie247.Data;
 using Movie247.Mail;
-using Movie247.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 
 namespace Movie247
@@ -50,8 +45,6 @@ namespace Movie247
                 options.Password.RequireUppercase = true;
                 options.Password.RequireLowercase = false;
             });
-            //services.AddDefaultIdentity<Movie247User>(options => options.SignIn.RequireConfirmedAccount = true)
-            //    .AddEntityFrameworkStores<Movie247Context>();
             services.AddDefaultIdentity<Movie247User>()
                             .AddRoles<IdentityRole>()
                             .AddEntityFrameworkStores<Movie247Context>();
@@ -63,8 +56,6 @@ namespace Movie247
                 options.Cookie.HttpOnly = true;
                 options.LoginPath = "/Account/Login";
                 options.AccessDeniedPath = "/Redirect/AccessDenied";
-                // options.SlidingExpiration = true;
-                // options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
             });
             services.Configure<SecurityStampValidatorOptions>(options =>
             {
@@ -99,7 +90,7 @@ namespace Movie247
             }
             else
             {
-               
+
                 app.UseExceptionHandler("/Home/Error");
             }
 
@@ -111,7 +102,6 @@ namespace Movie247
             });
 
             app.UseStaticFiles();
-            // app.UseStatusCodePages();
             app.UseStatusCodePagesWithReExecute("/Redirect/{0}");
             app.UseRouting();
 

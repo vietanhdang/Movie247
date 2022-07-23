@@ -1,0 +1,193 @@
+@using Movie247.Models;
+@model List<ProductionCountry>;
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Country Management";
+}
+<link href="~/admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<!-- Page Heading -->
+<h1 class="h3 mb-2 text-gray-800">List of Countries</h1>
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-country-add">
+                <i class="fas fa-plus"></i> Add Country
+            </button>
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="20%">ID</th>
+                        <th width="20%">Name</th>
+                        <th width="20%">Created Date</th>
+                        <th width="20%">Updated Date</th>
+                        <th width="10%">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Name</td>
+                            <td>@item.CreateAt</td>
+                            <td>@item.UpdateAt</td>
+                            <td>
+                                <button class="btn btn-circle btn-primary" data-toggle="modal" data-toggle="tooltip"
+                                data-id="@item.Id" data-name="@item.Name" data-placement="top" title="Edit @item.Name"
+                                onclick="editCountry(this)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-circle btn-danger" data-toggle="modal" data-toggle="tooltip"
+                                data-placement="top" title="Delete @item.Name" onclick="deleteCountry(@item.Id)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-country-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Country</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="form-edit-country">
+                    <div class="form-group">
+                        <label for="id">ID</label>
+                        <input type="text" class="form-control" id="id" name="id">
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="submitEdit(this)">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-country-add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Country</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="fomr-add-country">
+                    <div class="form-group">
+                        <label for="id">ID</label>
+                        <input type="text" class="form-control" id="id" name="id">
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="submitAdd(this)">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+<!-- Page level plugins -->
+<script src="~/admin/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="~/admin/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Page level custom scripts -->
+<script src="~/admin/js/demo/datatables-demo.js"></script>
+<script>
+    /* =============================== Start Edit Country =============================== */
+    // if update date is not null then order by update date or order by create date datatable
+    $("#dataTable").DataTable({
+        "order": [
+            [3, "desc"],
+            [2, "desc"]
+        ]
+    });
+    function editCountry(e) {
+        var id = $(e).data('id');
+        var name = $(e).data('name');
+        var description = $(e).data('description');
+        $('#id').val(id);
+        $('#name').val(name);
+        $('#modal-country-edit').modal('show');
+    }
+    $("#modal-country-edit").on("hidden.bs.modal", function () {
+        $('#form-edit-country').trigger('reset');
+    });
+
+    /* =============================== Add, Edit, Delete Country =============================== */
+    function submitEdit(e) {
+        $.ajax({
+            url: "/Admin/Countries/Edit",
+            type: "POST",
+            data: $('#form-edit-country').serialize(),
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message);
+                }
+            }
+        });
+    }
+    function submitAdd(e) {
+        $.ajax({
+            url: "/Admin/Countries/Add",
+            type: "POST",
+            data: $('#fomr-add-country').serialize(),
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message);
+                }
+            }
+        });
+    }
+    function deleteCountry(id) {
+        $.ajax({
+            url: "/Admin/Countries/Delete",
+            type: "POST",
+            data: {
+                id: id
+            },
+            success: function (data) {
+                if (data.success) {
+                    showMessage('success', data.message, true);
+                } else {
+                    showMessage('error', data.message);
+                }
+            }
+        });
+    }
+    /* =============================== Show Message ================================= */
+</script>
+}

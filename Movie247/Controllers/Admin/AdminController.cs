@@ -121,7 +121,197 @@ namespace Movie247.Controllers.Admin
                 return JsonReturn.Error("User could not be found");
             }
         }
+        /*===============DASHBOARD====================*/
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Dashboard()
+        {
+            //total users
+            var totalUsers = await _userManager.Users.CountAsync();
+            //total movies
+            var totalMovies = await _context.Movies.CountAsync();
+            //total genres
+            var totalGenres = await _context.Genres.CountAsync();
+            // total reviews
+            var totalReviews = await _context.MovieReviews.CountAsync();
+
+            ViewData["totalReviews"] = totalReviews;
+            ViewData["totalUsers"] = totalUsers;
+            ViewData["totalMovies"] = totalMovies;
+            ViewData["totalGenres"] = totalGenres;
+            return View("Dashboard/Index");
+        }
+
+        /*===============Genres====================*/
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Genres()
+        {
+            var genres = await _context.Genres.ToListAsync();
+            return View("Genre/Index", genres);
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("/Admin/Genres/Edit")]
+        public async Task<JsonResult> EditGenre(int id, string name, string description)
+        {
+            var genre = await _context.Genres.FindAsync(id);
+            if (genre != null)
+            {
+                genre.Name = name;
+                genre.Description = description;
+                genre.UpdateAt = DateTime.Now;
+                var result = await _context.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return JsonReturn.Success("Genre updated successfully");
+                }
+                else
+                {
+                    return JsonReturn.Error("Genre could not be updated");
+                }
+            }
+            else
+            {
+                return JsonReturn.Error("Genre could not be found");
+            }
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("/Admin/Genres/Delete")]
+        public async Task<JsonResult> DeleteGenre(int id)
+        {
+            var genre = await _context.Genres.FindAsync(id);
+            if (genre != null)
+            {
+                if (_context.MovieGenres.FirstOrDefault(x => x.GenreId == id) != null)
+                {
+                    return JsonReturn.Error("Genre could not be deleted because it is associated with a movie");
+                }
+                _context.Genres.Remove(genre);
+                var result = await _context.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return JsonReturn.Success("Genre deleted successfully");
+                }
+                else
+                {
+                    return JsonReturn.Error("Genre could not be deleted");
+                }
+            }
+            else
+            {
+                return JsonReturn.Error("Genre could not be found");
+            }
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("/Admin/Genres/Add")]
+        public async Task<JsonResult> AddGenre(string name, string description)
+        {
+            var genre = new Genre
+            {
+                Name = name,
+                Description = description,
+                CreateAt = DateTime.Now,
+            };
+            _context.Genres.Add(genre);
+            var result = await _context.SaveChangesAsync();
+            if (result > 0)
+            {
+                return JsonReturn.Success("Genre added successfully");
+            }
+            else
+            {
+                return JsonReturn.Error("Genre could not be added");
+            }
+        }
         /*===================================*/
+        /*===============Countries====================*/
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Countries()
+        {
+            var countries = await _context.ProductionCountries.ToListAsync();
+            return View("Country/Index", countries);
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("/Admin/Countries/Edit")]
+        public async Task<JsonResult> EditCountry(String id, string name)
+        {
+            var country = await _context.ProductionCountries.FindAsync(id);
+            if (country != null)
+            {
+                country.Id = id;
+                country.Name = name;
+                country.UpdateAt = DateTime.Now;
+                var result = await _context.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return JsonReturn.Success("Country updated successfully");
+                }
+                else
+                {
+                    return JsonReturn.Error("Country could not be updated");
+                }
+            }
+            else
+            {
+                return JsonReturn.Error("Country could not be found");
+            }
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("/Admin/Countries/Delete")]
+        public async Task<JsonResult> DeleteCountry(string id)
+        {
+            var country = await _context.ProductionCountries.FindAsync(id);
+            if (country != null)
+            {
+                if (_context.MovieCountries.FirstOrDefault(x => x.CountryId == id) != null)
+                {
+                    return JsonReturn.Error("Country could not be deleted because it is associated with a movie");
+                }
+                _context.ProductionCountries.Remove(country);
+                var result = await _context.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return JsonReturn.Success("Country deleted successfully");
+                }
+                else
+                {
+                    return JsonReturn.Error("Country could not be deleted");
+                }
+            }
+            else
+            {
+                return JsonReturn.Error("Country could not be found");
+            }
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("/Admin/Countries/Add")]
+        public async Task<JsonResult> AddCountry(string id, string name)
+        {
+            var country = new ProductionCountry
+            {
+                Id = id,
+                Name = name,
+                CreateAt = DateTime.Now,
+            };
+            _context.ProductionCountries.Add(country);
+            var result = await _context.SaveChangesAsync();
+            if (result > 0)
+            {
+                return JsonReturn.Success("Country added successfully");
+            }
+            else
+            {
+                return JsonReturn.Error("Country could not be added");
+            }
+        }
+        /*==================================*/
         [HttpGet]
         public async Task<IActionResult> Movies()
         {
@@ -630,5 +820,15 @@ namespace Movie247.Controllers.Admin
                 }
             }
         }
+        /*===============API CALL ====================*/
+        [HttpGet]
+        [Route("/Admin/API/GetTopViews")]
+        public async Task<JsonResult> GetTopViews()
+        {
+            var topViews = await _context.Movies.OrderByDescending(x => x.Views).Take(10).ToListAsync();
+            return Json(topViews);
+        }
     }
+
+
 }

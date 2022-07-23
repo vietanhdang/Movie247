@@ -58,6 +58,8 @@ namespace Movie247.Controllers
             return new ChallengeResult(provider, properties);
         }
 
+        [HttpGet]
+        [Route("/ExternalLogin/OnGetCallback")]
         public async Task<IActionResult> OnGetCallbackAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
