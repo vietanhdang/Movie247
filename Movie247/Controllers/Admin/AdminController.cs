@@ -506,6 +506,7 @@ namespace Movie247.Controllers.Admin
             try
             {
                 movie.CreateAt = DateTime.Now;
+                movie.Views = 0;
                 _context.Movies.Add(movie);
                 if (await _context.SaveChangesAsync() > 0)
                 {
